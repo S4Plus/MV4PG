@@ -55,9 +55,13 @@ oC_Query : oC_RegularQuery
          ;
 
 
-oC_View : CREATE SP? VIEW SP? oC_LabelName SP? AS SP? oC_RegularQuery ;
+oC_View : CREATE SP? VIEW SP? oC_LabelName SP? AS SP? '(' SP? oC_Construct SP? oC_Match SP? ')';
 
 VIEW : ( 'V' | 'v' ) ( 'I' | 'i' ) ( 'E' | 'e' ) ( 'W' | 'w' ) ;
+
+oC_Construct : CONSTRUCT SP? oC_PatternElement ;
+
+CONSTRUCT : ( 'C' | 'c' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ( 'S' | 's' ) ( 'T' | 't' ) ( 'R' | 'r' ) ( 'U' | 'u' ) ( 'C' | 'c' ) ( 'T' | 't' ) ;
 
 oC_RegularQuery : oC_SingleQuery ( SP? oC_Union )* ;
 

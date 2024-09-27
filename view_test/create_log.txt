@@ -1,0 +1,54 @@
+create view cypher: create view ROOT_POST as match (n:Comment)-[:replyOf*..]->(m:Post) return n,m 
+create time: 22.931977033615112
+create view cypher: create view ROOT_POST as match (n:Comment)-[:replyOf*..]->(m:Post) return n,m 
+create time: 101.24292302131653
+create view cypher: create view ROOT_POST as match (n:Comment)-[:replyOf*..]->(m:Post) return n,m 
+create time: 101.43790888786316
+create view cypher: create view test as match (n:person)-[]->()-[]->(m:keyword) return n,m
+create time: 2.0749597549438477
+create view cypher: create view ROOT_POST as match (n:Comment)-[:replyOf*..]->(m:Post) return n,m 
+create time: 97.82407546043396
+create view cypher: create view ROOT_POST as match (n:Comment)-[:replyOf*..]->(m:Post) return n,m 
+create time: 2.09653639793396
+create view cypher: create view ROOT_POST as match (n:Comment)-[:replyOf*..]->(m:Post) return n,m 
+create time: 119.64398312568665
+create view cypher: create view ROOT_POST as match (n:Comment)-[:replyOf*..]->(m:Post) return n,m 
+create time: 106.94578647613525
+create view cypher: create view ROOT_POST as match (n:Comment)-[:replyOf*..]->(m:Post) return n,m 
+create time: 2.070991039276123
+create view cypher: create view ROOT_POST as match (n:Comment)-[:replyOf*..]->(m:Post) return n,m 
+create time: 2.068578004837036
+create view cypher: create view ROOT_POST as match (n:Comment)-[:replyOf*..]->(m:Post) return n,m 
+create time: 2.0409882068634033
+create view cypher: create view ROOT_POST as match (n:Comment)-[:replyOf*..]->(m:Post) return n,m 
+create time: 115.59286642074585
+create view cypher: create view ROOT_POST as match (n:Comment)-[:replyOf*..]->(m:Post) return n,m 
+create time: 102.09745979309082
+create view cypher: create view ROOT_POST as match (n:Comment)-[:replyOf*..]->(m:Post) return n,m 
+create time: 84.47118401527405
+create view cypher: create view ROOT_POST as match (n:Comment)-[:replyOf*..]->(m:Post) return n,m 
+create time: 86.6568956375122
+create view cypher: create view ROOT_POST as match (n:Comment)-[:replyOf*..]->(m:Post) return n,m 
+create time: 115.6282262802124
+create view cypher: create view ROOT_POST as match (n:Comment)-[:replyOf*..]->(m:Post) return n,m 
+create time: 334.09156250953674
+create view cypher: create view ROOT_POST as (Construct (n)-[r:ROOT_POST]->(m) match (n:Comment)-[:replyOf*..]->(m:Post) return n,m )
+create time: 2.0292935371398926
+create view cypher: create view ROOT_POST as ( Construct (n)-[r:ROOT_POST]->(m) match (n:Comment)-[:replyOf*..]->(m:Post) )
+create time: 2.2766988277435303
+create view cypher: create view ROOT_POST as ( Construct (n)-[r:ROOT_POST]->(m) match (n:Comment)-[:replyOf*..]->(m:Post) )
+create time: 2.1430344581604004
+create view cypher: create view ROOT_POST as ( Construct (n)-[r:ROOT_POST]->(m) match (n:Comment)-[:replyOf*..]->(m:Post) )
+create time: 2.146636724472046
+create view cypher: create view ROOT_POST as ( Construct (n)-[r:ROOT_POST]->(m) match (n:Comment)-[:replyOf*..]->(m:Post) )
+create time: 2.1498773097991943
+create view cypher: create view ROOT_POST as ( Construct (n)-[r:ROOT_POST]->(m) match (n:Comment)-[:replyOf*..]->(m:Post) )
+create time: 45.09890532493591
+create view cypher: create view ROOT_POST as ( Construct (n)-[r:ROOT_POST]->(m) match (n:Comment)-[:replyOf*..]->(m:Post) )
+create time: 46.99742269515991
+create view cypher: create view ROOT_POST as ( Construct (n)-[r:ROOT_POST]->(m) match (n:Comment)-[:replyOf*..]->(m:Post) )
+create time: 37.943182945251465
+create view cypher: create view ROOT_POST as ( Construct (n)-[r:ROOT_POST]->(m) match (n:Comment)-[:replyOf*..]->(m:Post) )
+create time: 64.68263339996338
+create view cypher: create view ROOT_POST as ( Construct (n)-[r:ROOT_POST]->(m) match (n:Comment)-[:replyOf*..]->(m:Post) )
+create time: 411.8004102706909

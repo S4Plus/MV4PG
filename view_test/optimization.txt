@@ -1,0 +1,310 @@
+match p=(n:Comment)-[r:replyOf*..]->(m:Post) return count(p)
+cycle: 5
+original_time: 12.082014751434325
+optimized_time: 2.0439460277557373
+speed up: 5.911122205462752
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 5
+original_time: 9.796727657318115
+optimized_time: 2.9398650169372558
+speed up: 3.3323732895479408
+[2052169]
+[2052165]
+
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 1
+original_time: 9.794378280639648
+optimized_time: 2.947739362716675
+speed up: 3.322674455048503
+[2052169]
+[2052165]
+
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 1
+original_time: 9.880991220474243
+optimized_time: 2.8957059383392334
+speed up: 3.412290968378254
+[2052169]
+[2052169]
+
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 5
+original_time: 9.801185607910156
+optimized_time: 3.0418342113494874
+speed up: 3.222130111937275
+[2052169]
+[2052169]
+
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 5
+original_time: 2.013624572753906
+optimized_time: 2.0447864532470703
+speed up: 0.9847603252439002
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 5
+original_time: 2.013963317871094
+optimized_time: 2.932509994506836
+speed up: 0.6867711692862567
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 5
+original_time: 9.798929166793823
+optimized_time: 2.9873122692108156
+speed up: 3.280182412728647
+[2052169]
+[2052169]
+
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 5
+original_time: 9.813044261932372
+optimized_time: 2.9425232887268065
+speed up: 3.334907934128316
+[2052169]
+[2052169]
+
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 5
+original_time: 8.561487627029418
+optimized_time: 2.692083215713501
+speed up: 3.1802462780706833
+[2052169]
+[2052169]
+
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 5
+original_time: 8.651547002792359
+optimized_time: 2.7265154838562013
+speed up: 3.1731149351685284
+[2052169]
+[2052169]
+
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 5
+original_time: 8.66875410079956
+optimized_time: 2.8010597229003906
+speed up: 3.094812306187958
+[2052169]
+[2052169]
+
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 5
+original_time: 9.40089817047119
+optimized_time: 2.820046615600586
+speed up: 3.3335967279636898
+[2052169]
+[2052169]
+
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 5
+original_time: 9.326457691192626
+optimized_time: 2.9333359718322756
+speed up: 3.179471353009372
+[2052169]
+[2052169]
+
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 5
+original_time: 8.94746356010437
+optimized_time: 2.737976837158203
+speed up: 3.267910611468543
+[2052169]
+[2052169]
+
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 5
+original_time: 8.734628868103027
+optimized_time: 2.7243717193603514
+speed up: 3.2061075975909077
+[2052169]
+[2052169]
+
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 5
+original_time: 9.370329666137696
+optimized_time: 2.9637262344360353
+speed up: 3.161671802632191
+[2052169]
+[2052169]
+
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 5
+original_time: 9.260635089874267
+optimized_time: 2.9225393772125243
+speed up: 3.1686947187370067
+[2052169]
+[2052169]
+
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 5
+original_time: 8.996518754959107
+optimized_time: 2.70594744682312
+speed up: 3.324720428521753
+[2052169]
+[2052169]
+
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 5
+original_time: 8.959840345382691
+optimized_time: 2.784467887878418
+speed up: 3.21779266494235
+[2052169]
+[2052169]
+
+MATCH
+  (tag:Tag {name: "Rumi"}),
+  (person1:Person)<-[:commentHasCreator]-(message1:Comment)-[:replyOf*1..]->(post1:Post)<-[:containerOf]-(forum1:Forum),
+  (message1)-[:commentHasTag]->(tag),
+  (forum1)<-[:hasMember]->(person2:Person)<-[:commentHasCreator]-(comment:Comment)-[:HAS_TAG]->(tag),
+  (forum1)<-[:hasMember]->(person3:Person)<-[:commentHasCreator]-(message2:Comment),
+  (comment)-[:replyOf]->(message2)-[:replyOf*1..]->(post2:Post)<-[:containerOf]-(forum2:Forum)
+	,(comment)-[:commentHasTag]->(tag)
+	, (message2)-[:commentHasTag]->(tag)
+WHERE forum1 <> forum2
+  AND message2.creationDate > message1.creationDate 
+  
+RETURN person1.id, count(DISTINCT message2) AS messageCount
+ORDER BY messageCount DESC, person1.id ASC
+LIMIT 10
+cycle: 5
+original_time: 223.2885437488556
+optimized_time: 190.50588145256043
+speed up: 1.1720821532980266
+
+MATCH
+  (tag:Tag {name: "Rumi"}),
+  (person1:Person)<-[:commentHasCreator]-(message1:Comment)-[:replyOf*1..]->(post1:Post)<-[:containerOf]-(forum1:Forum),
+  (message1)-[:commentHasTag]->(tag),
+  (forum1)<-[:hasMember]->(person2:Person)<-[:commentHasCreator]-(comment:Comment)-[:HAS_TAG]->(tag),
+  (forum1)<-[:hasMember]->(person3:Person)<-[:commentHasCreator]-(message2:Comment),
+  (comment)-[:replyOf]->(message2)-[:replyOf*1..]->(post2:Post)<-[:containerOf]-(forum2:Forum)
+	,(comment)-[:commentHasTag]->(tag)
+	, (message2)-[:commentHasTag]->(tag)
+WHERE forum1 <> forum2
+  AND message2.creationDate > message1.creationDate 
+  
+RETURN person1.id, count(DISTINCT message2) AS messageCount
+ORDER BY messageCount DESC, person1.id ASC
+LIMIT 10
+cycle: 1
+original_time: 221.45649409294128
+optimized_time: 187.96259903907776
+speed up: 1.1781944664794728
+[6597069772672, 61350]
+[6597069772672, 61350]
+[4398046521028, 60012]
+[4398046521028, 60012]
+[4398046511667, 59690]
+[4398046511667, 59690]
+[10027, 58010]
+[10027, 58010]
+[1269, 52118]
+[1269, 52118]
+[10825, 50546]
+[10825, 50546]
+[8796093029267, 48092]
+[8796093029267, 48092]
+[2199023256181, 47957]
+[2199023256181, 47957]
+[2199023262209, 46500]
+[2199023262209, 46500]
+[8796093030364, 46428]
+[8796093030364, 46428]
+
+MATCH
+  (tag:Tag {name: "Rumi"}),
+  (person1:Person)<-[:commentHasCreator]-(message1:Comment)-[:replyOf*1..]->(post1:Post)<-[:containerOf]-(forum1:Forum),
+  (message1)-[:commentHasTag]->(tag),
+  (forum1)<-[:hasMember]->(person2:Person)<-[:commentHasCreator]-(comment:Comment)-[:HAS_TAG]->(tag),
+  (forum1)<-[:hasMember]->(person3:Person)<-[:commentHasCreator]-(message2:Comment),
+  (comment)-[:replyOf]->(message2)-[:replyOf*1..]->(post2:Post)<-[:containerOf]-(forum2:Forum)
+	,(comment)-[:commentHasTag]->(tag)
+	, (message2)-[:commentHasTag]->(tag)
+WHERE forum1 <> forum2
+  AND message2.creationDate > message1.creationDate 
+  
+RETURN person1.id, count(DISTINCT message2) AS messageCount
+ORDER BY messageCount DESC, person1.id ASC
+LIMIT 10
+cycle: 1
+original_time: 2.017385721206665
+optimized_time: 206.98947024345398
+speed up: 0.009746320519753418
+MATCH
+  (tag:Tag {name: "Rumi"}),
+  (person1:Person)<-[:commentHasCreator]-(message1:Comment)-[:replyOf*1..]->(post1:Post)<-[:containerOf]-(forum1:Forum),
+  (message1)-[:commentHasTag]->(tag),
+  (forum1)<-[:hasMember]->(person2:Person)<-[:commentHasCreator]-(comment:Comment)-[:HAS_TAG]->(tag),
+  (forum1)<-[:hasMember]->(person3:Person)<-[:commentHasCreator]-(message2:Comment),
+  (comment)-[:replyOf]->(message2)-[:replyOf*1..]->(post2:Post)<-[:containerOf]-(forum2:Forum)
+	,(comment)-[:commentHasTag]->(tag)
+	, (message2)-[:commentHasTag]->(tag)
+WHERE forum1 <> forum2
+  AND message2.creationDate > message1.creationDate 
+  
+RETURN person1.id, count(DISTINCT message2) AS messageCount
+ORDER BY messageCount DESC, person1.id ASC
+LIMIT 10
+cycle: 1
+original_time: 275.1845293045044
+optimized_time: 194.81284499168396
+speed up: 1.4125584445740798
+[6597069772672, 61350]
+[6597069772672, 61350]
+[4398046521028, 60012]
+[4398046521028, 60012]
+[4398046511667, 59690]
+[4398046511667, 59690]
+[10027, 58010]
+[10027, 58010]
+[1269, 52118]
+[1269, 52118]
+[10825, 50546]
+[10825, 50546]
+[8796093029267, 48092]
+[8796093029267, 48092]
+[2199023256181, 47957]
+[2199023256181, 47957]
+[2199023262209, 46500]
+[2199023262209, 46500]
+[8796093030364, 46428]
+[8796093030364, 46428]
+
+MATCH
+  (tag:Tag {name: "Rumi"}),
+  (person1:Person)<-[:commentHasCreator]-(message1:Comment)-[:replyOf*1..]->(post1:Post)<-[:containerOf]-(forum1:Forum),
+  (message1)-[:commentHasTag]->(tag),
+  (forum1)<-[:hasMember]->(person2:Person)<-[:commentHasCreator]-(comment:Comment)-[:HAS_TAG]->(tag),
+  (forum1)<-[:hasMember]->(person3:Person)<-[:commentHasCreator]-(message2:Comment),
+  (comment)-[:replyOf]->(message2)-[:replyOf*1..]->(post2:Post)<-[:containerOf]-(forum2:Forum)
+	,(comment)-[:commentHasTag]->(tag)
+	, (message2)-[:commentHasTag]->(tag)
+WHERE forum1 <> forum2
+  AND message2.creationDate > message1.creationDate 
+  
+RETURN person1.id, count(DISTINCT message2) AS messageCount
+ORDER BY messageCount DESC, person1.id ASC
+LIMIT 10
+cycle: 5
+original_time: 250.16660151481628
+optimized_time: 228.22754154205322
+speed up: 1.096128012528762
+[6597069772672, 61350]
+[6597069772672, 61350]
+[4398046521028, 60012]
+[4398046521028, 60012]
+[4398046511667, 59690]
+[4398046511667, 59690]
+[10027, 58010]
+[10027, 58010]
+[1269, 52118]
+[1269, 52118]
+[10825, 50546]
+[10825, 50546]
+[8796093029267, 48092]
+[8796093029267, 48092]
+[2199023256181, 47957]
+[2199023256181, 47957]
+[2199023262209, 46500]
+[2199023262209, 46500]
+[8796093030364, 46428]
+[8796093030364, 46428]
+

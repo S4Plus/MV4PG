@@ -179,8 +179,12 @@ class CypherBaseVisitor : public LcypherVisitor {
 
     std::any visitOC_View(LcypherParser::OC_ViewContext *ctx) override {
         LOG_DEBUG() << "visit oc view"<<std::endl;
-        visit(ctx->oC_RegularQuery());
+        // return visitChildren(ctx);
         return 0;
+    }
+
+    std::any visitOC_Construct(LcypherParser::OC_ConstructContext *ctx) override {
+        return visitChildren(ctx);
     }
 
     std::any visitOC_RegularQuery(LcypherParser::OC_RegularQueryContext *ctx) override {

@@ -49,7 +49,7 @@ class RewriteViews : public LcypherVisitor {
     std::string rewrite_query;
     std::string view_name;
     std::pair<std::string,std::string> constraints;
-    const std::vector<cypher::PatternGraph> &pattern_graphs_;
+    // const std::vector<cypher::PatternGraph> &pattern_graphs_;
 
     /* Anonymous entity are not in symbol table:
      * MATCH (n) RETURN exists((n)-->()-->())  */
@@ -71,7 +71,7 @@ class RewriteViews : public LcypherVisitor {
     RewriteViews() = default;
     RewriteViews(cypher::RTContext *ctx, antlr4::tree::ParseTree *tree,
                              const std::vector<cypher::PatternGraph> &pattern_graphs)
-        : ctx_(ctx), pattern_graphs_(pattern_graphs) {
+        : ctx_(ctx) {
         tree->accept(this);
     }
 
@@ -119,8 +119,18 @@ class RewriteViews : public LcypherVisitor {
         view_name=ctx->oC_LabelName()->getText();
         // view_name=std::any_cast<std::string>(visit(ctx->StringLiteral()));
         LOG_DEBUG() <<view_name;
-        return std::any_cast<std::string>(visit(ctx->oC_RegularQuery()));
+        std::string match = std::any_cast<std::string>(visit(ctx->oC_Match()));
+        std::string create = std::any_cast<std::string>(visit(ctx->oC_Construct()));
+        return match + create;
     }
+
+    std::any visitOC_Construct(LcypherParser::OC_ConstructContext *ctx) override {
+        std::string start_name = std::any_cast<std::string>(visit(ctx->oC_PatternElement()->oC_NodePattern()->oC_Variable()));
+        std::string end_name = std::any_cast<std::string>(visit(ctx->oC_PatternElement()->oC_PatternElementChain(0)->oC_NodePattern()->oC_Variable()));
+        std::string pattern = std::any_cast<std::string>(visit(ctx->oC_PatternElement()));
+        return " WITH "+start_name+","+end_name + " CREATE "+pattern;
+    }
+
     std::any visitOC_RegularQuery(LcypherParser::OC_RegularQueryContext *ctx) override {
         // reserve for single_queries
         LOG_DEBUG() <<"RQ s";
@@ -218,16 +228,17 @@ class RewriteViews : public LcypherVisitor {
     }
 
     std::any visitOC_Return(LcypherParser::OC_ReturnContext *ctx) override {
-        LOG_DEBUG() <<"Return s";
-        std::string result;
-        result="WITH ";
-        if(ctx->DISTINCT()!=nullptr){
-            result.append(ctx->DISTINCT()->getText());
-            result.append(" ");
-        }
-        result.append(std::any_cast<std::string>(visit(ctx->oC_ReturnBody())));
-        LOG_DEBUG() <<"Return e";
-        return result;
+        return visitChildrenToString(ctx);
+        // LOG_DEBUG() <<"Return s";
+        // std::string result;
+        // result="WITH ";
+        // if(ctx->DISTINCT()!=nullptr){
+        //     result.append(ctx->DISTINCT()->getText());
+        //     result.append(" ");
+        // }
+        // result.append(std::any_cast<std::string>(visit(ctx->oC_ReturnBody())));
+        // LOG_DEBUG() <<"Return e";
+        // return result;
     }
 
     std::any visitOC_ReturnBody(LcypherParser::OC_ReturnBodyContext *ctx) override {
@@ -235,22 +246,23 @@ class RewriteViews : public LcypherVisitor {
     } 
 
     std::any visitOC_ReturnItems(LcypherParser::OC_ReturnItemsContext *ctx) override {
-        LOG_DEBUG() <<"Return item s";
-        if(ctx->oC_ReturnItem().size()!=2){
-            throw lgraph::CypherException("Views now only support two return nodes");
-        }
-        std::string start=std::any_cast<std::string>(visit(ctx->oC_ReturnItem(0)));
-        std::string end=std::any_cast<std::string>(visit(ctx->oC_ReturnItem(1)));
-        const cypher::Node empty;
-        auto start_node = &(pattern_graphs_[curr_pattern_graph].GetNode(start));
-        auto end_node = &(pattern_graphs_[curr_pattern_graph].GetNode(end));
-        // if(start_node->Label().empty()||end_node->Label().empty())
-        //     throw lgraph::CypherException("Views need explicit node labels");
-        constraints.first=start_node->Label();
-        constraints.second=end_node->Label();
-        std::string result=start+","+end+" ";
-        result.append("CREATE ("+start+")-[r:"+view_name+"]->("+end+")");
-        return result;
+        return visitChildrenToString(ctx);
+        // LOG_DEBUG() <<"Return item s";
+        // if(ctx->oC_ReturnItem().size()!=2){
+        //     throw lgraph::CypherException("Views now only support two return nodes");
+        // }
+        // std::string start=std::any_cast<std::string>(visit(ctx->oC_ReturnItem(0)));
+        // std::string end=std::any_cast<std::string>(visit(ctx->oC_ReturnItem(1)));
+        // const cypher::Node empty;
+        // auto start_node = &(pattern_graphs_[curr_pattern_graph].GetNode(start));
+        // auto end_node = &(pattern_graphs_[curr_pattern_graph].GetNode(end));
+        // // if(start_node->Label().empty()||end_node->Label().empty())
+        // //     throw lgraph::CypherException("Views need explicit node labels");
+        // constraints.first=start_node->Label();
+        // constraints.second=end_node->Label();
+        // std::string result=start+","+end+" ";
+        // result.append("CREATE ("+start+")-[r:"+view_name+"]->("+end+")");
+        // return result;
     }
 
     std::any visitOC_ReturnItem(LcypherParser::OC_ReturnItemContext *ctx) override {

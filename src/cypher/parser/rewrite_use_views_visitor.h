@@ -144,6 +144,11 @@ class RewriteUseViewsVisitor : public LcypherVisitor {
         // std::cout <<view_name;
         return visitChildrenToString(ctx);    
     }
+
+    std::any visitOC_Construct(LcypherParser::OC_ConstructContext *ctx) override {
+        return visitChildrenToString(ctx);
+    }
+    
     std::any visitOC_RegularQuery(LcypherParser::OC_RegularQueryContext *ctx) override {
         // reserve for single_queries
         // std::cout <<"RQ s"<<std::endl;

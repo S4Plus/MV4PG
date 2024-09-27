@@ -169,6 +169,100 @@ const std::string Scheduler::EvalCypher(RTContext *ctx, const std::string &scrip
             plan.get()->SetMaintenance(true);
         else if(visitor.CommandType()==parser::CmdType::OPTIMIZE)
             plan.get()->SetOptimize(true);
+        else if(visitor.CommandType()==parser::CmdType::VIEW){ //创建视图
+            LOG_DEBUG() << "s";
+            const std::vector<cypher::PatternGraph>& pattern_graphs=plan->GetPatternGraphs();
+            LOG_DEBUG() << "new visitor s";
+            RewriteViews new_visitor(ctx,oc_cypher,pattern_graphs);
+            LOG_DEBUG() << "new visitor e";
+            auto view_name=new_visitor.GetViewName();
+            auto constraints=new_visitor.GetConstraints();
+            auto new_query=new_visitor.GetRewriteQuery();
+            auto profile_new_query="profile "+new_query;
+            LOG_DEBUG() << "hhh";
+            // std::string create_query="CALL db.createEdgeLabel('"+view_name+"', '[[\""+constraints.first+"\",\""+constraints.second+"\"]]','is_view',bool,true)";
+            std::string create_query="CALL db.createEdgeLabel('"+view_name+"', '[]')";
+            // std::cout<<"create query: "<<create_query<<std::endl;
+            // std::cout<<"new query: "<<new_query<<std::endl;
+            elapsed.t_compile = fma_common::GetTime() - t0;
+            ElapsedTime temp;
+            if(is_with_new_txn)
+                EvalCypher(ctx,create_query,temp);
+            else
+                EvalCypherWithoutNewTxn(ctx,create_query,temp);
+            // 将信息保存到json文件中
+            auto parent_dir=ctx->galaxy_->GetConfig().dir;
+            if(parent_dir.end()[-1]=='/')parent_dir.pop_back();
+            std::string file_path=parent_dir+"/view/"+ctx->graph_+".json";
+            // std::string file_path="/data/view/"+ctx->graph_+".json";
+            // AddView(file_path,view_name,constraints.first,constraints.second,new_query,0,0);
+            
+            // 为重写后的语句生成执行计划
+            ANTLRInputStream new_input(profile_new_query);
+            LcypherLexer new_lexer(&new_input);
+            CommonTokenStream new_tokens(&new_lexer);
+            LcypherParser new_parser(&new_tokens);
+            new_parser.addErrorListener(&CypherErrorListener::INSTANCE);
+            auto new_oc_cypher=new_parser.oC_Cypher();
+            CypherBaseVisitor new_base_visitor(ctx, new_oc_cypher);
+            LOG_DEBUG() <<"visitor e"<<std::endl; // de
+            LOG_DEBUG() << "-----CLAUSE TO STRING-----";
+            plan = std::make_shared<ExecutionPlan>();
+            plan->SetCreateView(true);
+            plan->Build(new_base_visitor.GetQuery(), new_base_visitor.CommandType(), ctx,true);
+            // LOG_DEBUG()<<"EvalCypherWithoutNewTxn txn exist7:"<<(ctx->txn_!=nullptr);
+            plan->Validate(ctx);
+            
+            if(!is_with_new_txn)
+                plan->ExecuteWithoutNewTxn(ctx);
+            else{
+                if (!plan->ReadOnly() && ctx->optimistic_) {
+                    while (1) {
+                        try {
+                            plan->Execute(ctx);
+                            break;
+                        } catch (lgraph::TxnCommitException &e) {
+                            LOG_DEBUG() << e.what();
+                        }
+                    }
+                } else {
+                    plan->Execute(ctx);
+                }
+            }
+            // if(is_with_new_txn)
+            //     EvalCypher(ctx,new_query,temp);
+            // else
+            //     EvalCypherWithoutNewTxn(ctx,new_query,temp);
+            // produce results->Create->Apply->Argument或Project
+            size_t db_hit=plan->GetDBHit(),result_num=plan->Root()->children[0]->children[0]->children[1]->stats.profileRecordCount;
+            // std::string result=ctx->result_->Dump(false);
+            // LOG_DEBUG()<<"result size:"<<ctx->result_->Header().size();
+            // LOG_DEBUG()<<result;
+            // if(ctx->result_->Header().size()==2){
+            //     std::string result=ctx->result_->Dump(false);
+            //     LOG_DEBUG()<<result;
+            //     nlohmann::json j = nlohmann::json::parse(result);
+            //     auto db_hit_str=j.at("db_hit").get<std::string>();
+            //     auto result_num_str=j.at("result_num").get<std::string>();
+            //     db_hit=std::stoull(db_hit_str);
+            //     result_num=std::stoull(result_num_str);
+            // }
+            LOG_DEBUG()<<"db_hit:"<<db_hit<<",result num:"<<result_num;
+            AddView(file_path,view_name,constraints.first,constraints.second,new_query,db_hit,result_num);
+            ctx->result_info_ = std::make_unique<ResultInfo>();
+            ctx->result_ = std::make_unique<lgraph::Result>();
+
+            ctx->result_->ResetHeader({{"view_name", lgraph_api::LGraphType::STRING},{"start_node_label", lgraph_api::LGraphType::STRING},{"end_node_label", lgraph_api::LGraphType::STRING}});
+            auto r = ctx->result_->MutableRecord();
+            r->Insert("view_name", lgraph::FieldData(view_name));
+            r->Insert("start_node_label", lgraph::FieldData(constraints.first));
+            r->Insert("end_node_label", lgraph::FieldData(constraints.second));
+            
+            
+            elapsed.t_total = fma_common::GetTime() - t0;
+            LOG_DEBUG() << "end";
+            return std::string();
+        }
         // LOG_DEBUG()<<"EvalCypherWithoutNewTxn txn exist6:"<<(ctx->txn_!=nullptr);
         LOG_DEBUG()<<"build start";
         plan->Build(visitor.GetQuery(), visitor.CommandType(), ctx,visitor.CommandType()==parser::CmdType::PROFILE);
@@ -204,100 +298,6 @@ const std::string Scheduler::EvalCypher(RTContext *ctx, const std::string &scrip
                     r->Insert("@opt_query", lgraph::FieldData(new_visitor.GetOptQuery()));
                 }
                 return new_visitor.GetOptQuery();
-            }
-            else if(visitor.CommandType()==parser::CmdType::VIEW){ //创建视图
-                LOG_DEBUG() << "s";
-                const std::vector<cypher::PatternGraph>& pattern_graphs=plan->GetPatternGraphs();
-                LOG_DEBUG() << "new visitor s";
-                RewriteViews new_visitor(ctx,oc_cypher,pattern_graphs);
-                LOG_DEBUG() << "new visitor e";
-                auto view_name=new_visitor.GetViewName();
-                auto constraints=new_visitor.GetConstraints();
-                auto new_query=new_visitor.GetRewriteQuery();
-                auto profile_new_query="profile "+new_query;
-                LOG_DEBUG() << "hhh";
-                // std::string create_query="CALL db.createEdgeLabel('"+view_name+"', '[[\""+constraints.first+"\",\""+constraints.second+"\"]]','is_view',bool,true)";
-                std::string create_query="CALL db.createEdgeLabel('"+view_name+"', '[]')";
-                // std::cout<<"create query: "<<create_query<<std::endl;
-                // std::cout<<"new query: "<<new_query<<std::endl;
-                elapsed.t_compile = fma_common::GetTime() - t0;
-                ElapsedTime temp;
-                if(is_with_new_txn)
-                    EvalCypher(ctx,create_query,temp);
-                else
-                    EvalCypherWithoutNewTxn(ctx,create_query,temp);
-                // 将信息保存到json文件中
-                auto parent_dir=ctx->galaxy_->GetConfig().dir;
-                if(parent_dir.end()[-1]=='/')parent_dir.pop_back();
-                std::string file_path=parent_dir+"/view/"+ctx->graph_+".json";
-                // std::string file_path="/data/view/"+ctx->graph_+".json";
-                // AddView(file_path,view_name,constraints.first,constraints.second,new_query,0,0);
-                
-                // 为重写后的语句生成执行计划
-                ANTLRInputStream new_input(profile_new_query);
-                LcypherLexer new_lexer(&new_input);
-                CommonTokenStream new_tokens(&new_lexer);
-                LcypherParser new_parser(&new_tokens);
-                new_parser.addErrorListener(&CypherErrorListener::INSTANCE);
-                auto new_oc_cypher=new_parser.oC_Cypher();
-                CypherBaseVisitor new_base_visitor(ctx, new_oc_cypher);
-                LOG_DEBUG() <<"visitor e"<<std::endl; // de
-                LOG_DEBUG() << "-----CLAUSE TO STRING-----";
-                plan = std::make_shared<ExecutionPlan>();
-                plan->SetCreateView(true);
-                plan->Build(new_base_visitor.GetQuery(), new_base_visitor.CommandType(), ctx,true);
-                // LOG_DEBUG()<<"EvalCypherWithoutNewTxn txn exist7:"<<(ctx->txn_!=nullptr);
-                plan->Validate(ctx);
-                
-                if(!is_with_new_txn)
-                    plan->ExecuteWithoutNewTxn(ctx);
-                else{
-                    if (!plan->ReadOnly() && ctx->optimistic_) {
-                        while (1) {
-                            try {
-                                plan->Execute(ctx);
-                                break;
-                            } catch (lgraph::TxnCommitException &e) {
-                                LOG_DEBUG() << e.what();
-                            }
-                        }
-                    } else {
-                        plan->Execute(ctx);
-                    }
-                }
-                // if(is_with_new_txn)
-                //     EvalCypher(ctx,new_query,temp);
-                // else
-                //     EvalCypherWithoutNewTxn(ctx,new_query,temp);
-                // produce results->Create->Apply->Argument或Project
-                size_t db_hit=plan->GetDBHit(),result_num=plan->Root()->children[0]->children[0]->children[1]->stats.profileRecordCount;
-                // std::string result=ctx->result_->Dump(false);
-                // LOG_DEBUG()<<"result size:"<<ctx->result_->Header().size();
-                // LOG_DEBUG()<<result;
-                // if(ctx->result_->Header().size()==2){
-                //     std::string result=ctx->result_->Dump(false);
-                //     LOG_DEBUG()<<result;
-                //     nlohmann::json j = nlohmann::json::parse(result);
-                //     auto db_hit_str=j.at("db_hit").get<std::string>();
-                //     auto result_num_str=j.at("result_num").get<std::string>();
-                //     db_hit=std::stoull(db_hit_str);
-                //     result_num=std::stoull(result_num_str);
-                // }
-                LOG_DEBUG()<<"db_hit:"<<db_hit<<",result num:"<<result_num;
-                AddView(file_path,view_name,constraints.first,constraints.second,new_query,db_hit,result_num);
-                ctx->result_info_ = std::make_unique<ResultInfo>();
-                ctx->result_ = std::make_unique<lgraph::Result>();
-
-                ctx->result_->ResetHeader({{"view_name", lgraph_api::LGraphType::STRING},{"start_node_label", lgraph_api::LGraphType::STRING},{"end_node_label", lgraph_api::LGraphType::STRING}});
-                auto r = ctx->result_->MutableRecord();
-                r->Insert("view_name", lgraph::FieldData(view_name));
-                r->Insert("start_node_label", lgraph::FieldData(constraints.first));
-                r->Insert("end_node_label", lgraph::FieldData(constraints.second));
-                
-                
-                elapsed.t_total = fma_common::GetTime() - t0;
-                LOG_DEBUG() << "end";
-                return std::string();
             }
             ctx->result_->ResetHeader({{header, lgraph_api::LGraphType::STRING}});
             auto r = ctx->result_->MutableRecord();

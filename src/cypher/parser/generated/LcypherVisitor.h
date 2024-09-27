@@ -28,6 +28,8 @@ public:
 
     virtual std::any visitOC_View(LcypherParser::OC_ViewContext *context) = 0;
 
+    virtual std::any visitOC_Construct(LcypherParser::OC_ConstructContext *context) = 0;
+
     virtual std::any visitOC_RegularQuery(LcypherParser::OC_RegularQueryContext *context) = 0;
 
     virtual std::any visitOC_Union(LcypherParser::OC_UnionContext *context) = 0;

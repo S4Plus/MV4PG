@@ -104,6 +104,10 @@ class ParseTreeToCypherVisitor : public LcypherVisitor {
         return visitChildrenToString(ctx);
     }
 
+    std::any visitOC_Construct(LcypherParser::OC_ConstructContext *ctx) override {
+        return visitChildrenToString(ctx);
+    }
+
     std::any visitOC_RegularQuery(LcypherParser::OC_RegularQueryContext *ctx) override {
         // reserve for single_queries
         _anonymous_idx = 0;

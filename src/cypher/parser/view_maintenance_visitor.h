@@ -168,8 +168,14 @@ class ViewMaintenance : public LcypherVisitor {
         // view_name=ctx->oC_LabelName()->getText();
         // // view_name=std::any_cast<std::string>(visit(ctx->StringLiteral()));
         // std::cout <<view_name;
-        return std::any_cast<std::string>(visit(ctx->oC_RegularQuery()));
+        // return std::any_cast<std::string>(visit(ctx->oC_RegularQuery()));
+        return visitChildrenToString(ctx);
     }
+
+    std::any visitOC_Construct(LcypherParser::OC_ConstructContext *ctx) override {
+        return visitChildrenToString(ctx);
+    }
+
     std::any visitOC_RegularQuery(LcypherParser::OC_RegularQueryContext *ctx) override {
         // reserve for single_queries
         // std::cout <<"RQ s"<<std::endl;

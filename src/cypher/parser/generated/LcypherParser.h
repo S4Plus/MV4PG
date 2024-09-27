@@ -21,59 +21,59 @@ public:
     T__32 = 33, T__33 = 34, T__34 = 35, T__35 = 36, T__36 = 37, T__37 = 38, 
     T__38 = 39, T__39 = 40, T__40 = 41, T__41 = 42, T__42 = 43, T__43 = 44, 
     T__44 = 45, EXPLAIN = 46, PROFILE = 47, OPTIMIZE = 48, MAINTENANCE = 49, 
-    VIEW = 50, UNION = 51, ALL = 52, OPTIONAL_ = 53, MATCH = 54, UNWIND = 55, 
-    AS = 56, MERGE = 57, ON = 58, CREATE = 59, SET = 60, DETACH = 61, DELETE_ = 62, 
-    REMOVE = 63, CALL = 64, YIELD = 65, WITH = 66, DISTINCT = 67, RETURN = 68, 
-    ORDER = 69, BY = 70, L_SKIP = 71, LIMIT = 72, ASCENDING = 73, ASC = 74, 
-    DESCENDING = 75, DESC = 76, USING = 77, JOIN = 78, START = 79, WHERE = 80, 
-    NO_DUPLICATE_EDGE = 81, OR = 82, XOR = 83, AND = 84, NOT = 85, IN = 86, 
-    STARTS = 87, ENDS = 88, CONTAINS = 89, REGEXP = 90, IS = 91, NULL_ = 92, 
-    COUNT = 93, ANY = 94, NONE = 95, SINGLE = 96, TRUE_ = 97, FALSE_ = 98, 
-    EXISTS = 99, CASE = 100, ELSE = 101, END = 102, WHEN = 103, THEN = 104, 
-    StringLiteral = 105, EscapedChar = 106, HexInteger = 107, DecimalInteger = 108, 
-    OctalInteger = 109, HexLetter = 110, HexDigit = 111, Digit = 112, NonZeroDigit = 113, 
-    NonZeroOctDigit = 114, OctDigit = 115, ZeroDigit = 116, ExponentDecimalReal = 117, 
-    RegularDecimalReal = 118, FILTER = 119, EXTRACT = 120, UnescapedSymbolicName = 121, 
-    CONSTRAINT = 122, DO = 123, FOR = 124, REQUIRE = 125, UNIQUE = 126, 
-    MANDATORY = 127, SCALAR = 128, OF = 129, ADD = 130, DROP = 131, IdentifierStart = 132, 
-    IdentifierPart = 133, EscapedSymbolicName = 134, SP = 135, WHITESPACE = 136, 
-    Comment = 137
+    VIEW = 50, CONSTRUCT = 51, UNION = 52, ALL = 53, OPTIONAL_ = 54, MATCH = 55, 
+    UNWIND = 56, AS = 57, MERGE = 58, ON = 59, CREATE = 60, SET = 61, DETACH = 62, 
+    DELETE_ = 63, REMOVE = 64, CALL = 65, YIELD = 66, WITH = 67, DISTINCT = 68, 
+    RETURN = 69, ORDER = 70, BY = 71, L_SKIP = 72, LIMIT = 73, ASCENDING = 74, 
+    ASC = 75, DESCENDING = 76, DESC = 77, USING = 78, JOIN = 79, START = 80, 
+    WHERE = 81, NO_DUPLICATE_EDGE = 82, OR = 83, XOR = 84, AND = 85, NOT = 86, 
+    IN = 87, STARTS = 88, ENDS = 89, CONTAINS = 90, REGEXP = 91, IS = 92, 
+    NULL_ = 93, COUNT = 94, ANY = 95, NONE = 96, SINGLE = 97, TRUE_ = 98, 
+    FALSE_ = 99, EXISTS = 100, CASE = 101, ELSE = 102, END = 103, WHEN = 104, 
+    THEN = 105, StringLiteral = 106, EscapedChar = 107, HexInteger = 108, 
+    DecimalInteger = 109, OctalInteger = 110, HexLetter = 111, HexDigit = 112, 
+    Digit = 113, NonZeroDigit = 114, NonZeroOctDigit = 115, OctDigit = 116, 
+    ZeroDigit = 117, ExponentDecimalReal = 118, RegularDecimalReal = 119, 
+    FILTER = 120, EXTRACT = 121, UnescapedSymbolicName = 122, CONSTRAINT = 123, 
+    DO = 124, FOR = 125, REQUIRE = 126, UNIQUE = 127, MANDATORY = 128, SCALAR = 129, 
+    OF = 130, ADD = 131, DROP = 132, IdentifierStart = 133, IdentifierPart = 134, 
+    EscapedSymbolicName = 135, SP = 136, WHITESPACE = 137, Comment = 138
   };
 
   enum {
     RuleOC_Cypher = 0, RuleOC_Statement = 1, RuleOC_Query = 2, RuleOC_View = 3, 
-    RuleOC_RegularQuery = 4, RuleOC_Union = 5, RuleOC_SingleQuery = 6, RuleOC_SinglePartQuery = 7, 
-    RuleOC_MultiPartQuery = 8, RuleOC_UpdatingClause = 9, RuleOC_ReadingClause = 10, 
-    RuleOC_Match = 11, RuleOC_Unwind = 12, RuleOC_Merge = 13, RuleOC_MergeAction = 14, 
-    RuleOC_Create = 15, RuleOC_Set = 16, RuleOC_SetItem = 17, RuleOC_Delete = 18, 
-    RuleOC_Remove = 19, RuleOC_RemoveItem = 20, RuleOC_InQueryCall = 21, 
-    RuleOC_StandaloneCall = 22, RuleOC_YieldItems = 23, RuleOC_YieldItem = 24, 
-    RuleOC_With = 25, RuleOC_Return = 26, RuleOC_ReturnBody = 27, RuleOC_ReturnItems = 28, 
-    RuleOC_ReturnItem = 29, RuleOC_Order = 30, RuleOC_Skip = 31, RuleOC_Limit = 32, 
-    RuleOC_SortItem = 33, RuleOC_Hint = 34, RuleOC_Where = 35, RuleOC_Pattern = 36, 
-    RuleOC_PatternPart = 37, RuleOC_AnonymousPatternPart = 38, RuleOC_PatternElement = 39, 
-    RuleOC_NodePattern = 40, RuleOC_PatternElementChain = 41, RuleOC_RelationshipPattern = 42, 
-    RuleOC_RelationshipDetail = 43, RuleOC_Properties = 44, RuleOC_RelationshipTypes = 45, 
-    RuleOC_NodeLabels = 46, RuleOC_NodeLabel = 47, RuleOC_RangeLiteral = 48, 
-    RuleOC_LabelName = 49, RuleOC_RelTypeName = 50, RuleOC_Expression = 51, 
-    RuleOC_OrExpression = 52, RuleOC_XorExpression = 53, RuleOC_AndExpression = 54, 
-    RuleOC_NotExpression = 55, RuleOC_ComparisonExpression = 56, RuleOC_AddOrSubtractExpression = 57, 
-    RuleOC_MultiplyDivideModuloExpression = 58, RuleOC_PowerOfExpression = 59, 
-    RuleOC_UnaryAddOrSubtractExpression = 60, RuleOC_StringListNullOperatorExpression = 61, 
-    RuleOC_ListOperatorExpression = 62, RuleOC_StringOperatorExpression = 63, 
-    RuleOC_NullOperatorExpression = 64, RuleOC_PropertyOrLabelsExpression = 65, 
-    RuleOC_Atom = 66, RuleOC_Literal = 67, RuleOC_BooleanLiteral = 68, RuleOC_ListLiteral = 69, 
-    RuleOC_PartialComparisonExpression = 70, RuleOC_ParenthesizedExpression = 71, 
-    RuleOC_RelationshipsPattern = 72, RuleOC_FilterExpression = 73, RuleOC_IdInColl = 74, 
-    RuleOC_FunctionInvocation = 75, RuleOC_FunctionName = 76, RuleOC_ExplicitProcedureInvocation = 77, 
-    RuleOC_ImplicitProcedureInvocation = 78, RuleOC_ProcedureResultField = 79, 
-    RuleOC_ProcedureName = 80, RuleOC_Namespace = 81, RuleOC_ListComprehension = 82, 
-    RuleOC_PatternComprehension = 83, RuleOC_PropertyLookup = 84, RuleOC_CaseExpression = 85, 
-    RuleOC_CaseAlternatives = 86, RuleOC_Variable = 87, RuleOC_NumberLiteral = 88, 
-    RuleOC_MapLiteral = 89, RuleOC_Parameter = 90, RuleOC_PropertyExpression = 91, 
-    RuleOC_PropertyKeyName = 92, RuleOC_IntegerLiteral = 93, RuleOC_DoubleLiteral = 94, 
-    RuleOC_SchemaName = 95, RuleOC_SymbolicName = 96, RuleOC_ReservedWord = 97, 
-    RuleOC_LeftArrowHead = 98, RuleOC_RightArrowHead = 99, RuleOC_Dash = 100
+    RuleOC_Construct = 4, RuleOC_RegularQuery = 5, RuleOC_Union = 6, RuleOC_SingleQuery = 7, 
+    RuleOC_SinglePartQuery = 8, RuleOC_MultiPartQuery = 9, RuleOC_UpdatingClause = 10, 
+    RuleOC_ReadingClause = 11, RuleOC_Match = 12, RuleOC_Unwind = 13, RuleOC_Merge = 14, 
+    RuleOC_MergeAction = 15, RuleOC_Create = 16, RuleOC_Set = 17, RuleOC_SetItem = 18, 
+    RuleOC_Delete = 19, RuleOC_Remove = 20, RuleOC_RemoveItem = 21, RuleOC_InQueryCall = 22, 
+    RuleOC_StandaloneCall = 23, RuleOC_YieldItems = 24, RuleOC_YieldItem = 25, 
+    RuleOC_With = 26, RuleOC_Return = 27, RuleOC_ReturnBody = 28, RuleOC_ReturnItems = 29, 
+    RuleOC_ReturnItem = 30, RuleOC_Order = 31, RuleOC_Skip = 32, RuleOC_Limit = 33, 
+    RuleOC_SortItem = 34, RuleOC_Hint = 35, RuleOC_Where = 36, RuleOC_Pattern = 37, 
+    RuleOC_PatternPart = 38, RuleOC_AnonymousPatternPart = 39, RuleOC_PatternElement = 40, 
+    RuleOC_NodePattern = 41, RuleOC_PatternElementChain = 42, RuleOC_RelationshipPattern = 43, 
+    RuleOC_RelationshipDetail = 44, RuleOC_Properties = 45, RuleOC_RelationshipTypes = 46, 
+    RuleOC_NodeLabels = 47, RuleOC_NodeLabel = 48, RuleOC_RangeLiteral = 49, 
+    RuleOC_LabelName = 50, RuleOC_RelTypeName = 51, RuleOC_Expression = 52, 
+    RuleOC_OrExpression = 53, RuleOC_XorExpression = 54, RuleOC_AndExpression = 55, 
+    RuleOC_NotExpression = 56, RuleOC_ComparisonExpression = 57, RuleOC_AddOrSubtractExpression = 58, 
+    RuleOC_MultiplyDivideModuloExpression = 59, RuleOC_PowerOfExpression = 60, 
+    RuleOC_UnaryAddOrSubtractExpression = 61, RuleOC_StringListNullOperatorExpression = 62, 
+    RuleOC_ListOperatorExpression = 63, RuleOC_StringOperatorExpression = 64, 
+    RuleOC_NullOperatorExpression = 65, RuleOC_PropertyOrLabelsExpression = 66, 
+    RuleOC_Atom = 67, RuleOC_Literal = 68, RuleOC_BooleanLiteral = 69, RuleOC_ListLiteral = 70, 
+    RuleOC_PartialComparisonExpression = 71, RuleOC_ParenthesizedExpression = 72, 
+    RuleOC_RelationshipsPattern = 73, RuleOC_FilterExpression = 74, RuleOC_IdInColl = 75, 
+    RuleOC_FunctionInvocation = 76, RuleOC_FunctionName = 77, RuleOC_ExplicitProcedureInvocation = 78, 
+    RuleOC_ImplicitProcedureInvocation = 79, RuleOC_ProcedureResultField = 80, 
+    RuleOC_ProcedureName = 81, RuleOC_Namespace = 82, RuleOC_ListComprehension = 83, 
+    RuleOC_PatternComprehension = 84, RuleOC_PropertyLookup = 85, RuleOC_CaseExpression = 86, 
+    RuleOC_CaseAlternatives = 87, RuleOC_Variable = 88, RuleOC_NumberLiteral = 89, 
+    RuleOC_MapLiteral = 90, RuleOC_Parameter = 91, RuleOC_PropertyExpression = 92, 
+    RuleOC_PropertyKeyName = 93, RuleOC_IntegerLiteral = 94, RuleOC_DoubleLiteral = 95, 
+    RuleOC_SchemaName = 96, RuleOC_SymbolicName = 97, RuleOC_ReservedWord = 98, 
+    RuleOC_LeftArrowHead = 99, RuleOC_RightArrowHead = 100, RuleOC_Dash = 101
   };
 
   explicit LcypherParser(antlr4::TokenStream *input);
@@ -97,6 +97,7 @@ public:
   class OC_StatementContext;
   class OC_QueryContext;
   class OC_ViewContext;
+  class OC_ConstructContext;
   class OC_RegularQueryContext;
   class OC_UnionContext;
   class OC_SingleQueryContext;
@@ -252,7 +253,8 @@ public:
     antlr4::tree::TerminalNode *VIEW();
     OC_LabelNameContext *oC_LabelName();
     antlr4::tree::TerminalNode *AS();
-    OC_RegularQueryContext *oC_RegularQuery();
+    OC_ConstructContext *oC_Construct();
+    OC_MatchContext *oC_Match();
     std::vector<antlr4::tree::TerminalNode *> SP();
     antlr4::tree::TerminalNode* SP(size_t i);
 
@@ -262,6 +264,21 @@ public:
   };
 
   OC_ViewContext* oC_View();
+
+  class  OC_ConstructContext : public antlr4::ParserRuleContext {
+  public:
+    OC_ConstructContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *CONSTRUCT();
+    OC_PatternElementContext *oC_PatternElement();
+    antlr4::tree::TerminalNode *SP();
+
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  OC_ConstructContext* oC_Construct();
 
   class  OC_RegularQueryContext : public antlr4::ParserRuleContext {
   public:
