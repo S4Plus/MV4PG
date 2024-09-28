@@ -50,5 +50,3 @@ create view cypher: create view ROOT_POST as ( Construct (n)-[r:ROOT_POST]->(m) 
 create time: 37.943182945251465
 create view cypher: create view ROOT_POST as ( Construct (n)-[r:ROOT_POST]->(m) match (n:Comment)-[:replyOf*..]->(m:Post) )
 create time: 64.68263339996338
-create view cypher: create view ROOT_POST as ( Construct (n)-[r:ROOT_POST]->(m) match (n:Comment)-[:replyOf*..]->(m:Post) )
-create time: 411.8004102706909

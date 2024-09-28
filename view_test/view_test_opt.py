@@ -13,9 +13,9 @@ graph = 'ldbcSf1'
 user = 'admin'
 password = '73@TuGraph'
 cypher = 'match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)'
-cypher_folder="./view_test/test_queries"
+cypher_folder="/tugraph-db_graph_views/view_test/test_queries"
 cycle = 5
-output_path="./view_test/optimization.txt"
+output_path="/tugraph-db_graph_views/view_test/optimization.txt"
 
 def parse_args():
     parser = argparse.ArgumentParser(description="TuGraph Rpc Client for python")

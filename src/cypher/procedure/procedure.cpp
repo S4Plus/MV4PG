@@ -543,6 +543,9 @@ void BuiltinProcedure::DbDeleteLabel(RTContext *ctx, const Record *record, const
     std::string file_path=parent_dir+"/view/"+ctx->graph_+".json";
     // std::string file_path="/data/view/"+ctx->graph_+".json";
     std::ifstream ifs(file_path);
+    if (!ifs) { // 没有该文件不用删除
+        return;
+    }
     nlohmann::json j;
     try {
         ifs >> j;

@@ -26,7 +26,7 @@ cypher='create view ROOT_POST as ( Construct (n)-[r:ROOT_POST]->(m) match (n:Com
 # cypher = 'MATCH (n:person)-[r]->()-[]->(m:keyword) return m'
 # cypher = 'MATCH (m:keyword)<-[r]-()<-[]-(n:person) return m'
 # cypher = 'MATCH (m:keyword)<-[]-()<-[]-(n:person) return count(n)'
-output_path="./view_test/create_log.txt"
+output_path="/tugraph-db_graph_views/view_test/create_log.txt"
 
 def parse_args():
     parser = argparse.ArgumentParser(description="TuGraph Rpc Client for python")

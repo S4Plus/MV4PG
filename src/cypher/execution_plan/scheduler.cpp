@@ -66,8 +66,14 @@ void AddView(std::string file_path, std::string view_name, std::string start_nod
 
     // 检查文件是否成功打开
     if (!ifs) {
-        std::cout << "Failed to open file: " << file_path << std::endl;
-        return;
+        std::cout << "File does not exist, creating new file: " << file_path << std::endl;
+        std::ofstream ofs(file_path);
+        ofs.close();
+        ifs.open(file_path);
+        if (!ifs) {
+            std::cout << "Failed to open file: " << file_path << std::endl;
+            return;
+        }
     }
 
     // 使用nlohmann的json库来解析文件
@@ -136,6 +142,13 @@ const std::string RewriteCypherUseViews(RTContext *ctx,const std::string &script
 
 const std::string Scheduler::EvalCypher(RTContext *ctx, const std::string &script, ElapsedTime &elapsed, bool is_with_new_txn) {
     // LOG_DEBUG()<<"EvalCypherWithoutNewTxn txn exist:"<<(ctx->txn_!=nullptr);
+    auto parent_dir=ctx->galaxy_->GetConfig().dir;
+    if(parent_dir.end()[-1]=='/')parent_dir.pop_back();
+    std::string folder=parent_dir+"/view";
+    if (!std::filesystem::exists(folder)) {
+        std::filesystem::create_directories(folder);
+    }
+
     using namespace parser;
     using namespace antlr4;
     // LOG_DEBUG()<<"tugraph dir: "<< ctx->galaxy_->GetConfig().dir;

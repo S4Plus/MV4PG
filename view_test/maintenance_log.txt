@@ -54,11 +54,3 @@ total time: 0.6280949115753174
 cycle: 10
 total ave time: 0.031404745578765866
 
-delete cypher: match (n:Comment{id:558})-[r:replyOf]->(m:Post{id:556}) with r limit 1 delete r
-       ave time: 0.04655678272247314
-create cypher: match (n:Comment{id:558}),(m:Post{id:556}) with n,m create (n)-[:replyOf{creationDate:1266604713724}]->(m)
-       ave time: 0.03695361614227295
-total time: 0.8351039886474609
-cycle: 10
-total ave time: 0.04175519943237305
-
