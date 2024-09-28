@@ -30,7 +30,7 @@
 #include "parser/cypher_base_visitor.h"
 #include "parser/cypher_error_listener.h"
 #include "parser/rewrite_views_visitor.h"
-#include "parser/anti_rewrite_visitor.h"
+#include "parser/reverse_rewrite_visitor.h"
 #include "parser/rewrite_use_views_visitor.h"
 
 #include "cypher/execution_plan/execution_plan.h"
@@ -300,7 +300,7 @@ const std::string Scheduler::EvalCypher(RTContext *ctx, const std::string &scrip
             else if(visitor.CommandType() == parser::CmdType::OPTIMIZE) {
                 LOG_DEBUG()<<"optimize start";
                 const std::vector<cypher::PatternGraph>& pattern_graphs=plan->GetPatternGraphs();
-                AntiRewriteVisitor new_visitor(ctx,oc_cypher,pattern_graphs);
+                ReverseRewriteVisitor new_visitor(ctx,oc_cypher,pattern_graphs);
                 LOG_DEBUG()<<"optimize end";
                 if(is_with_new_txn){
                     ctx->result_info_ = std::make_unique<ResultInfo>();

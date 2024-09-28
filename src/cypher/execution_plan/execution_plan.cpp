@@ -1059,7 +1059,7 @@ OpBase *ExecutionPlan::BuildPart(const parser::QueryPart &part, int part_id) {
     /* build the pattern graph */
     BuildQueryGraph(part, pattern_graph);
 
-    if(!_is_view_maintenance&&!_is_optimize&&!_is_create_view){
+    if(!_is_view_maintenance&&!_is_create_view){
         for(auto &view_pattern_graph:_view_pattern_graphs){
             // view_pattern_graph.first
             LOG_DEBUG()<<"开始视图重写优化";
