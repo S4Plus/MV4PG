@@ -413,6 +413,19 @@ class ViewMaintenance : public LcypherVisitor {
         }
         return result;
     }
+
+    LinkDirection GetDirection(LcypherParser::OC_RelationshipPatternContext *ctx){
+        LinkDirection direction;
+        if (ctx->oC_LeftArrowHead() != nullptr && ctx->oC_RightArrowHead() == nullptr) {
+            direction = LinkDirection::RIGHT_TO_LEFT;
+        } else if (ctx->oC_RightArrowHead() != nullptr && ctx->oC_LeftArrowHead() == nullptr) {
+            direction = LinkDirection::LEFT_TO_RIGHT;
+        } else {
+            direction = LinkDirection::DIR_NOT_SPECIFIED;
+        }
+        return direction;
+    }
+
     std::any visitOC_PatternElement(LcypherParser::OC_PatternElementContext *ctx) override {
         if(_InClauseMATCH()){
             std::vector<std::string> pattern_elements;
@@ -497,11 +510,12 @@ class ViewMaintenance : public LcypherVisitor {
                 else{
                     int edge_size=ctx->oC_PatternElementChain().size();
                     for(size_t i=0;i<(size_t)edge_size;i++){
+                        auto relp_Pattern = ctx->oC_PatternElementChain(i)->oC_RelationshipPattern();
                         if(i==0){
                             std::string result;
                             bool can_rewrite=true;
                             _change=true;
-                            is_src=true;
+                            is_src=(GetDirection(relp_Pattern) == LinkDirection::LEFT_TO_RIGHT);
                             std::string src_node_pattern=std::any_cast<std::string>(visit(ctx->oC_NodePattern()));
                             if(src_node_pattern.empty())can_rewrite=false;
                             result.append(src_node_pattern);
@@ -510,11 +524,11 @@ class ViewMaintenance : public LcypherVisitor {
                             for(size_t j=0;j<ctx->oC_PatternElementChain().size();j++){
                                 if(j==i){
                                     _change=true;
-                                    std::string edge_pattern=std::any_cast<std::string>(visit(ctx->oC_PatternElementChain(j)->oC_RelationshipPattern()->oC_RelationshipDetail()));
+                                    std::string edge_pattern=std::any_cast<std::string>(visit(relp_Pattern->oC_RelationshipDetail()));
                                     if(edge_pattern.empty())can_rewrite=false;
-                                    edge_pattern=std::any_cast<std::string>(visit(ctx->oC_PatternElementChain(j)->oC_RelationshipPattern()));
+                                    edge_pattern=std::any_cast<std::string>(visit(relp_Pattern));
                                     result.append(edge_pattern);
-                                    is_src=false;
+                                    is_src=!(GetDirection(relp_Pattern) == LinkDirection::LEFT_TO_RIGHT);;
                                     std::string dst_node_pattern=std::any_cast<std::string>(visit(ctx->oC_PatternElementChain(j)->oC_NodePattern()));
                                     if(dst_node_pattern.empty())can_rewrite=false;
                                     result.append(dst_node_pattern);
@@ -540,7 +554,7 @@ class ViewMaintenance : public LcypherVisitor {
                                     edge_pattern=std::any_cast<std::string>(visit(ctx->oC_PatternElementChain(j)->oC_RelationshipPattern()));
                                     result.append(edge_pattern);
                                     _change=true;
-                                    is_src=true;
+                                    is_src=(GetDirection(relp_Pattern) == LinkDirection::LEFT_TO_RIGHT);;
                                     std::string src_node_pattern=std::any_cast<std::string>(visit(ctx->oC_PatternElementChain(j)->oC_NodePattern()));
                                     if(src_node_pattern.empty())can_rewrite=false;
                                     result.append(src_node_pattern);
@@ -552,7 +566,7 @@ class ViewMaintenance : public LcypherVisitor {
                                     if(edge_pattern.empty())can_rewrite=false;
                                     edge_pattern=std::any_cast<std::string>(visit(ctx->oC_PatternElementChain(j)->oC_RelationshipPattern()));
                                     result.append(edge_pattern);
-                                    is_src=false;
+                                    is_src=!(GetDirection(relp_Pattern) == LinkDirection::LEFT_TO_RIGHT);;
                                     std::string dst_node_pattern=std::any_cast<std::string>(visit(ctx->oC_PatternElementChain(j)->oC_NodePattern()));
                                     if(dst_node_pattern.empty())can_rewrite=false;
                                     result.append(dst_node_pattern);

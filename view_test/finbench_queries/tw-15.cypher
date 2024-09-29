@@ -1,0 +1,1 @@
+MATCH (a:Account{id:%d}), (loan:Loan{id:%d}) CREATE (a)<-[:deposit{timestamp: %d, amount: %f}]-(loan);
