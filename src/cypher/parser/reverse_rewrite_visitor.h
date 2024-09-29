@@ -140,66 +140,116 @@ class ReverseRewriteVisitor : public LcypherVisitor {
         return visitChildrenToString(ctx);
     }
 
+    std::string ReverseNode(const cypher::Node *node){
+        std::string node_cypher="";
+        node_cypher.append("(");
+        if(!node->Alias().empty()){
+            std::string name=node->Alias();
+            if(name[0]=='@')name=name.substr(1);
+            node_cypher.append(name);
+        }
+        if(!node->Label().empty()){
+            node_cypher.append(":"+node->Label());
+        }
+        if(!node->Prop().Empty()){
+            node_cypher.append("{");
+            node_cypher.append(node->Prop().field+":");
+            if(node->Prop().type==2){
+                if(node->Prop().value.type==lgraph::FieldType::STRING){
+                    node_cypher.append("'");
+                }
+                node_cypher.append(node->Prop().value.ToString());
+                if(node->Prop().value.type==lgraph::FieldType::STRING){
+                    node_cypher.append("'");
+                }
+            }
+            else{
+                node_cypher.append(node->Prop().value_alias);
+            }
+            node_cypher.append("}");
+        }
+
+        node_cypher.append(")");
+        return node_cypher;
+    }
+
+    std::string ReverseRelp(const cypher::Relationship *relationship){
+        std::string relp_cypher="";
+        if(relationship->direction_==LEFT_TO_RIGHT)
+                relp_cypher.append("-");
+            else if(relationship->direction_==RIGHT_TO_LEFT)
+                relp_cypher.append("<-");
+            else
+                relp_cypher.append("-");
+            relp_cypher.append("[");
+            if(!relationship->Alias().empty()){
+                std::string name=relationship->Alias();
+                if(name[0]=='@')name=name.substr(1);
+                relp_cypher.append(name);
+            }
+            if(!relationship->Types().empty()){
+                relp_cypher.append(":");
+                int temp_index = 0;
+                for(auto it:relationship->Types()){
+                    if(temp_index>0)
+                        relp_cypher.append("|");
+                    relp_cypher.append(it);                  
+                    temp_index++;
+                }
+
+            }
+            if(relationship->VarLen())
+            {
+                relp_cypher.append("*").append(std::to_string(relationship->MinHop())).append("..");
+                if(relationship->MaxHop()<128)
+                    relp_cypher.append(std::to_string(relationship->MaxHop()));
+            }
+
+            // TODO: relationship Property
+            relp_cypher.append("]");
+            if(relationship->direction_==LEFT_TO_RIGHT)
+                relp_cypher.append("->");
+            else if(relationship->direction_==RIGHT_TO_LEFT)
+                relp_cypher.append("-");
+            else
+                relp_cypher.append("-");
+        return relp_cypher;
+    }
+
     std::any visitOC_Match(LcypherParser::OC_MatchContext *ctx) override {
         int i=curr_pattern_graph;
         auto &pattern_graph=pattern_graphs_[i];
         std::string opti{"match "};
         auto &relationships=pattern_graph.GetRelationships();
         std::vector<cypher::PatternGraph>::size_type j = 0;
+        int temp_index=0;
+        bool have_node=false;
+        for(auto &node:pattern_graph.GetNodes()){
+            if(node.derivation_!=cypher::Node::Derivation::MATCHED)continue;
+            have_node=true;
+            if(temp_index>0)opti.append(",");
+            opti.append(ReverseNode(&node));
+            temp_index++;
+        }
         for(auto &relationship:relationships){
+            if(relationship.derivation_!=cypher::Relationship::Derivation::MATCHED)continue;
+            if(have_node){
+                opti.append(", ");
+                have_node=false;
+            }
             cypher::NodeID lhs=relationship.Lhs();
             cypher::NodeID rhs=relationship.Rhs();
             auto &lnode=pattern_graph.GetNode(lhs);
             auto &rnode=pattern_graph.GetNode(rhs);
-            opti.append("(").append(lnode.Alias()).append(":").append(lnode.Label()).append(")");
-            if(relationship.direction_==LEFT_TO_RIGHT){
-                opti.append("-").append("[").append(relationship.Alias());
-                opti.append(":");
-                for(auto it:relationship.Types()){
-                    opti.append(it).append(" ");
-                }
-                if(relationship.VarLen()){
-                opti.append("*").append(std::to_string(relationship.MinHop())).append("..");
-                 if(relationship.MaxHop()<128)
-                    opti.append(std::to_string(relationship.MaxHop()));
-                }
-                opti.append("]");
-                opti.append("->");
-            }
-            else if(relationship.direction_==RIGHT_TO_LEFT){
-                opti.append("<-").append("[").append(relationship.Alias());
-                opti.append(":");
-                for(auto it:relationship.Types()){
-                    opti.append(it).append(" ");
-                }
-                if(relationship.VarLen())
-                {
-                 opti.append("*").append(std::to_string(relationship.MinHop())).append("..");
-                 if(relationship.MaxHop()<128)
-                 opti.append(std::to_string(relationship.MaxHop()));
-            }
-                opti.append("]");
-                opti.append("-");
-            }            
-            else{
-                opti.append("-").append("[").append(relationship.Alias());
-                opti.append(":");
-                for(auto it:relationship.Types()){
-                    opti.append(it).append(" ");
-                }
-                if(relationship.VarLen())
-                {
-                opti.append("*").append(std::to_string(relationship.MinHop())).append("..");
-                 if(relationship.MaxHop()<128)
-                opti.append(std::to_string(relationship.MaxHop()));
-                }
-                opti.append("]");
-                opti.append("-");
-            }
-          opti.append("(").append(rnode.Alias()).append(":").append(rnode.Label()).append(")");
-          j++;
-          if(j!=relationships.size())
-          opti.append(",");
+            opti.append("("+lnode.Alias()+")");
+            // opti.append("(").append(lnode.Alias()).append(":").append(lnode.Label()).append(")");
+            opti.append(ReverseRelp(&relationship));
+
+            opti.append("("+rnode.Alias()+")");
+            //   opti.append("(").append(rnode.Alias()).append(":").append(rnode.Label()).append(")");
+            j++;
+            if(j!=relationships.size())
+            opti.append(",");
           }
           return opti;
         //return visitChildrenToString(ctx);
