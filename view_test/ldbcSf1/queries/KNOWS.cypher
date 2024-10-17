@@ -1,0 +1,1 @@
+match (n:Person)-[r:knows*..2]->(m:Person) return count(m)

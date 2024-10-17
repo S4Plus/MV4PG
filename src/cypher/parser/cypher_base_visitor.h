@@ -78,6 +78,8 @@ class CypherBaseVisitor : public LcypherVisitor {
      * MATCH (n) RETURN exists((n)-->()-->())  */
     size_t _anonymous_idx = 0;
 
+    // bool valid = true; //检查点Pattern有多个label时是否相同，不相同则valid为false
+
     std::string GenAnonymousAlias(bool is_node) {
         std::string alias(ANONYMOUS);
         if (is_node) {
@@ -132,6 +134,8 @@ class CypherBaseVisitor : public LcypherVisitor {
             for (auto &p : q.parts) p.Enrich();
         }
     }
+
+    // bool IsValid() {return valid;}
 
     /**
      * Override this method to avoid clone childResults. When the childResult is
@@ -841,6 +845,12 @@ class CypherBaseVisitor : public LcypherVisitor {
         if (ctx->oC_NodeLabels() != nullptr) {
             VEC_STR tmp = std::any_cast<VEC_STR>(visit(ctx->oC_NodeLabels()));
             node_labels = std::move(tmp);
+            if (node_labels.size() > 1) {
+                if (!std::equal(node_labels.begin() + 1, node_labels.end(), node_labels.begin())) {
+                    node_labels={"@INVALID"};
+                    // valid=false;
+                } 
+            }
         }
         if (ctx->oC_Properties() != nullptr) {
             TUP_PROPERTIES tmp = std::any_cast<TUP_PROPERTIES>(visit(ctx->oC_Properties()));
@@ -1420,7 +1430,10 @@ class CypherBaseVisitor : public LcypherVisitor {
                 (_listcompr_placeholder.empty() || var != _listcompr_placeholder)) {
                 THROW_CODE(InputError, "Variable `{}` not defined", var);
             }
-
+            if(_InClauseRETURN()) {
+                LOG_DEBUG()<<"OC_Atom";
+                AddReferenceSymbol(var);
+            }
             Expression expr;
             expr.type = Expression::VARIABLE;
             expr.data = std::make_shared<std::string>(ctx->oC_Variable()->getText());

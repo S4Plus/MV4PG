@@ -60,7 +60,7 @@ class VarLenExpand : public OpBase {
     }
 
     void _InitializeEdgeIter(RTContext *ctx, int64_t vid, lgraph::EIter &eit) {
-        stats.db_hit++;
+        if(profile_)stats.db_hit++;
         auto &types = relp_->Types();
         auto iter_type = lgraph::EIter::NA;
         // switch (expand_direction_) {
@@ -253,7 +253,7 @@ class VarLenExpand : public OpBase {
             (ctx->path_unique_ && pattern_graph_->VisitedEdges().Contains(eits_[k - 1]))) {
             do {
                 eits_[k - 1].Next();
-                if(profile_){
+                if(profile_ && eits_[k - 1].IsValid()){
                     m_expand_cnt[k-1]++;
                     stats.db_hit++;
                 }
@@ -296,6 +296,7 @@ class VarLenExpand : public OpBase {
             int64_t nbr_id = GetFirstFromKthHop(ctx, hop_);
             if (nbr_id < 0) return OP_REFRESH;
             neighbor_->PushVid(nbr_id);
+            if(profile_) stats.db_hit++;
             VAR_LEN_EXP_DUMP_FOR_DEBUG();
             state_ = Consuming;
             return OP_OK;
@@ -303,6 +304,7 @@ class VarLenExpand : public OpBase {
         auto vid = GetNextFromKthHop(ctx, hop_, false);
         if (vid >= 0) {
             neighbor_->PushVid(vid);
+            if(profile_) stats.db_hit++;
             VAR_LEN_EXP_DUMP_FOR_DEBUG();
             return OP_OK;
         } else {
@@ -323,11 +325,14 @@ class VarLenExpand : public OpBase {
                 while (ctx->path_unique_ &&
                        pattern_graph_->VisitedEdges().Contains(eits_[hop_ - 1])) {
                     eits_[hop_ - 1].Next();
-                    m_expand_cnt[hop_-1]++;
-                    stats.db_hit++;
+                    if(profile_){
+                        m_expand_cnt[hop_-1]++;
+                        stats.db_hit++;
+                    }
                 }
             } while (!eits_[hop_ - 1].IsValid());
             neighbor_->PushVid(eits_[hop_ - 1].GetNbr(expand_direction_));
+            if(profile_) stats.db_hit++;
             relp_->path_.Append(eits_[hop_ - 1].GetUid());
             // TODO(anyone) remove in last hop
             if (ctx->path_unique_) pattern_graph_->VisitedEdges().Add(eits_[hop_ - 1]);

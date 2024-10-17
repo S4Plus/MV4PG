@@ -56,6 +56,8 @@ static void RRecordToURecord(
         }
 
         if (entry_type == cypher::Entry::NODE) {
+            LOG_DEBUG()<<"entry type:"<<entry_type;
+            LOG_DEBUG()<<"header type:"<<std::to_string(uint16_t(header_type));
             if (header_type == lgraph_api::LGraphType::NODE ||
                 header_type == lgraph_api::LGraphType::ANY) {
                 auto vid = v.node->PullVid();
@@ -65,6 +67,9 @@ static void RRecordToURecord(
                     // OPTIONAL MATCH return null
                     record.InsertVertexByID(header[index].first, vid);
                 }
+                continue;
+            } else if(header_type == lgraph_api::LGraphType::STRING){
+                record.Insert(header[index].first, lgraph::FieldData(v.ToString()));
                 continue;
             } else {
                 throw lgraph::CypherException(
@@ -106,6 +111,9 @@ static void RRecordToURecord(
                 auto uit = v.relationship->ItRef();
                 auto uid = uit->GetUid();
                 record.Insert(header[index].first, uid, txn);
+                continue;
+            } else if(header_type == lgraph_api::LGraphType::STRING){
+                record.Insert(header[index].first, lgraph::FieldData(v.ToString()));
                 continue;
             } else {
                 throw lgraph::CypherException(

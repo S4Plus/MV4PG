@@ -52,7 +52,7 @@ class OpCreate : public OpBase {
         if(j.size()>0){
             for(auto element:j.at(0).items()){
                 view_names_.emplace(element.key());
-                view_queries_.emplace(element.value().at("query"));
+                edge_maintenances_.emplace(element.value().at("create_edge"));
             }
         }
         // for (auto& element : j) {
@@ -84,7 +84,29 @@ class OpCreate : public OpBase {
         std::tuple<std::string,std::string,std::string,bool> dst_info(dst_label,dst_primary_field,dst_primary_value.ToString(),dst_is_string);  
         using namespace parser;
         using namespace antlr4;
-        for(auto view_query:view_queries_){
+        for(auto view_query:edge_maintenances_){
+            auto temp1=Replace(view_query,"\\$SL",src_label);
+            auto temp2=Replace(temp1,"\\$SK",src_primary_field);
+            std::string temp3;
+            if(src_is_string)
+                temp3=Replace(temp2,"\\$SV","'"+src_primary_value.ToString()+"'");
+            else
+                temp3=Replace(temp2,"\\$SV",src_primary_value.ToString());
+            auto temp4=Replace(temp3,"\\$DL",dst_label);
+            auto temp5=Replace(temp4,"\\$DK",dst_primary_field);
+            std::string temp6;
+            if(dst_is_string)
+                temp6=Replace(temp5,"\\$DV","'"+dst_primary_value.ToString()+"'");
+            else
+                temp6=Replace(temp5,"\\$DV",dst_primary_value.ToString());
+            auto result=Replace(temp6,"\\$RID","'"+edge_uid.ToString()+"'");
+            std::cout<<"View maintenance5: "<<result<<std::endl;
+            cypher::ElapsedTime temp;
+            Scheduler scheduler;
+            // scheduler.Eval(ctx,lgraph_api::GraphQueryType::CYPHER,"match (n) return count(n)",temp);
+            LOG_DEBUG()<<"in create op txn exist:"<<(ctx->txn_!=nullptr);
+            scheduler.EvalCypherWithoutNewTxn(ctx,result,temp);
+            std::cout<<"View maintenance6: "<<std::endl;
             // ANTLRInputStream input(view_query);
             // LcypherLexer lexer(&input);
             // CommonTokenStream tokens(&lexer);
@@ -100,31 +122,31 @@ class OpCreate : public OpBase {
                 // LOG_DEBUG()<<"unfold query:"<<unfold_query;
                 // LOG_DEBUG()<<"new unfold query:"<<new_unfold_query;
                 //获得视图更新语句
-                ANTLRInputStream input(view_query);
-                LcypherLexer lexer(&input);
-                CommonTokenStream tokens(&lexer);
-                // std::cout <<"parser s1"<<std::endl; // de
-                LcypherParser parser(&tokens);
-                ViewMaintenance visitor(parser.oC_Cypher(),label,edge_uid.eid,src_info,dst_info,true);
-                std::cout<<"View maintenance4: "<<std::endl;
-                // std::string rewrite_query=visitor.GetRewriteQueries();
-                // std::cout<<"View maintenance5: "<<rewrite_query<<std::endl;
-                // cypher::ElapsedTime temp;
-                // Scheduler scheduler;
-                // // scheduler.Eval(ctx,lgraph_api::GraphQueryType::CYPHER,"match (n) return count(n)",temp);
-                // LOG_DEBUG()<<"in create op txn exist:"<<(ctx->txn_!=nullptr);
-                // scheduler.EvalCypherWithoutNewTxn(ctx,rewrite_query,temp);
-                // std::cout<<"View maintenance6: "<<std::endl; 
-                std::vector<std::string> queries=visitor.GetRewriteQueries();
-                for(auto query:queries){
-                    std::cout<<"View maintenance5: "<<query<<std::endl;
-                    cypher::ElapsedTime temp;
-                    Scheduler scheduler;
-                    // scheduler.Eval(ctx,lgraph_api::GraphQueryType::CYPHER,"match (n) return count(n)",temp);
-                    LOG_DEBUG()<<"in create op txn exist:"<<(ctx->txn_!=nullptr);
-                    scheduler.EvalCypherWithoutNewTxn(ctx,query,temp);
-                    std::cout<<"View maintenance6: "<<std::endl; 
-                }
+                // ANTLRInputStream input(view_query);
+                // LcypherLexer lexer(&input);
+                // CommonTokenStream tokens(&lexer);
+                // // std::cout <<"parser s1"<<std::endl; // de
+                // LcypherParser parser(&tokens);
+                // ViewMaintenance visitor(parser.oC_Cypher(),label,edge_uid.eid,src_info,dst_info,true);
+                // std::cout<<"View maintenance4: "<<std::endl;
+                // // std::string rewrite_query=visitor.GetRewriteQueries();
+                // // std::cout<<"View maintenance5: "<<rewrite_query<<std::endl;
+                // // cypher::ElapsedTime temp;
+                // // Scheduler scheduler;
+                // // // scheduler.Eval(ctx,lgraph_api::GraphQueryType::CYPHER,"match (n) return count(n)",temp);
+                // // LOG_DEBUG()<<"in create op txn exist:"<<(ctx->txn_!=nullptr);
+                // // scheduler.EvalCypherWithoutNewTxn(ctx,rewrite_query,temp);
+                // // std::cout<<"View maintenance6: "<<std::endl; 
+                // std::vector<std::string> queries=visitor.GetRewriteQueries();
+                // for(auto query:queries){
+                //     std::cout<<"View maintenance5: "<<query<<std::endl;
+                //     cypher::ElapsedTime temp;
+                //     Scheduler scheduler;
+                //     // scheduler.Eval(ctx,lgraph_api::GraphQueryType::CYPHER,"match (n) return count(n)",temp);
+                //     LOG_DEBUG()<<"in create op txn exist:"<<(ctx->txn_!=nullptr);
+                //     scheduler.EvalCypherWithoutNewTxn(ctx,query,temp);
+                //     std::cout<<"View maintenance6: "<<std::endl; 
+                // }
             // }
         }
     }
@@ -224,7 +246,11 @@ class OpCreate : public OpBase {
         auto euid =
             ctx->txn_->AddEdge(src_node.PullVid(), dst_node.PullVid(), label, fields, values);
         ctx->result_info_->statistics.edges_created++;
-        // LOG_DEBUG()<<"create Edge:"<<euid.tid<<","<<euid.eid;
+        if(is_create_view_){
+            edge_created_++;
+            view_label=label;
+        }
+        // LOG_DEBUG()<<"create Edge:"<<euid.ToString();
         if (!edge_variable.empty()) {
             /* There could be multiple match,
              * e.g. MATCH (a:Film),(b:City) CREATE (a)-[r:BORN_IN]->(b)  */
@@ -239,7 +265,8 @@ class OpCreate : public OpBase {
                 record->values[it->second.id].relationship = relp;
             }
         }
-        ViewMaintenanceCreateEdge(ctx,euid);
+        if(!is_create_view_)
+            ViewMaintenanceCreateEdge(ctx,euid);
     }
 
     void CreateVE(RTContext *ctx) {
@@ -283,6 +310,10 @@ class OpCreate : public OpBase {
                 }
             }  // for pattern_part
         }
+        if(is_create_view_){
+            MaintenanceViewStatistics(view_path_,view_label,edge_created_,false);
+            edge_created_=0;
+        }
         ctx->txn_->GetTxn()->RefreshIterators();
         // LOG_DEBUG()<<"Create VE end";
     }
@@ -308,7 +339,10 @@ class OpCreate : public OpBase {
  public:
     std::string view_path_;
     std::set<std::string> view_names_;
-    std::set<std::string> view_queries_;
+    std::set<std::string> edge_maintenances_;
+    bool is_create_view_ = false;
+    int edge_created_=0;
+    std::string view_label="";
 
     OpCreate(const parser::QueryPart *stmt, PatternGraph *pattern_graph)
         : OpBase(OpType::CREATE, "Create"),
@@ -326,11 +360,12 @@ class OpCreate : public OpBase {
         }
     }
 
-    OpCreate(const parser::QueryPart *stmt, PatternGraph *pattern_graph, std::string view_path)
+    OpCreate(const parser::QueryPart *stmt, PatternGraph *pattern_graph, std::string view_path,bool is_create_view)
         : OpBase(OpType::CREATE, "Create"),
           sym_tab_(pattern_graph->symbol_table),
           pattern_graph_(pattern_graph),
-          view_path_(view_path) {
+          view_path_(view_path),
+          is_create_view_(is_create_view) {
         _SetViewInfs(view_path_);
         for (auto &node : pattern_graph_->GetNodes()) {
             if (node.derivation_ == Node::CREATED) modifies.emplace_back(node.Alias());

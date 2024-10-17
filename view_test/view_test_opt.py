@@ -10,10 +10,12 @@ old_port = '7071'
 port = '7072'
 # old_graph = 'ldbcSf1'
 graph = 'ldbcSf1'
+folder_name = ''
 user = 'admin'
 password = '73@TuGraph'
-cypher = 'match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)'
-cypher_folder="/tugraph-db_graph_views/view_test/test_queries"
+# cypher = 'match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)'
+root_folder="/tugraph-db_graph_views/view_test/"
+# parameter_folder="/tugraph-db_graph_views/view_test/finbench_parameter"
 cycle = 5
 output_path="/tugraph-db_graph_views/view_test/optimization.txt"
 
@@ -99,12 +101,36 @@ def test_cypher(cypher):
             f.write(str(optimized_records[i])+"\n")
     f.write("\n")
 
+def convert_to_number(s):
+    if s.isdigit():
+        return int(s)
+    else:
+        try:
+            return float(s)
+        except ValueError:
+            return s
+
 if  __name__ == '__main__':
     parse_args()
-
+    if folder_name=='':
+        folder_name=graph
+    graph_folder=os.path.join(root_folder,folder_name)
+    cypher_folder=os.path.join(graph_folder,"queries")
+    parameter_folder=os.path.join(graph_folder,"parameter")
     for file in os.listdir(cypher_folder):
         with open(os.path.join(cypher_folder,file)) as f:
+            cypher_name=file.split(".")[0]
+            parameter_path=os.path.join(parameter_folder,cypher_name)
+            parameters=[]
+            if os.path.exists(parameter_path):
+                f2 = open(parameter_path,"r")
+                parameter_lines=f2.readlines()
+                for line in parameter_lines:
+                    parameters.append(convert_to_number(line.strip()))
             cypher=f.read()
+            if len(parameters)>0:
+                cypher=cypher % tuple(parameters)
+            print(cypher)
             test_cypher(cypher)
 
     # test_cypher(cypher)

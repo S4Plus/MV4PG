@@ -50,3 +50,280 @@ create view cypher: create view ROOT_POST as ( Construct (n)-[r:ROOT_POST]->(m) 
 create time: 37.943182945251465
 create view cypher: create view ROOT_POST as ( Construct (n)-[r:ROOT_POST]->(m) match (n:Comment)-[:replyOf*..]->(m:Post) )
 create time: 64.68263339996338
+create view cypher: create view SameTransferSource as (
+    Construct (n)-[r:SameTransferSource]->(m)
+    match (n:Account)<-[:transfer]-(:Account)-[:transfer]->(m:Account)
+)
+create time: 17.059752225875854
+
+create view cypher: create view SameTransferSource as (
+    Construct (n)-[r:SameTransferSource]->(m)
+    match (n:Account)<-[:transfer]-(:Account)-[:transfer]->(m:Account)
+)
+create time: 17.043121576309204
+
+create view cypher: create view TransferTrace as (
+    Construct (n)-[r:AccountTransfer]->(m)
+    match (n:Account)-[r:transfer *1..3]->(m:Account)
+)
+create time: 17.047386407852173
+
+create view cypher: create view TransferTrace as (
+    Construct (n)-[r:AccountTransfer]->(m)
+    match (n:Account)-[r:transfer *1..3]->(m:Account)
+)
+create time: 17.052857160568237
+
+create view cypher: create view TransferTrace as (
+    Construct (n)-[r:AccountTransfer]->(m)
+    match (n:Account)-[r:transfer *1..3]->(m:Account)
+)
+create time: 17.042627811431885
+
+create view cypher: create view TransferTrace as (
+    Construct (n)-[r:AccountTransfer]->(m)
+    match (n:Account)-[r:transfer *1..3]->(m:Account)
+)
+create time: 2.0348894596099854
+
+create view cypher: create view TransferTrace as (
+    Construct (n)-[r:AccountTransfer]->(m)
+    match (n:Account)-[r:transfer *1..3]->(m:Account)
+)
+create time: 2.033031940460205
+
+create view cypher: create view TransferTrace as (
+    Construct (n)-[r:AccountTransfer]->(m)
+    match (n:Account)-[r:transfer *1..3]->(m:Account)
+)
+create time: 2.028149127960205
+
+create view cypher: create view TransferTrace as (
+    Construct (n)-[r:TransferTrace]->(m)
+    match (n:Account)-[r:transfer *1..3]->(m:Account)
+)
+create time: 17.051138401031494
+
+create view cypher: create view TransferTrace as (
+    Construct (n)-[r:TransferTrace]->(m)
+    match (n:Account)-[r:transfer *1..3]->(m:Account)
+)
+create time: 17.05444884300232
+
+create view cypher: create view TransferTrace as (
+    Construct (n)-[r:TransferTrace]->(m)
+    match (n:Account)-[r:transfer *1..3]->(m:Account)
+)
+create time: 17.042981147766113
+
+create view cypher: create view TransferTrace as (
+    Construct (n)-[r:TransferTrace]->(m)
+    match (n:Account)-[r:transfer *1..3]->(m:Account)
+)
+create time: 17.04224157333374
+
+create view cypher: create view TransferTrace as (
+    Construct (n)-[r:TransferTrace]->(m)
+    match (n:Account)-[r:transfer *1..3]->(m:Account)
+)
+create time: 2.0348446369171143
+
+create view cypher: create view TransferTrace as (
+    Construct (n)-[r:TransferTrace]->(m)
+    match (n:Account)-[r:transfer *1..3]->(m:Account)
+)
+create time: 410.79447412490845
+
+create view cypher: create view SameTransferSource as (
+    Construct (n)-[r:SameTransferSource]->(m)
+    match (n:Account)<-[:transfer]-(:Account)-[:transfer]->(m:Account)
+)
+create time: 585.9256870746613
+
+create view cypher: create view TransferTrace as (
+    Construct (n)-[r:TransferTrace]->(m)
+    match (n:Account)-[r:transfer *1..3]->(m:Account)
+)
+create time: 3180.9537699222565
+
+create view cypher: create view ROOT_POST as 
+( Construct (n)-[r:ROOT_POST]->(m) 
+match (n:Comment)-[:replyOf*..]->(m:Post) )
+create time: 138.33760142326355
+
+create view cypher: create view ROOT_POST as 
+( Construct (n)-[r:ROOT_POST]->(m) 
+match (n:Comment)-[:replyOf*..]->(m:Post) )
+create time: 2.0454142093658447
+
+create view cypher: create view ROOT_POST as 
+( Construct (n)-[r:ROOT_POST]->(m) 
+match (n:Comment)-[:replyOf*..]->(m:Post) )
+create time: 32.08838701248169
+
+create view cypher: create view ALL_KNOWS as 
+( Construct (n)-[r:ALL_KNOWS]->(m) 
+match (n:Person)-[:knows*..]->(m:Person) )
+create time: 2.0355875492095947
+
+create view cypher: create view ROOT_POST as 
+( Construct (n)-[r:ROOT_POST]->(m) 
+match (n:Comment)-[:replyOf*..]->(m:Post) )
+create time: 33.2038836479187
+
+create view cypher: create view ALL_KNOWS as 
+( Construct (n)-[r:ALL_KNOWS]->(m) 
+match (n:Person)-[:knows*..]->(m:Person) )
+create time: 2.043581962585449
+
+create view cypher: create view ROOT_POST as 
+( Construct (n)-[r:ROOT_POST]->(m) 
+match (n:Comment)-[:replyOf*..]->(m:Post) )
+create time: 34.75609302520752
+
+create view cypher: create view ALL_KNOWS as 
+( Construct (n)-[r:ALL_KNOWS]->(m) 
+match (n:Person)-[:knows*..]->(m:Person) )
+create time: 88.07297205924988
+
+create view cypher: create view ALL_KNOWS as 
+( Construct (n)-[r:ALL_KNOWS]->(m) 
+match (n:Person)-[:knows*..]->(m:Person) )
+create time: 1421.4981684684753
+
+create view cypher: create view ROOT_POST as 
+( Construct (n)-[r:ROOT_POST]->(m) 
+match (n:Comment)-[:replyOf*..]->(m:Post) )
+create time: 62.87430810928345
+
+create view cypher: create view ALL_KNOWS as 
+( Construct (n)-[r:ALL_KNOWS]->(m) 
+match (n:Person)-[:knows*..]->(m:Person) )
+create time: 410.1130006313324
+
+create view cypher: create view ROOT_POST as 
+( Construct (n)-[r:ROOT_POST]->(m) 
+match (n:Comment)-[:replyOf*..]->(m:Post) )
+create time: 62.931848764419556
+
+create view cypher: create view ALL_KNOWS as 
+( Construct (n)-[r:ALL_KNOWS]->(m) 
+match (n:Person)-[:knows*..3]->(m:Person) )
+create time: 1039.711407661438
+
+create view cypher: create view ROOT_POST as 
+( Construct (n)-[r:ROOT_POST]->(m) 
+match (n:Comment)-[:replyOf*..]->(m:Post) )
+create time: 32.73753571510315
+
+create view cypher: create view ALL_KNOWS as 
+( Construct (n)-[r:ALL_KNOWS]->(m) 
+match (n:Person)-[:knows*..3]->(m:Person) )
+create time: 6062.046053409576
+
+create view cypher: create view test as (
+  Construct (n)-[r:test]->(m)
+  match (n:user)-[:rate]->(:movie)-[:has_keyword]->(m:keyword)
+)
+create time: 0.3633701801300049
+
+create view cypher: create view test as (
+  Construct (n)-[r:test]->(m)
+  match (n:user)-[:rate]->(:movie)-[:has_keyword]->(m:keyword)
+)
+create time: 2.0453171730041504
+
+create view cypher: create view test as (
+  Construct (n)-[r:test]->(m)
+  match (n:user)-[:rate]->(:movie)-[:has_keyword]->(m:keyword)
+)
+create time: 2.047705888748169
+
+create view cypher: create view test as (
+  Construct (n)-[r:test]->(m)
+  match (n:user)-[:rate]->(:movie)-[:has_keyword]->(m:keyword)
+)
+create time: 0.40596818923950195
+
+create view cypher: create view test as (
+  Construct (n)-[r:test]->(m)
+  match (n:user)-[:rate]->(:movie)-[:has_keyword]->(m:keyword)
+)
+create time: 2.0327696800231934
+
+create view cypher: create view test as (
+  Construct (n)-[r:test]->(m)
+  match (n:user)-[:rate]->(:movie)-[:has_keyword]->(m:keyword)
+)
+create time: 0.36722612380981445
+
+create view cypher: create view test as (
+  Construct (n)-[r:test]->(m)
+  match (n:user)-[:rate]->(:movie)-[:has_keyword]->(m:keyword)
+)
+create time: 2.0320167541503906
+
+create view cypher: create view test as (
+  Construct (n)-[r:test]->(m)
+  match (n:user)-[:rate]->(:movie)-[:has_keyword]->(m:keyword)
+)
+create time: 0.34356021881103516
+
+create view cypher: create view test as (
+  Construct (n)-[r:test]->(m)
+  match (n:user)-[:rate]->(:movie)-[:has_keyword]->(m:keyword)
+)
+create time: 2.0337040424346924
+
+create view cypher: create view Friend as (
+  Construct (n)-[r:Friend]->(m)
+  match (n:user)-[:is_friend*..2]->(m:user)
+)
+create time: 0.06336021423339844
+
+create view cypher: create view test as (
+  Construct (n)-[r:test]->(m)
+  match (n:user)-[:rate]->(:movie)-[:has_keyword]->(m:keyword)
+)
+create time: 0.6420271396636963
+
+create view cypher: create view Friend as (
+  Construct (n)-[r:Friend]->(m)
+  match (n:user)-[:is_friend*..2]->(m:user)
+)
+create time: 2.043288469314575
+
+create view cypher: create view ROOT_POST as 
+( Construct (n)-[r:ROOT_POST]->(m) 
+match (n:Comment)-[:replyOf*..]->(m:Post) )
+create time: 32.948102951049805
+
+create view cypher: create view ALL_KNOWS as 
+( Construct (n)-[r:ALL_KNOWS]->(m) 
+match (n:Person)-[:knows*..2]->(m:Person) )
+create time: 234.5453760623932
+
+create view cypher: create view Friend as (
+  Construct (n)-[r:Friend]->(m)
+  match (n:user)-[:is_friend*..2]->(m:user)
+)
+create time: 0.09516406059265137
+
+create view cypher: create view test as (
+  Construct (n)-[r:test]->(m)
+  match (n:user)-[:rate]->(:movie)-[:has_keyword]->(m:keyword)
+)
+create time: 0.6411974430084229
+
+create view cypher: create view Friend as (
+  Construct (n)-[r:Friend]->(m)
+  match (n:user)-[:is_friend*..2]->(m:user)
+)
+create time: 0.5768260955810547
+
+create view cypher: create view test as (
+  Construct (n)-[r:test]->(m)
+  match (n:user)-[:rate]->(:movie)-[:has_keyword]->(m:keyword)
+)
+create time: 3.602816343307495
+

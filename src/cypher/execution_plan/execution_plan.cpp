@@ -762,7 +762,7 @@ void ExecutionPlan::_BuildInQueryCallOp(const parser::QueryPart &part,
 
 void ExecutionPlan::_BuildCreateOp(const parser::QueryPart &part,
                                    cypher::PatternGraph &pattern_graph, cypher::OpBase *&root) {
-    OpBase *create = new OpCreate(&part, &pattern_graph,_view_path);
+    OpBase *create = new OpCreate(&part, &pattern_graph,_view_path, _is_view_maintenance||_is_create_view);
     _UpdateStreamRoot(create, root);
 }
 
@@ -774,7 +774,7 @@ void ExecutionPlan::_BuildMergeOp(const parser::QueryPart &part,
 
 void ExecutionPlan::_BuildDeleteOp(const parser::QueryPart &part,
                                    cypher::PatternGraph &pattern_graph, cypher::OpBase *&root) {
-    OpBase *del = new OpDelete(&part, &pattern_graph, _view_path);
+    OpBase *del = new OpDelete(&part, &pattern_graph, _view_path, _is_view_maintenance||_is_create_view);
     _UpdateStreamRoot(del, root);
 }
 
@@ -1302,8 +1302,14 @@ void ExecutionPlan::GetViewPatternGraphs(cypher::RTContext *ctx){
 
     // 检查文件是否成功打开
     if (!ifs) {
-        std::cout << "Failed to open file: " << _view_path << std::endl;
-        return;
+        LOG_DEBUG() << "File does not exist, creating new file: " << _view_path;
+        std::ofstream ofs(_view_path);
+        ofs.close();
+        ifs.open(_view_path);
+        if (!ifs) {
+            LOG_DEBUG() << "Failed to open file: " << _view_path;
+            return;
+        }
     }
 
     // 使用nlohmann的json库来解析文件
@@ -1318,12 +1324,12 @@ void ExecutionPlan::GetViewPatternGraphs(cypher::RTContext *ctx){
     // nlohmann::json sort_j;
     std::vector<std::pair<std::string, size_t>> opts;
     LOG_DEBUG()<<"opt start";
-   for(auto element:j.at(0).items()){
-        size_t db_hit=element.value().at("db_hit");
+    for(auto element:j.at(0).items()){
+        float opt_rate=element.value().at("opt_rate");
         size_t result_num=element.value().at("result_num");
-        opts.push_back(std::pair<std::string, size_t>(element.key(),db_hit-2*result_num));
+        opts.push_back(std::pair<std::string, size_t>(element.key(),(opt_rate-1)*(2*result_num)));
     }
-    LOG_DEBUG()<<"opt end";
+    LOG_DEBUG()<<"opt end size:"<<opts.size();
     std::sort(opts.begin(), opts.end(),
         [](const std::pair<std::string, size_t>& a, const std::pair<std::string, size_t>& b) {
             return a.second > b.second;
@@ -1583,6 +1589,7 @@ int ExecutionPlan::ExecuteWithoutNewTxn(RTContext *ctx) {
         auto session = (bolt::BoltSession*)ctx->bolt_conn_->GetContext();
         session->state = bolt::SessionState::STREAMING;
     }
+    LOG_DEBUG()<<"is Maintenance:"<<_is_view_maintenance;
     LOG_DEBUG()<<"execute wo 3 bolt_conn: "<<ctx->bolt_conn_;
     try {
         OpBase::OpResult res;

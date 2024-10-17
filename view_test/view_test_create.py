@@ -5,18 +5,20 @@ from TuGraphClient import TuGraphClient
 import time
 import re
 import sys
+import os
 
 
 ip = '127.0.0.1'
 port = '7072'
 graph = 'ldbcSf1'
+folder_name = ''
 user = 'admin'
 password = '73@TuGraph'
 
 is_delete=False
 
-delete_cypher="CALL db.deleteLabel('edge', 'ROOT_POST')"
-cypher='create view ROOT_POST as ( Construct (n)-[r:ROOT_POST]->(m) match (n:Comment)-[:replyOf*..]->(m:Post) )'
+delete_cypher="CALL db.deleteLabel('edge', '%s')"
+# cypher='create view ROOT_POST as ( Construct (n)-[r:ROOT_POST]->(m) match (n:Comment)-[:replyOf*..]->(m:Post) )'
 # cypher='match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)'
 # cypher ='match (n:Comment{id:561})-[r:replyOf]->(m) with r limit 1 return r'
 # cypher ='match (n:Comment{id:561}),(m:Post{id:556}) with n,m create (n)-[:replyOf{creationDate:1266568959307}]->(m)'
@@ -26,6 +28,8 @@ cypher='create view ROOT_POST as ( Construct (n)-[r:ROOT_POST]->(m) match (n:Com
 # cypher = 'MATCH (n:person)-[r]->()-[]->(m:keyword) return m'
 # cypher = 'MATCH (m:keyword)<-[r]-()<-[]-(n:person) return m'
 # cypher = 'MATCH (m:keyword)<-[]-()<-[]-(n:person) return count(n)'
+root_folder="/tugraph-db_graph_views/view_test"
+# view_folder="/tugraph-db_graph_views/view_test/views"
 output_path="/tugraph-db_graph_views/view_test/create_log.txt"
 
 def parse_args():
@@ -35,6 +39,7 @@ def parse_args():
     parser.add_argument('-g', '--graph', help='graph name')
     parser.add_argument('-u', '--user', help='user name')
     parser.add_argument('-c', '--cypher', help='cypher to query')
+    parser.add_argument('-f', '--folder', help='folder name')
     parser.add_argument('--password', help='user password')
     parser.add_argument('--is_delete', help='is delete')
     args = parser.parse_args()
@@ -56,6 +61,9 @@ def parse_args():
     if args.cypher:
         global cypher
         cypher = args.cypher
+    if args.folder:
+        global folder_name
+        folder_name = args.folder
     if args.is_delete:
         global is_delete
         if(args.is_delete=="True" or args.is_delete=="true"):
@@ -71,7 +79,9 @@ def call_cypher(cypher):
     client = TuGraphClient(url, user, password,graph)
     
     try:
+        print("create start")
         ret = client.call_cypher(cypher)['result']
+        print("create end")
         return True,ret
     except Exception as e:
         return False,""
@@ -88,18 +98,25 @@ if  __name__ == '__main__':
     #     print("不是视图创建语句")
     #     exit()
     # view_name=cypher.split(" ")[2]
-
+    if folder_name=='':
+        folder_name=graph
+    view_folder=os.path.join(root_folder,folder_name,"views")
     try:
         if(is_delete):
-            call_cypher(delete_cypher)
-        start_time=time.time()
-        is_success,records=call_cypher(cypher)
-        end_time=time.time()
-        # print("查询时间：",end_time-start_time)
-        f=open(output_path,'a')
-        f.write("create view cypher: "+cypher+"\n")
-        f.write("create time: "+str(end_time-start_time)+"\n")
-        print(records[0])
+            for file in os.listdir(view_folder):
+                view_name=file.split(".")[0]
+                call_cypher(delete_cypher % view_name)
+        for file in os.listdir(view_folder):
+            start_time=time.time()
+            cypher = open(view_folder+"/"+file).read()
+            is_success,records=call_cypher(cypher)
+            end_time=time.time()
+            # print("查询时间：",end_time-start_time)
+            f=open(output_path,'a')
+            f.write("create view cypher: "+cypher+"\n")
+            f.write("create time: "+str(end_time-start_time)+"\n\n")
+            print(records[0])
+            f.close()
         # f=open("edge.csv",'w')
         # min_id=100000000
         # max_id=0

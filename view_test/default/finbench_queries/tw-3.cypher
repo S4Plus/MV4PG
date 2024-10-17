@@ -1,0 +1,1 @@
+CREATE (:Medium {id: %d, isBlocked: %s, type: '%s'});

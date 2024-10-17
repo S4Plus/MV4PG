@@ -53,7 +53,8 @@ class OpDelete : public OpBase {
         if(j.size()>0){
             for(auto element:j.at(0).items()){
                 view_names_.emplace(element.key());
-                view_queries_.emplace(element.value().at("query"));
+                vertex_maintenances_.emplace(element.value().at("delete_vertex"));
+                edge_maintenances_.emplace(element.value().at("delete_edge"));
             }
         }
     }
@@ -71,8 +72,21 @@ class OpDelete : public OpBase {
         bool is_string=primary_value.IsString();
         using namespace parser;
         using namespace antlr4;
-        for(auto view_query:view_queries_){
-            std::cout<<"View maintenance3: "<<view_query<<std::endl;
+        for(auto view_query:vertex_maintenances_){
+            auto temp1=Replace(view_query,"\\$L",label);
+            auto temp2=Replace(temp1,"\\$K",primary_field);
+            std::string result;
+            if(!is_string)
+                result=Replace(temp2,"\\$V",primary_value.ToString());
+            else
+                result=Replace(temp2,"\\$V","'"+primary_value.ToString()+"'");
+            std::cout<<"View maintenance5: "<<result<<std::endl;
+            cypher::ElapsedTime temp;
+            Scheduler scheduler;
+            // scheduler.Eval(ctx,lgraph_api::GraphQueryType::CYPHER,"match (n) return count(n)",temp);
+            LOG_DEBUG()<<"in create op txn exist:"<<(ctx->txn_!=nullptr);
+            scheduler.EvalCypherWithoutNewTxn(ctx,result,temp);
+            std::cout<<"View maintenance6: "<<std::endl;
             // ANTLRInputStream input(view_query);
             // LcypherLexer lexer(&input);
             // CommonTokenStream tokens(&lexer);
@@ -86,23 +100,23 @@ class OpDelete : public OpBase {
                 // Scheduler scheduler;
                 // auto new_unfold_query=scheduler.EvalCypherWithoutNewTxn(ctx,"optimize "+unfold_auery,temp);
                 //获得视图更新语句
-                ANTLRInputStream input(view_query);
-                LcypherLexer lexer(&input);
-                CommonTokenStream tokens(&lexer);
-                // std::cout <<"parser s1"<<std::endl; // de
-                LcypherParser parser(&tokens);
-                ViewMaintenance visitor(parser.oC_Cypher(),label,primary_field,primary_value.ToString(),is_string,false);
-                std::cout<<"View maintenance4: "<<std::endl;
-                std::vector<std::string> queries=visitor.GetRewriteQueries();
-                for(auto query:queries){
-                    std::cout<<"View maintenance5: "<<query<<std::endl;
-                    cypher::ElapsedTime temp;
-                    Scheduler scheduler;
-                    // scheduler.Eval(ctx,lgraph_api::GraphQueryType::CYPHER,"match (n) return count(n)",temp);
-                    LOG_DEBUG()<<"in create op txn exist:"<<(ctx->txn_!=nullptr);
-                    scheduler.EvalCypherWithoutNewTxn(ctx,query,temp);
-                    std::cout<<"View maintenance6: "<<std::endl; 
-                } 
+                // ANTLRInputStream input(view_query);
+                // LcypherLexer lexer(&input);
+                // CommonTokenStream tokens(&lexer);
+                // // std::cout <<"parser s1"<<std::endl; // de
+                // LcypherParser parser(&tokens);
+                // ViewMaintenance visitor(parser.oC_Cypher(),label,primary_field,primary_value.ToString(),is_string,false);
+                // std::cout<<"View maintenance4: "<<std::endl;
+                // std::vector<std::string> queries=visitor.GetRewriteQueries();
+                // for(auto query:queries){
+                //     std::cout<<"View maintenance5: "<<query<<std::endl;
+                //     cypher::ElapsedTime temp;
+                //     Scheduler scheduler;
+                //     // scheduler.Eval(ctx,lgraph_api::GraphQueryType::CYPHER,"match (n) return count(n)",temp);
+                //     LOG_DEBUG()<<"in create op txn exist:"<<(ctx->txn_!=nullptr);
+                //     scheduler.EvalCypherWithoutNewTxn(ctx,query,temp);
+                //     std::cout<<"View maintenance6: "<<std::endl; 
+                // } 
             // }
         }
         std::cout<<"View maintenance7: "<<std::endl;
@@ -131,7 +145,29 @@ class OpDelete : public OpBase {
         std::tuple<std::string,std::string,std::string,bool> dst_info(dst_label,dst_primary_field,dst_primary_value.ToString(),dst_is_string);  
         using namespace parser;
         using namespace antlr4;
-        for(auto view_query:view_queries_){
+        for(auto view_query:edge_maintenances_){
+            auto temp1=Replace(view_query,"\\$SL",src_label);
+            auto temp2=Replace(temp1,"\\$SK",src_primary_field);
+            std::string temp3;
+            if(src_is_string)
+                temp3=Replace(temp2,"\\$SV","'"+src_primary_value.ToString()+"'");
+            else
+                temp3=Replace(temp2,"\\$SV",src_primary_value.ToString());
+            auto temp4=Replace(temp3,"\\$DL",dst_label);
+            auto temp5=Replace(temp4,"\\$DK",dst_primary_field);
+            std::string temp6;
+            if(dst_is_string)
+                temp6=Replace(temp5,"\\$DV","'"+dst_primary_value.ToString()+"'");
+            else
+                temp6=Replace(temp5,"\\$DV",dst_primary_value.ToString());
+            auto result=Replace(temp6,"\\$RID","'"+edge_uid.ToString()+"'");
+            std::cout<<"View maintenance5: "<<result<<std::endl;
+            cypher::ElapsedTime temp;
+            Scheduler scheduler;
+            // scheduler.Eval(ctx,lgraph_api::GraphQueryType::CYPHER,"match (n) return count(n)",temp);
+            LOG_DEBUG()<<"in create op txn exist:"<<(ctx->txn_!=nullptr);
+            scheduler.EvalCypherWithoutNewTxn(ctx,result,temp);
+            std::cout<<"View maintenance6: "<<std::endl;
             // ANTLRInputStream input(view_query);
             // LcypherLexer lexer(&input);
             // CommonTokenStream tokens(&lexer);
@@ -144,24 +180,24 @@ class OpDelete : public OpBase {
                 // cypher::ElapsedTime temp;
                 // Scheduler scheduler;
                 // auto new_unfold_query=scheduler.EvalCypherWithoutNewTxn(ctx,"optimize "+unfold_auery,temp);
-                //获得视图更新语句
-                ANTLRInputStream input(view_query);
-                LcypherLexer lexer(&input);
-                CommonTokenStream tokens(&lexer);
-                // std::cout <<"parser s1"<<std::endl; // de
-                LcypherParser parser(&tokens);
-                ViewMaintenance visitor(parser.oC_Cypher(),label,edge_uid.eid,src_info,dst_info,false);
-                std::cout<<"View maintenance4: "<<std::endl;
-                std::vector<std::string> queries=visitor.GetRewriteQueries();
-                for(auto query:queries){
-                    std::cout<<"View maintenance5: "<<query<<std::endl;
-                    cypher::ElapsedTime temp;
-                    Scheduler scheduler;
-                    // scheduler.Eval(ctx,lgraph_api::GraphQueryType::CYPHER,"match (n) return count(n)",temp);
-                    LOG_DEBUG()<<"in create op txn exist:"<<(ctx->txn_!=nullptr);
-                    scheduler.EvalCypherWithoutNewTxn(ctx,query,temp);
-                    std::cout<<"View maintenance6: "<<std::endl; 
-                }
+                // //获得视图更新语句
+                // ANTLRInputStream input(view_query);
+                // LcypherLexer lexer(&input);
+                // CommonTokenStream tokens(&lexer);
+                // // std::cout <<"parser s1"<<std::endl; // de
+                // LcypherParser parser(&tokens);
+                // ViewMaintenance visitor(parser.oC_Cypher(),label,edge_uid.eid,src_info,dst_info,false);
+                // std::cout<<"View maintenance4: "<<std::endl;
+                // std::vector<std::string> queries=visitor.GetRewriteQueries();
+                // for(auto query:queries){
+                //     std::cout<<"View maintenance5: "<<query<<std::endl;
+                //     cypher::ElapsedTime temp;
+                //     Scheduler scheduler;
+                //     // scheduler.Eval(ctx,lgraph_api::GraphQueryType::CYPHER,"match (n) return count(n)",temp);
+                //     LOG_DEBUG()<<"in create op txn exist:"<<(ctx->txn_!=nullptr);
+                //     scheduler.EvalCypherWithoutNewTxn(ctx,query,temp);
+                //     std::cout<<"View maintenance6: "<<std::endl; 
+                // }
             // }
         }
     }
@@ -197,20 +233,44 @@ class OpDelete : public OpBase {
         }
     }
 
+    // void MaintenanceViewStatistics(std::string view_label,int count,bool is_delete){
+    //     if(view_label=="")return;
+    //     std::ifstream input_file(view_path_);
+    //     json j;
+    //     input_file >> j;
+
+    //     int sign=is_delete?-1:1;
+    //     j[view_label]["result_num"] = j[view_label]["result_num"]+count*sign;
+
+    //     std::ofstream output_file(view_path_);
+    //     output_file << std::setw(4) << j << std::endl;
+    // }
+
     void DoDeleteVE(RTContext *ctx) {
         LOG_DEBUG() << "vertices & edges to delete:";
         for (auto &v : vertices_to_delete_) LOG_DEBUG() << "V[" << v << "]";
         for (auto &e : edges_to_delete_) LOG_DEBUG() << "E[" << _detail::EdgeUid2String(e) << "]";
-
+        std::string view_label="";
+        if(edges_to_delete_.size()>0){
+            auto txn=ctx->txn_->GetTxn().get();
+            view_label=txn->GetEdgeLabel(edges_to_delete_[0].lid);
+        }
         for (auto &e : edges_to_delete_) {
-            ViewMaintenanceDeleteEdge(ctx,e);
+            if(!is_view_)
+                ViewMaintenanceDeleteEdge(ctx,e);
             if (ctx->txn_->GetTxn()->DeleteEdge(e)) {
                 ctx->result_info_->statistics.edges_deleted++;
+                edge_deleted_++;
             }
+        }
+        if(is_view_){
+            MaintenanceViewStatistics(view_path_,view_label,edge_deleted_,true);
+            edge_deleted_=0;
         }
         for (auto &v : vertices_to_delete_) {
             size_t n_in, n_out;
-            ViewMaintenanceDeleteVertex(ctx,v);
+            if(!is_view_)
+                ViewMaintenanceDeleteVertex(ctx,v);
             // LOG_DEBUG() << "Delete vertex: " << v;
             // // lgraph_api::GraphDB db(ctx->ac_db_.get(), false);
             // LOG_DEBUG() << "get db : " << v;
@@ -254,7 +314,10 @@ class OpDelete : public OpBase {
  public:
     std::string view_path_;
     std::set<std::string> view_names_;
-    std::set<std::string> view_queries_;
+    std::set<std::string> vertex_maintenances_;
+    std::set<std::string> edge_maintenances_;
+    bool is_view_=false;
+    int edge_deleted_=0;
     
     OpDelete(const parser::QueryPart *stmt, PatternGraph *pattern_graph)
         : OpBase(OpType::DELETE_, "Delete"), pattern_graph_(pattern_graph) {
@@ -262,8 +325,8 @@ class OpDelete : public OpBase {
         state = StreamUnInitialized;
     }
 
-    OpDelete(const parser::QueryPart *stmt, PatternGraph *pattern_graph,std::string view_path)
-        : OpBase(OpType::DELETE_, "Delete"), pattern_graph_(pattern_graph),view_path_(view_path) {
+    OpDelete(const parser::QueryPart *stmt, PatternGraph *pattern_graph,std::string view_path,bool is_view)
+        : OpBase(OpType::DELETE_, "Delete"), pattern_graph_(pattern_graph),view_path_(view_path), is_view_(is_view){
         _SetViewInfs(view_path_);
         delete_data_ = *stmt->delete_clause;
         state = StreamUnInitialized;

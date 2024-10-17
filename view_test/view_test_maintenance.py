@@ -23,7 +23,7 @@ delete_cypher ='match (n:Comment{id:558})-[r:replyOf]->(m:Post{id:556}) with r l
 create_cypher ='match (n:Comment{id:558}),(m:Post{id:556}) with n,m create (n)-[:replyOf{creationDate:1266604713724}]->(m)'
 # create_cypher='match (n:Comment{id:557}),(m:Post{id:556}) create (n)-[r:replyOf{creationDate:20240517}]->(m)'
 # delete_cypher='match (n:Comment{id:557})-[r:replyOf nodupedge]->(m:Post{id:556}) delete r'
-create_time=10
+create_time=5
 output_path="/tugraph-db_graph_views/view_test/maintenance_log.txt"
 
 def parse_args():

@@ -77,9 +77,8 @@ class AllNodeScan : public OpBase {
             consuming_ = true;
         } else {
             it_->Next();
-            if(profile_)
-                stats.db_hit++;
             if (!it_->IsValid()) return OP_DEPLETED;
+            if(profile_)stats.db_hit++;
         }
         return OP_OK;
     }

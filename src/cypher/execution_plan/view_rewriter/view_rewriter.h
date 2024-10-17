@@ -340,14 +340,16 @@ namespace cypher{
                     now_view_id=start_node_id;
                     if(NodeFeasible(now_view_id,target_node.ID())){
                         // now_view_id=start_node_id;
+                        int pre_view_id=now_view_id;
+                        int pre_target_id=now_target_id;
                         now_target_id=target_node.ID();
                         view_to_target[now_view_id]=now_target_id;
                         target_to_view[now_target_id]=now_view_id;
                         if(VF2()){
                             return true;
                         }
-                        view_to_target.erase(now_view_id);
-                        target_to_view.erase(now_target_id);
+                        view_to_target.erase(pre_view_id);
+                        target_to_view.erase(pre_target_id);
                         now_view_id=-1;
                         now_target_id=-1;
                     }

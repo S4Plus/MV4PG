@@ -83,9 +83,8 @@ class AllNodeScanDynamic : public OpBase {
             consuming_ = true;
         } else {
             it_->Next();
-            if(profile_)
-                stats.db_hit++;
             if (!it_->IsValid()) return OP_DEPLETED;
+            if(profile_)stats.db_hit++;
         }
 #ifndef NDEBUG
         LOG_DEBUG() << "[" << __FILE__ << "] " << alias_ << ": " << it_->GetId();

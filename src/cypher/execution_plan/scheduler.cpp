@@ -32,6 +32,7 @@
 #include "parser/rewrite_views_visitor.h"
 #include "parser/reverse_rewrite_visitor.h"
 #include "parser/rewrite_use_views_visitor.h"
+#include "parser/view_maintenance_visitor.h"
 
 #include "cypher/execution_plan/execution_plan.h"
 #include "cypher/execution_plan/scheduler.h"
@@ -39,6 +40,8 @@
 #include "cypher/rewriter/GenAnonymousAliasRewriter.h"
 
 #include "server/bolt_session.h"
+
+#define MaintenanceTemplate std::tuple<std::string,std::string,std::string>
 
 namespace cypher {
 
@@ -61,17 +64,17 @@ bool Scheduler::DetermineReadOnly(cypher::RTContext *ctx,
     }
 }
 
-void AddView(std::string file_path, std::string view_name, std::string start_node_label, std::string end_node_label, std::string query,size_t db_hit,size_t result_num){
+void AddView(std::string file_path, std::string view_name, std::string start_node_label, std::string end_node_label, std::string query,size_t db_hit,size_t result_num,MaintenanceTemplate templates){
     std::ifstream ifs(file_path);
 
     // 检查文件是否成功打开
     if (!ifs) {
-        std::cout << "File does not exist, creating new file: " << file_path << std::endl;
+        std::cout << "File does not exist, creating new file: " << file_path<<std::endl;
         std::ofstream ofs(file_path);
         ofs.close();
         ifs.open(file_path);
         if (!ifs) {
-            std::cout << "Failed to open file: " << file_path << std::endl;
+            std::cout << "Failed to open file: " << file_path<<std::endl;
             return;
         }
     }
@@ -89,13 +92,14 @@ void AddView(std::string file_path, std::string view_name, std::string start_nod
             {"start_node_label", start_node_label},
             {"end_node_label", end_node_label},
             {"query", query},
-            {"db_hit",db_hit},
-            {"result_num",result_num}
+            {"opt_rate",static_cast<double>(db_hit)/(2*result_num)},
+            {"result_num",result_num},
+            {"delete_vertex",std::get<0>(templates)},
+            {"create_edge",std::get<1>(templates)},
+            {"delete_edge",std::get<2>(templates)}
         }}
     };
-    // nlohmann::json final_element={
-    //     {view_name,new_element}
-    // };
+
     if(j.size()==0){
         j.push_back(new_element);
     }
@@ -105,7 +109,7 @@ void AddView(std::string file_path, std::string view_name, std::string start_nod
     }
     // j.push_back(final_element);
     std::ofstream ofs(file_path);
-    ofs << j;
+    ofs << std::setw(4) << j;
     ofs.close();
 }
 
@@ -118,7 +122,7 @@ const std::string RewriteCypherUseViews(RTContext *ctx,const std::string &script
 
     // 检查文件是否成功打开
     if (!ifs) {
-        std::cout << "Failed to open file: " << file_path << std::endl;
+        LOG_DEBUG() << "Failed to open file: " << file_path;
         return script;
     }
 
@@ -138,6 +142,40 @@ const std::string RewriteCypherUseViews(RTContext *ctx,const std::string &script
         return visitor.GetRewriteQuery();
     }
     return script;
+}
+
+MaintenanceTemplate GeneratorMaintenanceTemplate(std::string view_query){
+    using namespace parser;
+    using namespace antlr4;
+    std::string deleteVertex,createEdge,deleteEdge;
+    NODE_INF src("$SL","$SK","$SV",false);
+    NODE_INF dst("$DL","$DK","$DV",false);
+
+    ANTLRInputStream inputDV(view_query);
+    LcypherLexer lexerDV(&inputDV);
+    CommonTokenStream tokensDV(&lexerDV);
+    // std::cout <<"parser s1"<<std::endl; // de
+    LcypherParser parserDV(&tokensDV);
+    ViewMaintenance visitorDV(parserDV.oC_Cypher(),"$L","$K","$V",false,false);
+    deleteVertex=visitorDV.GetRewriteQuery();
+
+    ANTLRInputStream inputCE(view_query);
+    LcypherLexer lexerCE(&inputCE);
+    CommonTokenStream tokensCE(&lexerCE);
+    // std::cout <<"parser s1"<<std::endl; // de
+    LcypherParser parserCE(&tokensCE);
+    ViewMaintenance visitorCE(parserCE.oC_Cypher(),"VR","$RID",src,dst,true);
+    createEdge=visitorCE.GetRewriteQuery();
+
+    ANTLRInputStream inputDE(view_query);
+    LcypherLexer lexerDE(&inputDE);
+    CommonTokenStream tokensDE(&lexerDE);
+    // std::cout <<"parser s1"<<std::endl; // de
+    LcypherParser parserDE(&tokensDE);
+    ViewMaintenance visitorDE(parserDE.oC_Cypher(),"VR","$RID",src,dst,false);
+    deleteEdge=visitorDE.GetRewriteQuery();
+    MaintenanceTemplate templates=std::make_tuple(deleteVertex,createEdge,deleteEdge);
+    return templates;
 }
 
 const std::string Scheduler::EvalCypher(RTContext *ctx, const std::string &script, ElapsedTime &elapsed, bool is_with_new_txn) {
@@ -171,6 +209,7 @@ const std::string Scheduler::EvalCypher(RTContext *ctx, const std::string &scrip
         LOG_DEBUG() <<"visitor s"<<std::endl; // de
         auto oc_cypher=parser.oC_Cypher();
         CypherBaseVisitor visitor(ctx, oc_cypher);
+        // if(!visitor.IsValid()) return std::string();
         // LOG_DEBUG()<<"EvalCypherWithoutNewTxn txn exist2:"<<(ctx->txn_!=nullptr);
         LOG_DEBUG() <<"visitor e"<<std::endl; // de
         LOG_DEBUG() << "-----CLAUSE TO STRING-----";
@@ -192,7 +231,7 @@ const std::string Scheduler::EvalCypher(RTContext *ctx, const std::string &scrip
             auto constraints=new_visitor.GetConstraints();
             auto new_query=new_visitor.GetRewriteQuery();
             auto profile_new_query="profile "+new_query;
-            LOG_DEBUG() << "hhh";
+            LOG_DEBUG() << "profile_new_query:"<<profile_new_query;
             // std::string create_query="CALL db.createEdgeLabel('"+view_name+"', '[[\""+constraints.first+"\",\""+constraints.second+"\"]]','is_view',bool,true)";
             std::string create_query="CALL db.createEdgeLabel('"+view_name+"', '[]')";
             // std::cout<<"create query: "<<create_query<<std::endl;
@@ -242,6 +281,7 @@ const std::string Scheduler::EvalCypher(RTContext *ctx, const std::string &scrip
                     plan->Execute(ctx);
                 }
             }
+            LOG_DEBUG()<<"create view end";
             // if(is_with_new_txn)
             //     EvalCypher(ctx,new_query,temp);
             // else
@@ -260,8 +300,8 @@ const std::string Scheduler::EvalCypher(RTContext *ctx, const std::string &scrip
             //     db_hit=std::stoull(db_hit_str);
             //     result_num=std::stoull(result_num_str);
             // }
-            LOG_DEBUG()<<"db_hit:"<<db_hit<<",result num:"<<result_num;
-            AddView(file_path,view_name,constraints.first,constraints.second,new_query,db_hit,result_num);
+            MaintenanceTemplate templates=GeneratorMaintenanceTemplate(new_query);
+            AddView(file_path,view_name,constraints.first,constraints.second,new_query,db_hit,result_num,templates);
             ctx->result_info_ = std::make_unique<ResultInfo>();
             ctx->result_ = std::make_unique<lgraph::Result>();
 

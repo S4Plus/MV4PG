@@ -1,0 +1,1 @@
+MATCH (n:user{id:2})-[r:rate]->(m:movie{id:1768}) delete r

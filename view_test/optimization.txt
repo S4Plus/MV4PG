@@ -268,3 +268,247 @@ speed up: 1.4125584445740798
 [8796093030364, 46428]
 [8796093030364, 46428]
 
+MATCH p = (acc:Account {id:29836347531332953})-[e1:transfer *1..3]->(other:Account)<-[e2:signIn]-(medium) 
+WHERE e2.timestamp > 1589972630422 AND e2.timestamp < 1800000000000 
+AND medium.isBlocked = true 
+RETURN DISTINCT other.id as otherId, medium.id as mediumId, medium.type as mediumType 
+ORDER BY otherId, mediumId;
+cycle: 5
+original_time: 0.013957738876342773
+optimized_time: 0.01351022720336914
+speed up: 1.0331239191049306
+
+MATCH p = (acc:Account {id:29836347531332953})-[e1:transfer *1..3]->(other:Account)<-[e2:signIn]-(medium) 
+WHERE e2.timestamp > 1589972630422 AND e2.timestamp < 1800000000000 
+AND medium.isBlocked = true 
+RETURN DISTINCT other.id as otherId, medium.id as mediumId, medium.type as mediumType 
+ORDER BY otherId, mediumId;
+cycle: 5
+original_time: 0.012580442428588866
+optimized_time: 0.013373422622680663
+speed up: 0.9407047682208934
+
+MATCH p = (acc:Account {id:29836347531332953})-[e1:transfer *1..3]->(other:Account)<-[e2:signIn]-(medium) 
+WHERE e2.timestamp > 1589972630422 AND e2.timestamp < 1800000000000 
+AND medium.isBlocked = true 
+RETURN DISTINCT other.id as otherId, medium.id as mediumId, medium.type as mediumType 
+ORDER BY otherId, mediumId;
+cycle: 5
+original_time: 0.012292957305908203
+optimized_time: 0.014172506332397462
+speed up: 0.867380618331937
+
+match (n:Account)-[r:transfer*1..3]->(m:Account) return count(m)
+cycle: 5
+original_time: 24.503435754776
+optimized_time: 21.040474033355714
+speed up: 1.1645857272954216
+[19593079]
+[19593079]
+
+match (n:Comment)-[r:replyof*..]->(m) return count(m)
+cycle: 5
+original_time: 1.5574406623840331
+optimized_time: 1.8261245250701905
+speed up: 0.8528666260172865
+[0]
+[0]
+
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 5
+original_time: 9.74325098991394
+optimized_time: 3.1469836235046387
+speed up: 3.0960602772579313
+[2052169]
+[2052169]
+
+match (n:user)-[:is_friend*..2]->(m:user) return count(m)
+cycle: 5
+original_time: 0.01859908103942871
+optimized_time: 0.017459535598754884
+speed up: 1.065267797887768
+[2788]
+[2788]
+
+match (n:user)-[:rate]->(:movie)-[:has_keyword]->(m:keyword) return count(m)
+cycle: 5
+original_time: 0.04815597534179687
+optimized_time: 0.02720189094543457
+speed up: 1.770317197374072
+[22311]
+[22311]
+
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 5
+original_time: 9.415089464187622
+optimized_time: 2.9705983638763427
+speed up: 3.1694252507100433
+[2052169]
+[2052169]
+
+match (n:Person)-[r:knows*..2]->(m:Person) return count(m)
+cycle: 5
+original_time: 10.74505033493042
+optimized_time: 7.461171054840088
+speed up: 1.4401292043773837
+[8668035]
+[8668035]
+
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 1
+original_time: 9.477067708969116
+optimized_time: 2.947859048843384
+speed up: 3.21489852531705
+[2052169]
+[2052169]
+
+match (n:Person)-[r:knows*..2]->(m:Person) return count(m)
+cycle: 1
+original_time: 10.537179231643677
+optimized_time: 7.233175992965698
+speed up: 1.4567845773269086
+[8668035]
+[8668035]
+
+match (n:user)-[:is_friend*..2]->(m:user) return count(m)
+cycle: 5
+original_time: 0.019157838821411134
+optimized_time: 0.02150135040283203
+speed up: 0.8910063071614226
+[2788]
+[2788]
+
+MATCH (n:user{id:2}),(m:movie{id:1768}) create (n)-[r:rate{star:1}]->(m)
+cycle: 5
+original_time: 2.0378986835479735
+optimized_time: 2.0509363651275634
+speed up: 0.9936430589455276
+
+match (n:user)-[:rate]->(:movie)-[:has_keyword]->(m:keyword) return count(m)
+cycle: 5
+original_time: 0.07051568031311035
+optimized_time: 0.05875234603881836
+speed up: 1.2002189711117206
+[22311]
+[22311]
+
+MATCH (n:user{id:2})-[r:rate]->(m:movie{id:1768}) delete r
+cycle: 5
+original_time: 0.02384662628173828
+optimized_time: 0.023516035079956053
+speed up: 1.0140581182439214
+['deleted 0 vertices, deleted 0 edges.']
+['deleted 0 vertices, deleted 0 edges.']
+
+match (n:user)-[:is_friend*..2]->(m:user) return count(m)
+cycle: 5
+original_time: 0.018867301940917968
+optimized_time: 0.019809818267822264
+speed up: 0.9524217580312053
+[2788]
+[2788]
+
+MATCH (n:user{id:2}),(m:movie{id:1768}) create (n)-[r:rate{stars:1}]->(m)
+cycle: 5
+original_time: 0.010490179061889648
+optimized_time: 0.022833633422851562
+speed up: 0.45941786257246436
+['created 0 vertices, created 1 edges.']
+['created 0 vertices, created 0 edges.']
+
+match (n:user)-[:rate]->(:movie)-[:has_keyword]->(m:keyword) return count(m)
+cycle: 5
+original_time: 0.057157278060913086
+optimized_time: 0.05819945335388184
+speed up: 0.9820930398326629
+[23015]
+[22311]
+
+MATCH (n:user{id:2})-[r:rate]->(m:movie{id:1768}) delete r
+cycle: 5
+original_time: 0.022290563583374022
+optimized_time: 0.029632139205932616
+speed up: 0.7522428073269598
+['deleted 0 vertices, deleted 0 edges.']
+['deleted 0 vertices, deleted 0 edges.']
+
+match (n:user)-[:is_friend*..2]->(m:user) return count(m)
+cycle: 5
+original_time: 0.019199037551879884
+optimized_time: 0.020658349990844725
+speed up: 0.9293596807290238
+[2788]
+[2788]
+
+MATCH (n:user{id:2}),(m:movie{id:1768}) create (n)-[r:rate{stars:1}]->(m)
+cycle: 5
+original_time: 0.010633563995361328
+optimized_time: 0.023641347885131836
+speed up: 0.44978670619913474
+['created 0 vertices, created 1 edges.']
+['created 0 vertices, created 0 edges.']
+
+match (n:user)-[:rate]->(:movie)-[:has_keyword]->(m:keyword) return count(m)
+cycle: 5
+original_time: 0.042766141891479495
+optimized_time: 0.05821409225463867
+speed up: 0.7346355536115358
+[23191]
+[22311]
+
+MATCH (n:user{id:2})-[r:rate]->(m:movie{id:1768}) delete r
+cycle: 5
+original_time: 0.02099456787109375
+optimized_time: 0.03192272186279297
+speed up: 0.6576684770593965
+['deleted 0 vertices, deleted 0 edges.']
+['deleted 0 vertices, deleted 0 edges.']
+
+match (n:user)-[:is_friend*..2]->(m:user) return count(m)
+cycle: 5
+original_time: 0.018239212036132813
+optimized_time: 0.019607067108154297
+speed up: 0.9302366302682459
+[2788]
+[2788]
+
+MATCH (n:user{id:2}),(m:movie{id:1768}) create (n)-[r:rate{stars:1}]->(m)
+cycle: 5
+original_time: 0.01051344871520996
+optimized_time: 0.12970609664916993
+speed up: 0.08105593327387547
+['created 0 vertices, created 1 edges.']
+['V[3991]']
+
+match (n:user)-[:rate]->(:movie)-[:has_keyword]->(m:keyword) return count(m)
+cycle: 5
+original_time: 0.0685154914855957
+optimized_time: 0.062485361099243165
+speed up: 1.096504689742852
+[23191]
+[23191]
+
+MATCH (n:user{id:2})-[r:rate]->(m:movie{id:1768}) delete r
+cycle: 5
+original_time: 0.02350788116455078
+optimized_time: 0.041513490676879886
+speed up: 0.5662708864336246
+['deleted 0 vertices, deleted 0 edges.']
+['deleted 0 vertices, deleted 0 edges.']
+
+match (n1:Comment)-[r1:replyOf*..]->(m:Post)<-[r2:replyOf*..]-(n2:Comment) return count(n2)
+cycle: 5
+original_time: 52.173028802871706
+optimized_time: 19.77218632698059
+speed up: 2.6387081296961985
+[20319979]
+[25941136]
+
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 5
+original_time: 9.272340059280396
+optimized_time: 2.7961779594421388
+speed up: 3.3160765136459003
+[2052169]
+[2052169]
+

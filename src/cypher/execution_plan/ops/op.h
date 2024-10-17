@@ -245,6 +245,44 @@ struct OpBase {
 
     virtual void Accept(Visitor *visitor) const = 0;
 
+    void MaintenanceViewStatistics(std::string view_path, std::string view_label,int count,bool is_delete){
+        if(view_label=="")return;
+        // LOG_DEBUG()<<"MV S";
+        std::ifstream input_file(view_path);
+        if (input_file.peek() == std::ifstream::traits_type::eof()) {
+            // LOG_DEBUG()<<"MV E1";
+            return;
+        }
+
+        json j;
+        try {
+            input_file >> j;
+        } catch (json::parse_error& e) {
+            // LOG_DEBUG()<<"MV E2";
+            return;
+        }
+        if (j.empty()) {
+            // LOG_DEBUG()<<"MV E3";
+            return;
+        }
+        // LOG_DEBUG()<<"MV ST label:"<<view_label;
+        if(!j.at(0).contains(view_label))return;
+        auto element=j.at(0).at(view_label);
+        int sign=is_delete?-1:1;
+        LOG_DEBUG()<<"MV ST1:"<<count*sign;
+        j.at(0).at(view_label).at("result_num") = element.at("result_num").get<int>()+count*sign;
+
+        std::ofstream output_file(view_path);
+        output_file << std::setw(4) << j << std::endl;
+        LOG_DEBUG()<<"MV E4";
+    }
+
+    std::string Replace(std::string input,std::string beforeReplaced,std::string afterReplaced){
+        std::regex to_replace(beforeReplaced);
+        std::string result = std::regex_replace(input, to_replace, afterReplaced);
+        return result;
+    }
+
  protected:
     // complete reset: set operation to uninitialized state.
     virtual OpResult ResetImpl(bool complete) = 0;
