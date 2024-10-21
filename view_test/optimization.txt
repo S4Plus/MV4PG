@@ -512,3 +512,130 @@ speed up: 3.3160765136459003
 [2052169]
 [2052169]
 
+match (n:Person)-[r:knows*..2]->(m:Person) return count(m)
+cycle: 5
+original_time: 10.756412887573243
+optimized_time: 7.110124158859253
+speed up: 1.5128305283066956
+[8668035]
+[8668035]
+
+match (n:Person)-[r:knows*..2]->(:Person)-[:likes]->(:Comment)-[:replyOf*..]->(m:Post) return n,m limit 100
+cycle: 5
+original_time: 0.048533296585083006
+optimized_time: 0.06003141403198242
+speed up: 0.8084649906668255
+
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 5
+original_time: 0.008610200881958009
+optimized_time: 0.006564188003540039
+speed up: 1.3116932173963578
+
+match (n1:Comment)-[r1:replyOf*..]->(m:Post)<-[r2:replyOf*..]-(n2:Comment) return count(n2)
+cycle: 5
+original_time: 0.008184814453125
+optimized_time: 0.00719141960144043
+speed up: 1.1381361270430659
+
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 5
+original_time: 0.00696110725402832
+optimized_time: 0.006280946731567383
+speed up: 1.1082894906658771
+
+match (n:Person)-[r:knows*..2]->(m:Person) return count(m)
+cycle: 5
+original_time: 0.005907297134399414
+optimized_time: 0.0057601451873779295
+speed up: 1.025546569094115
+
+match (n:Person)-[r:knows*..2]->(:Person)-[:likes]->(:Comment)-[:replyOf*..]->(m:Post) return n,m
+cycle: 5
+original_time: 0.005956268310546875
+optimized_time: 0.0060364723205566405
+speed up: 0.986713430336351
+
+// match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+match (n:Comment) return count(m)
+cycle: 5
+original_time: 0.008640241622924805
+optimized_time: 0.005866146087646485
+speed up: 1.472899156248476
+
+// match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+match (n:Comment) return count(m)
+cycle: 5
+original_time: 0.007983255386352538
+optimized_time: 0.005944299697875977
+speed up: 1.3430102437811342
+
+// match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+match (n:Comment) return count(m)
+cycle: 5
+original_time: 0.010038328170776368
+optimized_time: 0.0147308349609375
+speed up: 0.6814500466128031
+
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 5
+original_time: 0.010192441940307616
+optimized_time: 0.006639814376831055
+speed up: 1.5350492290677715
+
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 5
+original_time: 9.13544750213623
+optimized_time: 3.075386571884155
+speed up: 2.9705038012633778
+[2052169]
+[2052169]
+
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 5
+original_time: 21.593166875839234
+optimized_time: 2.718145322799683
+speed up: 7.944081096296325
+[2052169]
+[2052169]
+
+match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)
+cycle: 5
+original_time: 8.60706639289856
+optimized_time: 3.3506891250610353
+speed up: 2.568745136193969
+[2052169]
+[2052169]
+
+match (n:Person)-[:knows]->(:Person)<-[:commentHasCreator]-(m:Comment) return count(m)
+cycle: 5
+original_time: 77.64192323684692
+optimized_time: 100.06687083244324
+speed up: 0.7759003813245472
+[84323903]
+[84323903]
+
+match (n:Person)<-[:postHasCreator]-(:Post)-[:postHasTag]->(m:Tag) return count(m)
+cycle: 5
+original_time: 1.726768922805786
+optimized_time: 2.322522735595703
+speed up: 0.7434884904852772
+[713258]
+[713258]
+
+match (n:Person)<-[:postHasCreator]-(:Post)-[:postHasTag]->(m:Tag) return count(m)
+cycle: 5
+original_time: 1.782090187072754
+optimized_time: 2.3448031425476072
+speed up: 0.7600169731675339
+[713258]
+[713258]
+
+match (n:Person)<-[:postHasCreator]-(:Post) return count(n)
+cycle: 5
+original_time: 0.891546106338501
+optimized_time: 1.374899196624756
+speed up: 0.6484447067298899
+[1003605]
+[1003605]
+

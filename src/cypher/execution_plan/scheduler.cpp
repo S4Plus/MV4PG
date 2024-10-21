@@ -179,6 +179,7 @@ MaintenanceTemplate GeneratorMaintenanceTemplate(std::string view_query){
 }
 
 const std::string Scheduler::EvalCypher(RTContext *ctx, const std::string &script, ElapsedTime &elapsed, bool is_with_new_txn) {
+    ctx->path_unique_ = false;
     // LOG_DEBUG()<<"EvalCypherWithoutNewTxn txn exist:"<<(ctx->txn_!=nullptr);
     auto parent_dir=ctx->galaxy_->GetConfig().dir;
     if(parent_dir.end()[-1]=='/')parent_dir.pop_back();

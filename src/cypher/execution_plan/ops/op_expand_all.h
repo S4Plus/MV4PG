@@ -161,13 +161,14 @@ class ExpandAll : public OpBase {
              * and dst for in_edge_iterator.  */
             neighbor_->PushVid(eit_->GetNbr(expand_direction_));
             if(profile_)stats.db_hit++;
-            pattern_graph_->VisitedEdges().Add(*eit_);
+            // if(view_types_.find(eit_->GetLabel())==view_types_.end())
+            if(ctx->path_unique_)pattern_graph_->VisitedEdges().Add(*eit_);
             state_ = ExpandAllConsuming;
             // _DumpForDebug();
             return OP_OK;
         }
         // The iterators are set, keep on consuming.
-        pattern_graph_->VisitedEdges().Erase(*eit_);
+        if(ctx->path_unique_)pattern_graph_->VisitedEdges().Erase(*eit_);
         do {
             eit_->Next();
             if(profile_ && eit_->IsValid())stats.db_hit++;
@@ -175,7 +176,7 @@ class ExpandAll : public OpBase {
         if (!eit_->IsValid() || !_FilterNeighborLabel(ctx)) return OP_REFRESH;
         neighbor_->PushVid(eit_->GetNbr(expand_direction_));
         if(profile_)stats.db_hit++;
-        pattern_graph_->VisitedEdges().Add(*eit_);
+        if(ctx->path_unique_)pattern_graph_->VisitedEdges().Add(*eit_);
         // _DumpForDebug();
         return OP_OK;
     }

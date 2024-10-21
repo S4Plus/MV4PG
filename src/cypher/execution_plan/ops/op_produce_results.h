@@ -56,8 +56,8 @@ static void RRecordToURecord(
         }
 
         if (entry_type == cypher::Entry::NODE) {
-            LOG_DEBUG()<<"entry type:"<<entry_type;
-            LOG_DEBUG()<<"header type:"<<std::to_string(uint16_t(header_type));
+            // LOG_DEBUG()<<"entry type:"<<entry_type;
+            // LOG_DEBUG()<<"header type:"<<std::to_string(uint16_t(header_type));
             if (header_type == lgraph_api::LGraphType::NODE ||
                 header_type == lgraph_api::LGraphType::ANY) {
                 auto vid = v.node->PullVid();
@@ -345,11 +345,11 @@ class ProduceResults : public OpBase {
 #endif
             auto child = children[0];
             auto res = child->Consume(ctx);
-            LOG_DEBUG()<<"produce child consume:"<<res;
+            // LOG_DEBUG()<<"produce child consume:"<<res;
             if (res != OP_OK) return res;
-            LOG_DEBUG()<<"produce consume mutable record";
+            // LOG_DEBUG()<<"produce consume mutable record";
             auto record = ctx->result_->MutableRecord();
-            LOG_DEBUG()<<"produce consume RRToU："<<child->record->ToString();
+            // LOG_DEBUG()<<"produce consume RRToU："<<child->record->ToString();
             RRecordToURecord(ctx->txn_.get(), ctx->result_->Header(), child->record, *record);
 #ifndef NDEBUG
             LOG_DEBUG()<<"produce consume end";

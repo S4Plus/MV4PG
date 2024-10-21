@@ -1,0 +1,1 @@
+match (n:user)-[:is_friend*..2]->(m:user) return count(m)

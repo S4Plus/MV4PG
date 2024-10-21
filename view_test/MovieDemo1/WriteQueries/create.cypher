@@ -1,0 +1,1 @@
+MATCH (n:user{id:2}),(m:movie{id:1768}) create (n)-[r:rate{stars:1}]->(m)
