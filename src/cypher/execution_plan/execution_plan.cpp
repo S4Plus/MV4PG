@@ -762,7 +762,7 @@ void ExecutionPlan::_BuildInQueryCallOp(const parser::QueryPart &part,
 
 void ExecutionPlan::_BuildCreateOp(const parser::QueryPart &part,
                                    cypher::PatternGraph &pattern_graph, cypher::OpBase *&root) {
-    OpBase *create = new OpCreate(&part, &pattern_graph,_view_path, _is_view_maintenance||_is_create_view);
+    OpBase *create = new OpCreate(&part, &pattern_graph,_view_path, _is_create_view,_is_view_maintenance);
     _UpdateStreamRoot(create, root);
 }
 

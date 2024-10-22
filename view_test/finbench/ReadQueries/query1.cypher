@@ -1,0 +1,1 @@
+match (n0:Account)-[r1:withdraw*..]->(n1:Account)<-[r2:withdraw*..]-(n2:Account) where n0<>n2 return count(n1)

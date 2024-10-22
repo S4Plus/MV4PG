@@ -1,0 +1,1 @@
+MATCH (acc:Account {id: %d}) WITH acc OPTIONAL MATCH (acc)-[:repay|deposit]-(loan:Loan) DELETE acc, loan;

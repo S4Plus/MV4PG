@@ -1,0 +1,1 @@
+match (n0:Company)-[r1]->(n1)-[r2]->(n2:Loan)<-[r3:apply]-(n3:Person) return count(n3)

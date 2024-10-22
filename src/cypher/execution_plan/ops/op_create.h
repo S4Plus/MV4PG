@@ -246,7 +246,7 @@ class OpCreate : public OpBase {
         auto euid =
             ctx->txn_->AddEdge(src_node.PullVid(), dst_node.PullVid(), label, fields, values);
         ctx->result_info_->statistics.edges_created++;
-        if(is_create_view_){
+        if(is_maintenance_view_){
             edge_created_++;
             view_label=label;
         }
@@ -265,7 +265,7 @@ class OpCreate : public OpBase {
                 record->values[it->second.id].relationship = relp;
             }
         }
-        if(!is_create_view_)
+        if(!is_create_view_&&!is_maintenance_view_)
             ViewMaintenanceCreateEdge(ctx,euid);
     }
 
@@ -310,7 +310,7 @@ class OpCreate : public OpBase {
                 }
             }  // for pattern_part
         }
-        if(is_create_view_){
+        if(is_maintenance_view_){
             MaintenanceViewStatistics(view_path_,view_label,edge_created_,false);
             edge_created_=0;
         }
@@ -341,6 +341,7 @@ class OpCreate : public OpBase {
     std::set<std::string> view_names_;
     std::set<std::string> edge_maintenances_;
     bool is_create_view_ = false;
+    bool is_maintenance_view_ =false;
     int edge_created_=0;
     std::string view_label="";
 
@@ -360,12 +361,13 @@ class OpCreate : public OpBase {
         }
     }
 
-    OpCreate(const parser::QueryPart *stmt, PatternGraph *pattern_graph, std::string view_path,bool is_create_view)
+    OpCreate(const parser::QueryPart *stmt, PatternGraph *pattern_graph, std::string view_path,bool is_create_view,bool is_maintenance_view)
         : OpBase(OpType::CREATE, "Create"),
           sym_tab_(pattern_graph->symbol_table),
           pattern_graph_(pattern_graph),
           view_path_(view_path),
-          is_create_view_(is_create_view) {
+          is_create_view_(is_create_view),
+          is_maintenance_view_(is_maintenance_view) {
         _SetViewInfs(view_path_);
         for (auto &node : pattern_graph_->GetNodes()) {
             if (node.derivation_ == Node::CREATED) modifies.emplace_back(node.Alias());

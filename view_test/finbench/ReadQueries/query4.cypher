@@ -1,0 +1,1 @@
+match (n0:Place)<-[r1*2]-(n1:Account)-[r2:withdraw*..]->(n3:Account) return count(n3)

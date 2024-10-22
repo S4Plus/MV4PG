@@ -1,0 +1,1 @@
+MATCH (p:Person{id:%d}), (c:Company{id:%d}) CREATE (p)-[:invest{timestamp: %d, ratio: %f}]->(c);

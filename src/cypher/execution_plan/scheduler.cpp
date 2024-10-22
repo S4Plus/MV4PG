@@ -78,7 +78,7 @@ void AddView(std::string file_path, std::string view_name, std::string start_nod
             return;
         }
     }
-
+    LOG_DEBUG()<<"Add view S";
     // 使用nlohmann的json库来解析文件
     nlohmann::json j;
     try {
@@ -87,12 +87,15 @@ void AddView(std::string file_path, std::string view_name, std::string start_nod
         j = nlohmann::json::array();
     }
     ifs.close();
+    double opt_rate=0;
+    if(result_num>0)
+        opt_rate=static_cast<double>(db_hit)/(2*result_num);
     nlohmann::json new_element = {
         {view_name, {
             {"start_node_label", start_node_label},
             {"end_node_label", end_node_label},
             {"query", query},
-            {"opt_rate",static_cast<double>(db_hit)/(2*result_num)},
+            {"opt_rate",opt_rate},
             {"result_num",result_num},
             {"delete_vertex",std::get<0>(templates)},
             {"create_edge",std::get<1>(templates)},
@@ -111,6 +114,7 @@ void AddView(std::string file_path, std::string view_name, std::string start_nod
     std::ofstream ofs(file_path);
     ofs << std::setw(4) << j;
     ofs.close();
+    LOG_DEBUG()<<"Add view E";
 }
 
 
@@ -247,6 +251,8 @@ const std::string Scheduler::EvalCypher(RTContext *ctx, const std::string &scrip
             auto parent_dir=ctx->galaxy_->GetConfig().dir;
             if(parent_dir.end()[-1]=='/')parent_dir.pop_back();
             std::string file_path=parent_dir+"/view/"+ctx->graph_+".json";
+            MaintenanceTemplate templates=GeneratorMaintenanceTemplate(new_query);
+            AddView(file_path,view_name,constraints.first,constraints.second,new_query,0,0,templates);
             // std::string file_path="/data/view/"+ctx->graph_+".json";
             // AddView(file_path,view_name,constraints.first,constraints.second,new_query,0,0);
             
@@ -301,7 +307,7 @@ const std::string Scheduler::EvalCypher(RTContext *ctx, const std::string &scrip
             //     db_hit=std::stoull(db_hit_str);
             //     result_num=std::stoull(result_num_str);
             // }
-            MaintenanceTemplate templates=GeneratorMaintenanceTemplate(new_query);
+            // MaintenanceTemplate templates=GeneratorMaintenanceTemplate(new_query);
             AddView(file_path,view_name,constraints.first,constraints.second,new_query,db_hit,result_num,templates);
             ctx->result_info_ = std::make_unique<ResultInfo>();
             ctx->result_ = std::make_unique<lgraph::Result>();

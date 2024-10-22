@@ -471,7 +471,7 @@ void Transaction::DeleteVertex(graph::VertexIterator& it, size_t* n_in, size_t* 
     if (fulltext_index_) {
         schema->DeleteVertexFullTextIndex(vid, fulltext_buffers_);
     }
-    LOG_DEBUG() << "Delete vertex in transcation.cpp end: " << it.GetId();
+    // LOG_DEBUG() << "Delete vertex in transcation.cpp end: " << it.GetId();
 }
 
 /**

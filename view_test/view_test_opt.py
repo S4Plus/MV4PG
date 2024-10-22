@@ -4,6 +4,7 @@ import argparse
 from TuGraphClient import TuGraphClient
 import time
 import os
+import json
 
 ip = '127.0.0.1'
 old_port = '7071'
@@ -18,6 +19,17 @@ root_folder="/tugraph-db_graph_views/view_test/"
 # parameter_folder="/tugraph-db_graph_views/view_test/finbench_parameter"
 cycle = 5
 output_path="/tugraph-db_graph_views/view_test/optimization.txt"
+is_read=True
+
+def str2bool(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
 
 def parse_args():
     parser = argparse.ArgumentParser(description="TuGraph Rpc Client for python")
@@ -27,6 +39,7 @@ def parse_args():
     parser.add_argument('-u', '--user', help='user name')
     parser.add_argument('-c', '--cypher', help='cypher to query')
     parser.add_argument('-f', '--folder', help='folder name')
+    parser.add_argument('-r', '--read', help='is execute read queries')
     parser.add_argument('--password', help='user password')
     parser.add_argument('--cycle', help='cycle')
     args = parser.parse_args()
@@ -51,6 +64,9 @@ def parse_args():
     if args.folder:
         global folder_name
         folder_name = args.folder
+    if args.read:
+        global is_read
+        is_read=str2bool(args.read)
     if args.cycle:
         global cycle
         cycle = int(args.cycle)
@@ -128,17 +144,21 @@ def OptTest(isRead,folder_name):
     for file in os.listdir(cypher_folder):
         with open(os.path.join(cypher_folder,file)) as f:
             cypher_name=file.split(".")[0]
-            parameter_path=os.path.join(parameter_folder,cypher_name)
+            input_cypher=f.read()
+            parameter_path=os.path.join(parameter_folder,cypher_name+".json")
             parameters=[]
             if os.path.exists(parameter_path):
                 f2 = open(parameter_path,"r")
-                parameter_lines=f2.readlines()
-                for line in parameter_lines:
-                    parameters.append(convert_to_number(line.strip()))
-            input_cypher=f.read()
-            if len(parameters)>0:
-                input_cypher=input_cypher % tuple(parameters)
+                data = json.load(f2)
+                for key, value in data.items():
+                    input_cypher = input_cypher.replace(key, str(value))
+                # parameter_lines=f2.readlines()
+                # for line in parameter_lines:
+                #     parameters.append(convert_to_number(line.strip()))
             print(input_cypher)
+            # if len(parameters)>0:
+            #     input_cypher=input_cypher % tuple(parameters)
+            # print(input_cypher)
             test_cypher(input_cypher)
 
 
@@ -146,8 +166,8 @@ if  __name__ == '__main__':
     parse_args()
     if folder_name=='':
         folder_name=graph
-    OptTest(True,folder_name)
-    OptTest(False,folder_name)
+    OptTest(is_read,folder_name)
+    # OptTest(False,folder_name)
     # if folder_name=='':
     #     folder_name=graph
     # graph_folder=os.path.join(root_folder,folder_name)
