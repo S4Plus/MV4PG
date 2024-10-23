@@ -18,7 +18,7 @@ password = '73@TuGraph'
 root_folder="/tugraph-db_graph_views/view_test/"
 # parameter_folder="/tugraph-db_graph_views/view_test/finbench_parameter"
 cycle = 5
-output_path="/tugraph-db_graph_views/view_test/optimization.txt"
+# output_path=""
 is_read=True
 
 def str2bool(v):
@@ -35,6 +35,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="TuGraph Rpc Client for python")
     parser.add_argument('-i', '--ip', help='ip for graph server')
     parser.add_argument('-p', '--port', help='port for graph server')
+    parser.add_argument('-o', '--old_port', help='original port for graph server')
     parser.add_argument('-g', '--graph', help='graph name')
     parser.add_argument('-u', '--user', help='user name')
     parser.add_argument('-c', '--cypher', help='cypher to query')
@@ -49,6 +50,9 @@ def parse_args():
     if args.port:
         global port
         port = args.port
+    if args.old_port:
+        global old_port
+        old_port = args.old_port
     if args.graph:
         global graph
         graph = args.graph
@@ -82,6 +86,8 @@ def call_cypher(input_cypher, input_port,input_graph):
         return False,""
 
 def test_cypher(input_cypher):
+    if(is_read==False):
+        cycle=1
     ave_time=0
     optimized_ave_time=0
     for i in range(0,cycle):
@@ -141,7 +147,7 @@ def OptTest(isRead,folder_name):
     if(os.path.exists(cypher_folder)==False):
         return
     parameter_folder=os.path.join(graph_folder,"parameter")
-    for file in os.listdir(cypher_folder):
+    for file in sorted(os.listdir(cypher_folder)):
         with open(os.path.join(cypher_folder,file)) as f:
             cypher_name=file.split(".")[0]
             input_cypher=f.read()
@@ -166,6 +172,8 @@ if  __name__ == '__main__':
     parse_args()
     if folder_name=='':
         folder_name=graph
+    global output_path
+    output_path=os.path.join(root_folder,folder_name,"optimization.txt")
     OptTest(is_read,folder_name)
     # OptTest(False,folder_name)
     # if folder_name=='':

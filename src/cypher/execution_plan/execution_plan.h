@@ -42,6 +42,7 @@ class ExecutionPlan {
     std::vector<PatternGraph> _pattern_graphs;
     std::string _view_path;
     std::map<std::string,PatternGraph*> _view_pattern_graphs;
+    std::string cypher_query_="";
     bool _is_view_maintenance = false;
     bool _is_create_view=false;
     bool _is_optimize=false;
@@ -141,6 +142,7 @@ class ExecutionPlan {
     void SetMaintenance(bool is_view_maintenance) { _is_view_maintenance = is_view_maintenance; }
     void SetOptimize(bool is_optimize) { _is_optimize = is_optimize; }
     void SetCreateView(bool is_create_view) { _is_create_view = is_create_view; }
+    void SetCypherQuery(std::string cypher_query) {cypher_query_=cypher_query;}
     size_t GetDBHit(){return _db_hit;}
     size_t CalculateDBHit(OpBase* root);
 };

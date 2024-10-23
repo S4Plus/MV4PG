@@ -1271,7 +1271,9 @@ class ViewMaintenance : public LcypherVisitor {
         if (std::get<3>(_dst_inf))
             node2.append("'");
         node2.append("})");
-        edge.append(_edge_variable).append(":");
+        edge.append(_edge_variable);
+        if(edgetypes.size()>0)
+            edge.append(":");
         edge.append(edgetypes);
         edge.append("]");
         if (direction == LinkDirection::LEFT_TO_RIGHT)

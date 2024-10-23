@@ -326,6 +326,7 @@ const std::string Scheduler::EvalCypher(RTContext *ctx, const std::string &scrip
         // LOG_DEBUG()<<"EvalCypherWithoutNewTxn txn exist6:"<<(ctx->txn_!=nullptr);
         LOG_DEBUG()<<"build start";
         plan->Build(visitor.GetQuery(), visitor.CommandType(), ctx,visitor.CommandType()==parser::CmdType::PROFILE);
+        plan->SetCypherQuery(script);
         LOG_DEBUG()<<"build end";
         // LOG_DEBUG()<<"EvalCypherWithoutNewTxn txn exist7:"<<(ctx->txn_!=nullptr);
         plan->Validate(ctx);

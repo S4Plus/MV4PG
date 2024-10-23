@@ -1049,6 +1049,24 @@ bool ExecutionPlan::_PlaceFilterToNode(std::shared_ptr<lgraph::Filter> &f, OpBas
     return false;
 }
 
+void WriteOutput(std::string cypher_query, std::chrono::duration<double> elapsed){
+    std::filesystem::path output_dir = "../output";
+    if (!std::filesystem::exists(output_dir)) {
+        std::filesystem::create_directories(output_dir);
+    }
+    std::string filename = "../output/output.txt";
+    std::ofstream outfile(filename);
+    if (!outfile) {
+        LOG_DEBUG() << "无法打开文件: " << filename;
+        return;
+    }
+    if(cypher_query!=""){
+        outfile << "cypher: " << cypher_query << std::endl;
+        outfile << "Opt time: "<< elapsed.count()<<"\n" <<std::endl;
+    }
+    outfile.close();
+}
+
 OpBase *ExecutionPlan::BuildPart(const parser::QueryPart &part, int part_id) {
     OpBase *segment_root = nullptr;
     /* init alias id map */
@@ -1058,23 +1076,30 @@ OpBase *ExecutionPlan::BuildPart(const parser::QueryPart &part, int part_id) {
 
     /* build the pattern graph */
     BuildQueryGraph(part, pattern_graph);
-
+    #include <chrono>
+    #include <fstream>
+    #include <filesystem>
+    auto start_opt = std::chrono::high_resolution_clock::now();
     if(!_is_view_maintenance&&!_is_create_view){
         for(auto &view_pattern_graph:_view_pattern_graphs){
             // view_pattern_graph.first
-            LOG_DEBUG()<<"开始视图重写优化";
-            LOG_DEBUG()<<"view name:"<<view_pattern_graph.first;
-            LOG_DEBUG()<<"view graph empty:"<<(view_pattern_graph.second==nullptr);
+            // LOG_DEBUG()<<"开始视图重写优化";
+            // LOG_DEBUG()<<"view name:"<<view_pattern_graph.first;
+            // LOG_DEBUG()<<"view graph empty:"<<(view_pattern_graph.second==nullptr);
             // LOG_DEBUG()<<view_pattern_graph.second->DumpGraph();
-            LOG_DEBUG()<<pattern_graph.DumpGraph();
+            // LOG_DEBUG()<<pattern_graph.DumpGraph();
             ViewRewriter view_rewriter(&pattern_graph,(view_pattern_graph.second),view_pattern_graph.first);
             view_rewriter.GraphRewriteUseViews();
-            LOG_DEBUG()<<pattern_graph.DumpGraph();
+            // LOG_DEBUG()<<pattern_graph.DumpGraph();
         }
         if(_view_pattern_graphs.size()>0)
             pattern_graph.symbol_table.Recover();
     }
-    LOG_DEBUG()<<"rewrite end:";
+    auto end_opt = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = end_opt - start_opt;
+    WriteOutput(cypher_query_,elapsed);
+    
+    // LOG_DEBUG()<<"rewrite end:";
     // for(size_t i=0;i<_view_pattern_graphs.size();i++){
     //     auto view_pattern_graph=&_view_pattern_graphs.at(i);
     //     ViewRewriter view_rewriter(&pattern_graph,view_pattern_graph,);

@@ -9,25 +9,13 @@ import os
 
 
 ip = '127.0.0.1'
+old_port = '7071'
 port = '7072'
 graph = 'ldbcSf1'
 folder_name = ''
 user = 'admin'
 password = '73@TuGraph'
 
-is_delete=False
-
-delete_cypher="CALL db.deleteLabel('edge', '%s')"
-# cypher='create view ROOT_POST as ( Construct (n)-[r:ROOT_POST]->(m) match (n:Comment)-[:replyOf*..]->(m:Post) )'
-# cypher='match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)'
-# cypher ='match (n:Comment{id:561})-[r:replyOf]->(m) with r limit 1 return r'
-# cypher ='match (n:Comment{id:561}),(m:Post{id:556}) with n,m create (n)-[:replyOf{creationDate:1266568959307}]->(m)'
-# cypher = 'create view test as match (n:person)-[]->()-[]->(m:keyword) return n,m'
-# cypher='create view two_hop_friend as match (n:user)-[:is_friend*..2]->(m:user) return n,m'
-# cypher = 'MATCH (a)-[]->(n:user)-[:is_friend*..2]->(m:user) return m'
-# cypher = 'MATCH (n:person)-[r]->()-[]->(m:keyword) return m'
-# cypher = 'MATCH (m:keyword)<-[r]-()<-[]-(n:person) return m'
-# cypher = 'MATCH (m:keyword)<-[]-()<-[]-(n:person) return count(n)'
 root_folder="/tugraph-db_graph_views/view_test"
 # view_folder="/tugraph-db_graph_views/view_test/views"
 # output_path=""
@@ -36,6 +24,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="TuGraph Rpc Client for python")
     parser.add_argument('-i', '--ip', help='ip for graph server')
     parser.add_argument('-p', '--port', help='port for graph server')
+    parser.add_argument('-o', '--old_port', help='original port for graph server')
     parser.add_argument('-g', '--graph', help='graph name')
     parser.add_argument('-u', '--user', help='user name')
     parser.add_argument('-c', '--cypher', help='cypher to query')
@@ -49,6 +38,9 @@ def parse_args():
     if args.port:
         global port
         port = args.port
+    if args.old_port:
+        global old_port
+        old_port = args.old_port
     if args.graph:
         global graph
         graph = args.graph

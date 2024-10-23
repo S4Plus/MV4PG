@@ -1,1 +1,1 @@
-match (n0:Comment)-[r1*2..2]->(n1:Place)<-[r2:isPartOf]-(n2:Place) return count(n2)
+match (n0:Place{name:$placeName})<-[r1:isPartOf]-(n1:Place),(n0)<-[r2*2]-(n2:Comment) return count(n2)
