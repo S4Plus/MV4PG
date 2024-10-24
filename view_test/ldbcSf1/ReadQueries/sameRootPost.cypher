@@ -1,1 +1,0 @@
-match (n1:Comment)-[r1:replyOf*..]->(m:Post)<-[r2:replyOf*..]-(n2:Comment) return count(n2)

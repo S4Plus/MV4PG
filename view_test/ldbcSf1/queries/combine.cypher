@@ -1,1 +1,0 @@
-match (n:Person)-[r:knows*..2]->(:Person)-[:likes]->(:Comment)-[:replyOf*..]->(m:Post) return n,m limit 100
