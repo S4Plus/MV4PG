@@ -95,16 +95,13 @@ class TransSingleMatchVisitor : public LcypherVisitor {
     std::any visitOC_Cypher(LcypherParser::OC_CypherContext *ctx) override {
         // std::cout <<"Cypher start"<<std::endl;
         // rewrite_query = std::any_cast<std::string>(visit(ctx->oC_Statement()));
-        rewrite_query=visitChildrenToString(ctx);
+        visitChildren(ctx);
         return 0;
     }
 
     std::any visitOC_Statement(LcypherParser::OC_StatementContext *ctx) override {
-        // std::cout <<"Statement start"<<std::endl;
-        // if(ctx->oC_View()==nullptr){
-        //     throw lgraph::CypherException("Not Views");
-        // }
-        return visitChildrenToString(ctx);
+        rewrite_query=visitChildrenToString(ctx);
+        return 0;
     }
 
     std::any visitOC_Query(LcypherParser::OC_QueryContext *ctx) override {

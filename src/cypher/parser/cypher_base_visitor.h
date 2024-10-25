@@ -227,7 +227,7 @@ class CypherBaseVisitor : public LcypherVisitor {
 
     std::any visitOC_SinglePartQuery(
         LcypherParser::OC_SinglePartQueryContext *ctx) override {
-        if (ctx->oC_ReadingClause().size() > 2) CYPHER_TODO();
+        // if (ctx->oC_ReadingClause().size() > 2) CYPHER_TODO();
         return visitChildren(ctx);
     }
 
@@ -259,7 +259,8 @@ class CypherBaseVisitor : public LcypherVisitor {
         clause.type = Clause::MATCH;
         clause.data = std::make_shared<Clause::TYPE_MATCH>(std::move(pattern), std::move(hints),
                                                            std::move(where), optional);
-        _query[_curr_query].parts[_curr_part].AddClause(clause);
+        if(!_query[_curr_query].parts[_curr_part].match_clause)
+            _query[_curr_query].parts[_curr_part].AddClause(clause);
         _LeaveClauseMATCH();
         return 0;
     }
