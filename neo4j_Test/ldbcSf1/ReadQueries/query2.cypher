@@ -1,0 +1,1 @@
+match (n0:Place{name:'China'})<-[r1:isPartOf]-(n1:Place),(n0)<-[r2*2]-(n2:Comment) return count(n2)

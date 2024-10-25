@@ -1,0 +1,2 @@
+match (n0:Tag)<-[r1:hasInterest]-(n1:Person)-[r2]->(n2)-[r3]->(n3:Place) where toInteger(n0.hasType)>100 return count(n3)
+match (n0:Comment)-[r1:replyOf*..]->(n1:Post)-[r2:postHasCreator]->(n2:Person)-[r3]->(n3)-[r4]->(n4:Place) where toInteger(n0.creationDate)<1280000000000 return count(n4)
