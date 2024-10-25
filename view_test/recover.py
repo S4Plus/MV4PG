@@ -16,7 +16,7 @@ folder_name = ''
 user = 'admin'
 password = '73@TuGraph'
 
-root_folder="/tugraph-db_graph_views/view_test"
+root_folder="../view_test"
 # view_folder="/tugraph-db_graph_views/view_test/views"
 # output_path=""
 
@@ -65,18 +65,55 @@ def parse_args():
 
 
 
-def call_cypher(cypher):
+def call_cypher(input_cypher,port,graph):
     url = ip + ":" + port
-    print(cypher)
+    print("call cypher:",input_cypher)
     client = TuGraphClient(url, user, password,graph)
     
     try:
         print("create start")
-        ret = client.call_cypher(cypher)['result']
+        ret = client.call_cypher(input_cypher)['result']
         print("create end")
         return True,ret
     except Exception as e:
         return False,""
+
+def test_cypher(input_cypher):
+    ave_time=0
+    optimized_ave_time=0
+
+    start=time.time()
+    try:
+        is_success,records=call_cypher(input_cypher,old_port,graph)
+    except Exception as e:
+        print("error")
+    end=time.time()
+    print("cypher duration:",end-start)
+    ave_time+=end-start
+
+    start=time.time()
+    try:
+        is_success,optimized_records=call_cypher(input_cypher, port,graph)
+    except Exception as e:
+        print("error")
+    end=time.time()
+    print("optimized cypher duration:",end-start)
+    optimized_ave_time+=end-start
+
+    f=open(output_path,"a")
+    f.write(input_cypher+"\n")
+    f.write("original_time: "+str(ave_time)+"\n")
+    f.write("optimized_time: "+str(optimized_ave_time)+"\n")
+    f.write("speed up: "+str(ave_time/optimized_ave_time)+"\n")
+    if(len(records)<11):
+        for i in range(0,len(records)):
+            if(records[i]!=optimized_records[i]):
+                print("wrong: "+input_cypher)
+                print("records:"+str(records[i]))
+                print("optimized_records:"+str(optimized_records[i]))
+            f.write(str(records[i])+"\n")
+            f.write(str(optimized_records[i])+"\n")
+    f.write("\n")
 
 if  __name__ == '__main__':
     parse_args()
@@ -93,24 +130,23 @@ if  __name__ == '__main__':
     # view_name=cypher.split(" ")[2]
     if folder_name=='':
         folder_name=graph
-    view_folder=os.path.join(root_folder,folder_name,"views")
-    output_path=os.path.join(root_folder,folder_name,"create_log.txt")
-    try:
-        if(is_delete):
-            for file in os.listdir(view_folder):
-                view_name=file.split(".")[0]
-                call_cypher(delete_cypher % view_name)
-        for file in os.listdir(view_folder):
-            start_time=time.time()
-            cypher = open(view_folder+"/"+file).read()
-            is_success,records=call_cypher(cypher)
-            end_time=time.time()
-            # print("查询时间：",end_time-start_time)
-            f=open(output_path,'a')
-            f.write("create view cypher: "+cypher+"\n")
-            f.write("create time: "+str(end_time-start_time)+"\n\n")
-            print(records[0])
-            f.close()
+    view_folder=os.path.join(root_folder,folder_name,"recover")
+    output_path=os.path.join(root_folder,folder_name,"recover.txt")
+    for file in os.listdir(view_folder):       
+        lines = open(view_folder+"/"+file).readlines()
+        for line in lines:
+            print(line)
+            test_cypher(line)
+        #     start_time=time.time()
+        #     cypher = line
+        #     is_success,records=call_cypher(cypher)
+        #     end_time=time.time()
+        # # print("查询时间：",end_time-start_time)
+        #     f=open(output_path,'a')
+        #     f.write("recover cypher: "+cypher+"\n")
+        #     f.write("create time: "+str(end_time-start_time)+"\n\n")
+        #     print(records[0])
+        #     f.close()
         # f=open("edge.csv",'w')
         # min_id=100000000
         # max_id=0
@@ -129,6 +165,6 @@ if  __name__ == '__main__':
         # for i in range(min_id,max_id+1):
         #     f2.write(str(i-min_id)+"\n")
         #     # print(record[0])
-    except Exception as e:
-        print(e)
+    # except Exception as e:
+    #     print(e)
     

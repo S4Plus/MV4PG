@@ -1,1 +1,1 @@
-match (n0:Place)<-[r1*2]-(n1:Account)-[r2:withdraw*..]->(n3:Account) return count(n3)
+match (n0:Medium)-[r1:signIn]->(n1:Account)-[r2*..2]->(n2:Loan) return count(n2)

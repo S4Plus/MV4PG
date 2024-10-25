@@ -15,7 +15,7 @@ folder_name = ''
 user = 'admin'
 password = '73@TuGraph'
 # cypher = 'match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)'
-root_folder="/tugraph-db_graph_views/view_test/"
+root_folder="../view_test/"
 # parameter_folder="/tugraph-db_graph_views/view_test/finbench_parameter"
 cycle = 5
 # output_path=""
@@ -86,6 +86,7 @@ def call_cypher(input_cypher, input_port,input_graph):
         return False,""
 
 def test_cypher(input_cypher):
+    global cycle
     if(is_read==False):
         cycle=1
     ave_time=0
@@ -173,7 +174,10 @@ if  __name__ == '__main__':
     if folder_name=='':
         folder_name=graph
     global output_path
-    output_path=os.path.join(root_folder,folder_name,"optimization.txt")
+    if is_read:
+        output_path=os.path.join(root_folder,folder_name,"optimization.txt")
+    else:
+        output_path=os.path.join(root_folder,folder_name,"maintenance_log.txt")
     OptTest(is_read,folder_name)
     # OptTest(False,folder_name)
     # if folder_name=='':

@@ -1,1 +1,0 @@
-MATCH (a:Account{id:%d}), (loan:Loan{id:%d}) CREATE (a)-[:repay{timestamp: %d, amount: %f}]->(loan);

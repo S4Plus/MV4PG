@@ -1,0 +1,1 @@
+MATCH (acc:Account {id: 1974997761410411}),(loan: Loan {id: 226310554199796320}) create (acc)-[r:repay{timestamp: 1656838704782,amount: 11624007.36}]->(loan)

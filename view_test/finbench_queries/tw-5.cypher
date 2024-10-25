@@ -1,1 +1,0 @@
-MATCH (c:Company {id:%d}) WITH c CREATE (c)-[:own]->(:Account {id: %d, createTime: %d, isBlocked: %s, type: '%s'});

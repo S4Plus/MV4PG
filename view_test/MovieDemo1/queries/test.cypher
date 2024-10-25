@@ -1,1 +1,0 @@
-match (n:user)-[:rate]->(:movie)-[:has_keyword]->(m:keyword) return count(m)

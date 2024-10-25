@@ -1,1 +1,0 @@
-MATCH (p:Person{id:%d}) WITH p CREATE(p)-[:own]->(a:Account{id:%d, createTime:%d, isBlocked:%s, type:'%s'});

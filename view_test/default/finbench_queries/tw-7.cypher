@@ -1,1 +1,0 @@
-MATCH (c:Company {id: %d}) CREATE (:Loan {id: %d, loanAmount: %f, balance: %f})<-[:apply {timestamp: %d}]-(c);

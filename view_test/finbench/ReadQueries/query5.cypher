@@ -1,1 +1,1 @@
-match (n0:Person)-[r1]->(n1)-[r2]->(n2:Place)<-[r3*2]-(n3:Comment) return count(n3)
+match (n0:Loan)<-[r1]-(n1)<-[r2]-(n2:Company)<-[r3*2]-(n3:Person) return count(n3)

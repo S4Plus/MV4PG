@@ -28,7 +28,7 @@ delete_cypher="CALL db.deleteLabel('edge', '%s')"
 # cypher = 'MATCH (n:person)-[r]->()-[]->(m:keyword) return m'
 # cypher = 'MATCH (m:keyword)<-[r]-()<-[]-(n:person) return m'
 # cypher = 'MATCH (m:keyword)<-[]-()<-[]-(n:person) return count(n)'
-root_folder="/tugraph-db_graph_views/view_test"
+root_folder="../view_test"
 # view_folder="/tugraph-db_graph_views/view_test/views"
 # output_path=""
 
@@ -41,7 +41,7 @@ def parse_args():
     parser.add_argument('-c', '--cypher', help='cypher to query')
     parser.add_argument('-f', '--folder', help='folder name')
     parser.add_argument('--password', help='user password')
-    parser.add_argument('--is_delete', help='is delete')
+    parser.add_argument('-d', '--is_delete', help='is delete')
     args = parser.parse_args()
     if args.ip:
         global ip

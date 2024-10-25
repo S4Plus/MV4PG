@@ -1,1 +1,0 @@
-match (n:movie{id:1}),(m:keyword{id:20}) with n,m create (n)-[r:has_keyword]->(m)

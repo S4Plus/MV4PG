@@ -1,1 +1,0 @@
-match (n:movie{id:1})-[r:has_keyword]->(:keyword{id:20}) delete r

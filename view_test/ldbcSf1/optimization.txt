@@ -96,3 +96,57 @@ speed up: 0.006984975149275906
 ['deleted 1 vertices, deleted 9 edges.']
 ['__null__']
 
+MATCH (p1:Person {id: 987}), (p2:Person {id: 2199023265994})
+CREATE (p1)-[:knows {creationDate: 13824310250, weight:0}]->(p2)
+cycle: 1
+original_time: 0.01950526237487793
+optimized_time: 0.8495056629180908
+speed up: 0.022960720836017103
+['created 0 vertices, created 1 edges.']
+['V[27565]']
+
+MATCH (n:Person {id: 65})-[r:likes]->(m:Comment {id: 1649268071638})
+DELETE r
+cycle: 1
+original_time: 0.012416601181030273
+optimized_time: 0.012892961502075195
+speed up: 0.9630526841355844
+['deleted 0 vertices, deleted 0 edges.']
+['deleted 0 vertices, deleted 0 edges.']
+
+MATCH (n:Post {id: 556})
+DETACH DELETE n
+cycle: 1
+original_time: 0.01105189323425293
+optimized_time: 0.015291213989257812
+speed up: 0.7227610078583011
+['deleted 0 vertices, deleted 0 edges.']
+['deleted 0 vertices, deleted 0 edges.']
+
+MATCH (p1:Person {id: 987}), (p2:Person {id: 2199023265994})
+CREATE (p1)-[:knows {creationDate: 13824310250, weight:0}]->(p2)
+cycle: 1
+original_time: 0.019644737243652344
+optimized_time: 0.8427791595458984
+speed up: 0.023309472026144088
+['created 0 vertices, created 1 edges.']
+['V[27565]']
+
+MATCH (n:Person {id: 65})-[r:likes]->(m:Comment {id: 1649268071638})
+DELETE r
+cycle: 1
+original_time: 0.012219667434692383
+optimized_time: 0.025089502334594727
+speed up: 0.48704303783033837
+['deleted 0 vertices, deleted 1 edges.']
+['V[26061]']
+
+MATCH (n:Post {id: 556})
+DETACH DELETE n
+cycle: 1
+original_time: 0.01104116439819336
+optimized_time: 0.03048872947692871
+speed up: 0.36213920972169006
+['deleted 1 vertices, deleted 9 edges.']
+['deleted 0 vertices, deleted 0 edges.']
+

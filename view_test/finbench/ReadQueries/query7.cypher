@@ -1,1 +1,1 @@
-match (n0:Comment)-[r1:replyOf*..]->(n1:Post)-[r2:postHasCreator]->(n2:Person)-[r3]->(n3)-[r4]->(n4:Place) where n0.creationDate<$creationDate return count(n4)
+match (n0:Account)-[r1*..2]->(n1:Loan)<-[r2]-(n2)<-[r3]-(n3:Company) return count(n1)

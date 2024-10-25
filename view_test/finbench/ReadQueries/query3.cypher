@@ -1,1 +1,1 @@
-match (n0:Company)<-[r1*2]-(n1:Person)-[r2:own]->(n2:Account) return count(n2)
+match (n0:Person)-[r1*2]->(n1:Company),(n0)-[r2:own]->(n2:Account) return count(n1)
