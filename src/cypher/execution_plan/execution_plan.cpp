@@ -1050,12 +1050,12 @@ bool ExecutionPlan::_PlaceFilterToNode(std::shared_ptr<lgraph::Filter> &f, OpBas
 }
 
 void WriteOutput(std::string cypher_query, std::chrono::duration<double> elapsed){
-    std::filesystem::path output_dir = "../output";
+    std::filesystem::path output_dir = "./output";
     if (!std::filesystem::exists(output_dir)) {
         std::filesystem::create_directories(output_dir);
     }
-    std::string filename = "../output/output.txt";
-    std::ofstream outfile(filename);
+    std::string filename = "./output/output.txt";
+    std::ofstream outfile(filename, std::ios::app);
     if (!outfile) {
         LOG_DEBUG() << "无法打开文件: " << filename;
         return;

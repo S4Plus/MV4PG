@@ -390,6 +390,31 @@ void Transaction::Abort() {
     }
 }
 
+void Transaction::MaintenanceViewStatistics(lgraph::LabelId lid){
+    std::string label=GetEdgeLabel(lid);
+    auto parent_dir=db_->GetConfig().dir;
+    if(parent_dir.end()[-1]=='/')parent_dir.pop_back();
+    std::string file_path=parent_dir+"/view/"+db_->GetConfig().name+".json";
+    std::ifstream ifs(file_path);
+    if (!ifs) {
+        LOG_DEBUG() << "Failed to open file: " << file_path;
+        return;
+    }
+    // 使用nlohmann的json库来解析文件
+    nlohmann::json j;
+    try {
+        ifs >> j;
+    } catch (nlohmann::json::parse_error& e) {
+        j = nlohmann::json::array();
+    }
+    if(!j.at(0).contains(label))return;
+    auto element=j.at(0).at(label);
+    j.at(0).at(label).at("result_num") = element.at("result_num").get<int>()-1;
+
+    std::ofstream output_file(file_path);
+    output_file << std::setw(4) << j << std::endl;
+}
+
 void Transaction::DeleteVertex(graph::VertexIterator& it, size_t* n_in, size_t* n_out) {
     // LOG_DEBUG() << "Delete vertex in transcation.cpp: " << it.GetId();
     if (n_in) *n_in = 0;
@@ -420,6 +445,8 @@ void Transaction::DeleteVertex(graph::VertexIterator& it, size_t* n_in, size_t* 
         for (size_t i = 0; i < edge_value.GetEdgeCount(); i++) {
             const auto& data = edge_value.GetNthEdgeData(i);
             auto edge_schema = curr_schema_->e_schema_manager.GetSchema(data.lid);
+            MaintenanceViewStatistics(data.lid);
+
             FMA_ASSERT(edge_schema);
             // LOG_DEBUG() << "Delete vertex in transcation.cpp 5 " << it.GetId();
             if (is_out_edge) {

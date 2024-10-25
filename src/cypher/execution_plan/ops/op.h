@@ -233,7 +233,10 @@ struct OpBase {
         for (int i = 0; i < indent; i++) s.append(" ");
         s.append(op->ToString());
         if (statistics) {
-            s.append(" (").append(std::to_string(op->stats.profileRecordCount)).append(" rows)");
+            s.append(" (").append(std::to_string(op->stats.profileRecordCount)).append(" rows");
+            if(op->type==OpType::EXPAND_ALL)
+                s.append(", ").append(std::to_string(op->stats.db_hit)).append(" edges");
+            s.append(")");
         }
         s.append("\n");
         for (auto child : op->children) {

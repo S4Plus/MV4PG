@@ -699,7 +699,7 @@ class Transaction {
      * \param [in,out]  n_out   Returns the number of out-going edges.
      */
     void DeleteVertex(graph::VertexIterator& it, size_t* n_in = nullptr, size_t* n_out = nullptr);
-
+    void MaintenanceViewStatistics(lgraph::LabelId lid);
     /**
      * Deletes the vertex specified by vid.
      *

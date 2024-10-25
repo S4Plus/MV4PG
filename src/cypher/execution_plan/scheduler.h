@@ -50,7 +50,6 @@ class Scheduler {
     const std::string EvalCypher(RTContext *ctx, const std::string &script, ElapsedTime &elapsed, bool is_with_new_txn);
     // void EvalCypher(RTContext *ctx, const std::string &script, ElapsedTime &elapsed, bool update_view);
     const std::string EvalCypherWithoutNewTxn(RTContext *ctx, const std::string &script, ElapsedTime &elapsed);
-    
     static bool DetermineReadOnly(cypher::RTContext *ctx,
                                   const lgraph_api::GraphQueryType &query_type,
                                   const std::string &script, std::string &name, std::string &type);
@@ -64,6 +63,7 @@ class Scheduler {
 
     static bool DetermineGqlReadOnly(cypher::RTContext *ctx, const std::string &script,
                                      std::string &name, std::string &type);
+    void WriteProfile(std::string cypher_query, std::string content);
     // void UpdateView(RTContext *ctx);
 };
 }  // namespace cypher

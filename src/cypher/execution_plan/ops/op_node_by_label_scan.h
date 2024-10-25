@@ -83,8 +83,8 @@ class NodeByLabelScan : public OpBase {
             consuming_ = true;
         } else {
             it_->Next();
-            if (!it_->IsValid()) return OP_DEPLETED;
             if(profile_)stats.db_hit++;
+            if (!it_->IsValid()) return OP_DEPLETED;
         }
 #ifndef NDEBUG
         LOG_DEBUG() << alias_ << ": " << it_->GetId();

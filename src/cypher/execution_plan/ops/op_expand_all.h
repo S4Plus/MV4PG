@@ -128,9 +128,10 @@ class ExpandAll : public OpBase {
         auto nbr_it = ctx->txn_->GetTxn()->GetVertexIterator(eit_->GetNbr(expand_direction_));
         while (ctx->txn_->GetTxn()->GetVertexLabel(nbr_it) != neighbor_->Label()) {
             eit_->Next();
-            if (!eit_->IsValid()) return false;
             if(profile_)stats.db_hit++;
+            if (!eit_->IsValid()) return false;
             nbr_it.Goto(eit_->GetNbr(expand_direction_));
+            if(profile_)stats.db_hit++;
             CYPHER_THROW_ASSERT(nbr_it.IsValid());
         }
         return true;
@@ -154,7 +155,7 @@ class ExpandAll : public OpBase {
             _InitializeEdgeIter(ctx);
             while (_CheckToSkipEdge(ctx)) {
                 eit_->Next();
-                if(profile_ && eit_->IsValid())stats.db_hit++;
+                if(profile_)stats.db_hit++;
             }
             if (!eit_->IsValid() || !_FilterNeighborLabel(ctx)) return OP_REFRESH;
             /* When relationship is undirected, GetNbr() will get src for out_edge_iterator
@@ -171,7 +172,7 @@ class ExpandAll : public OpBase {
         if(ctx->path_unique_)pattern_graph_->VisitedEdges().Erase(*eit_);
         do {
             eit_->Next();
-            if(profile_ && eit_->IsValid())stats.db_hit++;
+            if(profile_)stats.db_hit++;
         } while (_CheckToSkipEdge(ctx));
         if (!eit_->IsValid() || !_FilterNeighborLabel(ctx)) return OP_REFRESH;
         neighbor_->PushVid(eit_->GetNbr(expand_direction_));

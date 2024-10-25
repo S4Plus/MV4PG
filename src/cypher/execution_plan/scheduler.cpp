@@ -33,6 +33,7 @@
 #include "parser/reverse_rewrite_visitor.h"
 #include "parser/rewrite_use_views_visitor.h"
 #include "parser/view_maintenance_visitor.h"
+#include "parser/trans_single_match_visitor.h"
 
 #include "cypher/execution_plan/execution_plan.h"
 #include "cypher/execution_plan/scheduler.h"
@@ -182,6 +183,24 @@ MaintenanceTemplate GeneratorMaintenanceTemplate(std::string view_query){
     return templates;
 }
 
+void Scheduler::WriteProfile(std::string cypher_query, std::string content){
+    std::filesystem::path output_dir = "./output";
+    if (!std::filesystem::exists(output_dir)) {
+        std::filesystem::create_directories(output_dir);
+    }
+    std::string filename = "./output/profile.txt";
+    std::ofstream outfile(filename, std::ios::app);
+    if (!outfile) {
+        LOG_DEBUG() << "无法打开文件: " << filename;
+        return;
+    }
+    if(cypher_query!=""){
+        outfile << "cypher: " << cypher_query << std::endl;
+        outfile << content<<"\n" <<std::endl;
+    }
+    outfile.close();
+}
+
 const std::string Scheduler::EvalCypher(RTContext *ctx, const std::string &script, ElapsedTime &elapsed, bool is_with_new_txn) {
     ctx->path_unique_ = false;
     // LOG_DEBUG()<<"EvalCypherWithoutNewTxn txn exist:"<<(ctx->txn_!=nullptr);
@@ -196,12 +215,20 @@ const std::string Scheduler::EvalCypher(RTContext *ctx, const std::string &scrip
     using namespace antlr4;
     // LOG_DEBUG()<<"tugraph dir: "<< ctx->galaxy_->GetConfig().dir;
     auto t0 = fma_common::GetTime();
+    ANTLRInputStream inputT(script);
+    LcypherLexer lexerT(&inputT);
+    CommonTokenStream tokensT(&lexerT);
+    LOG_DEBUG() <<"parser s"<<std::endl; // de
+    LcypherParser parserT(&tokensT);
+    TransSingleMatchVisitor visitorT(parserT.oC_Cypher());
+    std::string trans_script=visitorT.GetRewriteQuery();
+    LOG_DEBUG()<<"trans_script:"<<trans_script;
     // <script, execution plan>
     thread_local LRUCacheThreadUnsafe<std::string, std::shared_ptr<ExecutionPlan>> tls_plan_cache;
     std::shared_ptr<ExecutionPlan> plan;
-    if (!tls_plan_cache.Get(script, plan)) {
+    if (!tls_plan_cache.Get(trans_script, plan)) {
         // auto rewrite_query=RewriteCypherUseViews(ctx,script);
-        ANTLRInputStream input(script);
+        ANTLRInputStream input(trans_script);
         LcypherLexer lexer(&input);
         CommonTokenStream tokens(&lexer);
         LOG_DEBUG() <<"parser s"<<std::endl; // de
@@ -325,8 +352,8 @@ const std::string Scheduler::EvalCypher(RTContext *ctx, const std::string &scrip
         }
         // LOG_DEBUG()<<"EvalCypherWithoutNewTxn txn exist6:"<<(ctx->txn_!=nullptr);
         LOG_DEBUG()<<"build start";
-        plan->Build(visitor.GetQuery(), visitor.CommandType(), ctx,visitor.CommandType()==parser::CmdType::PROFILE);
         plan->SetCypherQuery(script);
+        plan->Build(visitor.GetQuery(), visitor.CommandType(), ctx,visitor.CommandType()==parser::CmdType::PROFILE);
         LOG_DEBUG()<<"build end";
         // LOG_DEBUG()<<"EvalCypherWithoutNewTxn txn exist7:"<<(ctx->txn_!=nullptr);
         plan->Validate(ctx);
@@ -413,6 +440,9 @@ const std::string Scheduler::EvalCypher(RTContext *ctx, const std::string &scrip
     elapsed.t_exec = elapsed.t_total - elapsed.t_compile;
     if (plan->CommandType() == parser::CmdType::PROFILE){
         size_t db_hit=plan->GetDBHit();
+        std::string profile_inf=plan->DumpPlan(0, true);
+        profile_inf="total db hit:"+std::to_string(db_hit)+"\n"+profile_inf;
+        WriteProfile(script,profile_inf);
         size_t result_num=plan->Root()->stats.profileRecordCount;
         ctx->result_info_ = std::make_unique<ResultInfo>();
         ctx->result_ = std::make_unique<lgraph::Result>();

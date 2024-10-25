@@ -19,14 +19,10 @@
 #include <cassert>
 #include <tuple>
 #include "antlr4-runtime/antlr4-runtime.h"
-#include "parser/expression.h"
-#include "parser/generated/LcypherVisitor.h"
-#include "fma-common/utils.h"
-#include "parser/clause.h"
+
+#include "generated/LcypherVisitor.h"
 #include "cypher/cypher_exception.h"
-#include "procedure/procedure.h"
-#include "core/defs.h"
-#include "db/galaxy.h"
+// #include "cypher/parser/data_typedef.h"
 
 #if __APPLE__
 #ifdef TRUE
@@ -36,23 +32,18 @@
 #undef FALSE
 #endif
 #endif  // #if __APPLE__
-
 namespace parser {
 
 /**
  * This class provides an empty implementation of LcypherVisitor, which can be
  * extended to create a visitor which only needs to handle a subset of the available methods.
  */
-class ReverseRewriteVisitor : public LcypherVisitor {
-    cypher::RTContext *ctx_;
+class TransSingleMatchVisitor : public LcypherVisitor {
     size_t curr_pattern_graph = 0;  // 在整个Cypher中的第几个pattern_graph
-    std::string opt_query = "";
-    const std::vector<cypher::PatternGraph> &pattern_graphs_;
-
+    std::string rewrite_query;
     /* Anonymous entity are not in symbol table:
      * MATCH (n) RETURN exists((n)-->()-->())  */
-    size_t _anonymous_idx = 0;
-
+    int match_num=0;
     enum _ClauseType : uint32_t {
         NA = 0x0,
         MATCH = 0x1,
@@ -68,22 +59,11 @@ class ReverseRewriteVisitor : public LcypherVisitor {
         MERGE = 0x400,
         INQUERYCALL = 0x800,
     } _curr_clause_type = NA;
-    std::string GenAnonymousAlias(bool is_node) {
-        std::string alias(ANONYMOUS);
-        if (is_node) {
-            alias.append("N").append(std::to_string(_anonymous_idx));
-        } else {
-            alias.append("R").append(std::to_string(_anonymous_idx));
-        }
-        _anonymous_idx++;
-        return alias;
-    }
 
  public:
-    ReverseRewriteVisitor() = default;
-    ReverseRewriteVisitor(cypher::RTContext *ctx, antlr4::tree::ParseTree *tree,
-                             const std::vector<cypher::PatternGraph> &pattern_graphs)
-        : ctx_(ctx), pattern_graphs_(pattern_graphs) {
+    
+    TransSingleMatchVisitor() = default;
+    TransSingleMatchVisitor(antlr4::tree::ParseTree *tree){
         tree->accept(this);
     }
 
@@ -100,22 +80,46 @@ class ReverseRewriteVisitor : public LcypherVisitor {
         }
         return result;
     }
-    std::string GetOptQuery() const { return opt_query; }
+
+    std::string toLowerCase(const std::string& str) {
+        std::string result = str;
+        std::transform(result.begin(), result.end(), result.begin(), [](unsigned char c) {
+            return std::tolower(c);
+        });
+        return result;
+    }
+
+    const std::string GetRewriteQuery() const { return rewrite_query; }
+    // std::string GetViewName() const { return view_name; }
 
     std::any visitOC_Cypher(LcypherParser::OC_CypherContext *ctx) override {
-        opt_query = std::any_cast<std::string>(visit(ctx->oC_Statement()));
+        // std::cout <<"Cypher start"<<std::endl;
+        // rewrite_query = std::any_cast<std::string>(visit(ctx->oC_Statement()));
+        rewrite_query=visitChildrenToString(ctx);
         return 0;
     }
 
     std::any visitOC_Statement(LcypherParser::OC_StatementContext *ctx) override {
-        return std::any_cast<std::string>(visit(ctx->oC_Query()));
+        // std::cout <<"Statement start"<<std::endl;
+        // if(ctx->oC_View()==nullptr){
+        //     throw lgraph::CypherException("Not Views");
+        // }
+        return visitChildrenToString(ctx);
     }
 
     std::any visitOC_Query(LcypherParser::OC_QueryContext *ctx) override {
         return visitChildrenToString(ctx);
     }
 
+    // std::any visitOC_Views(LcypherParser::OC_ViewsContext *ctx) override {
+    //     return visitChildren(ctx);
+    // }
+
     std::any visitOC_View(LcypherParser::OC_ViewContext *ctx) override {
+        // std::cout <<"View start"<<std::endl;
+        // view_name=ctx->oC_LabelName()->getText();
+        // // view_name=std::any_cast<std::string>(visit(ctx->StringLiteral()));
+        // std::cout <<view_name;
         return visitChildrenToString(ctx);
     }
 
@@ -125,18 +129,17 @@ class ReverseRewriteVisitor : public LcypherVisitor {
 
     std::any visitOC_RegularQuery(LcypherParser::OC_RegularQueryContext *ctx) override {
         // reserve for single_queries
-        _anonymous_idx = 0;
+        // std::cout <<"RQ s"<<std::endl;
         return visitChildrenToString(ctx);
     }
 
     std::any visitOC_Union(LcypherParser::OC_UnionContext *ctx) override {
-        _anonymous_idx = 0;
-        curr_pattern_graph++;
-        return visitChildrenToString(ctx);
+        match_num=0;
+        return visitChildren(ctx);
     }
 
     std::any visitOC_SingleQuery(LcypherParser::OC_SingleQueryContext *ctx) override {
-        return visitChildrenToString(ctx);
+        return visitChildren(ctx);
     }
 
     std::any visitOC_SinglePartQuery(LcypherParser::OC_SinglePartQueryContext *ctx) override {
@@ -144,6 +147,13 @@ class ReverseRewriteVisitor : public LcypherVisitor {
     }
 
     std::any visitOC_MultiPartQuery(LcypherParser::OC_MultiPartQueryContext *ctx) override {
+        // if(ctx->oC_ReadingClause().size()==0)
+        //     // throw ("no match clause");
+        //     throw lgraph::CypherException("no match clause");
+        // if(ctx->oC_ReadingClause(0)->oC_Match()==nullptr)
+        //     // throw ("no match clause");
+        //     throw lgraph::CypherException("no match clause");
+        // std::cout<<"match s"<<std::endl;
         return visitChildrenToString(ctx);
     }
 
@@ -155,88 +165,24 @@ class ReverseRewriteVisitor : public LcypherVisitor {
         return visitChildrenToString(ctx);
     }
 
-    std::string ReverseNode(const cypher::Node *node){
-        std::string node_cypher="";
-        node_cypher.append("(");
-        if(!node->Alias().empty()){
-            std::string name=node->Alias();
-            if(name[0]=='@')name=name.substr(1);
-            node_cypher.append(name);
-        }
-        if(!node->Label().empty()){
-            node_cypher.append(":"+node->Label());
-        }
-        if(!node->Prop().Empty()){
-            node_cypher.append("{");
-            node_cypher.append(node->Prop().field+":");
-            if(node->Prop().type==2){
-                if(node->Prop().value.type==lgraph::FieldType::STRING){
-                    node_cypher.append("'");
-                }
-                node_cypher.append(node->Prop().value.ToString());
-                if(node->Prop().value.type==lgraph::FieldType::STRING){
-                    node_cypher.append("'");
-                }
-            }
-            else{
-                node_cypher.append(node->Prop().value_alias);
-            }
-            node_cypher.append("}");
-        }
-
-        node_cypher.append(")");
-        return node_cypher;
-    }
-
-    std::string ReverseRelp(const cypher::Relationship *relationship){
-        std::string relp_cypher="";
-        if(relationship->direction_==LEFT_TO_RIGHT)
-                relp_cypher.append("-");
-            else if(relationship->direction_==RIGHT_TO_LEFT)
-                relp_cypher.append("<-");
-            else
-                relp_cypher.append("-");
-            relp_cypher.append("[");
-            if(!relationship->Alias().empty()){
-                std::string name=relationship->Alias();
-                if(name[0]=='@')name=name.substr(1);
-                relp_cypher.append(name);
-            }
-            if(!relationship->Types().empty()){
-                relp_cypher.append(":");
-                int temp_index = 0;
-                for(auto it:relationship->Types()){
-                    if(temp_index>0)
-                        relp_cypher.append("|");
-                    relp_cypher.append(it);                  
-                    temp_index++;
-                }
-
-            }
-            if(relationship->VarLen())
-            {
-                relp_cypher.append("*").append(std::to_string(relationship->MinHop())).append("..");
-                if(relationship->MaxHop()<128)
-                    relp_cypher.append(std::to_string(relationship->MaxHop()));
-            }
-
-            // TODO: relationship Property
-            relp_cypher.append("]");
-            if(relationship->direction_==LEFT_TO_RIGHT)
-                relp_cypher.append("->");
-            else if(relationship->direction_==RIGHT_TO_LEFT)
-                relp_cypher.append("-");
-            else
-                relp_cypher.append("-");
-        return relp_cypher;
-    }
-
     std::any visitOC_Match(LcypherParser::OC_MatchContext *ctx) override {
-        _EnterClauseMATCH();
-        std::string result=visitChildrenToString(ctx);
-        _LeaveClauseMATCH();
-        return result;
-        //return visitChildrenToString(ctx);
+        match_num++;
+        if(match_num<=1)return visitChildrenToString(ctx);
+        else{
+            std::string result;
+            for (auto child : ctx->children) {
+                std::string child_text;
+                if (child->children.size() > 0)
+                    child_text = std::any_cast<std::string>(visit(child));
+                else if(toLowerCase(child->getText())=="match"){
+                    child_text=" , ";
+                }
+                else
+                    child_text = child->getText();
+                result.append(child_text);
+            }
+            return result;
+        }
     }
 
     std::any visitOC_Unwind(LcypherParser::OC_UnwindContext *ctx) override {
@@ -252,7 +198,9 @@ class ReverseRewriteVisitor : public LcypherVisitor {
     }
 
     std::any visitOC_Create(LcypherParser::OC_CreateContext *ctx) override {
+        _EnterClauseCREATE();
         return visitChildrenToString(ctx);
+        _LeaveClauseCREATE();
     }
 
     std::any visitOC_Set(LcypherParser::OC_SetContext *ctx) override {
@@ -280,7 +228,6 @@ class ReverseRewriteVisitor : public LcypherVisitor {
     }
 
     std::any visitOC_StandaloneCall(LcypherParser::OC_StandaloneCallContext *ctx) override {
-        _anonymous_idx = 0;
         return visitChildrenToString(ctx);
     }
 
@@ -293,21 +240,47 @@ class ReverseRewriteVisitor : public LcypherVisitor {
     }
 
     std::any visitOC_With(LcypherParser::OC_WithContext *ctx) override {
-        std::string result = visitChildrenToString(ctx);
-        curr_pattern_graph++;
-        return result;
+        match_num=0;
+        return visitChildrenToString(ctx);
     }
 
     std::any visitOC_Return(LcypherParser::OC_ReturnContext *ctx) override {
         return visitChildrenToString(ctx);
+        // std::cout <<"Return s"<<std::endl;
+        // std::string result;
+        // result="WITH ";
+        // if(ctx->DISTINCT()!=nullptr){
+        //     result.append(ctx->DISTINCT()->getText());
+        //     result.append(" ");
+        // }
+        // result.append(std::any_cast<std::string>(visit(ctx->oC_ReturnBody())));
+        // std::cout <<"Return e"<<std::endl;
+        // return result;
     }
 
     std::any visitOC_ReturnBody(LcypherParser::OC_ReturnBodyContext *ctx) override {
         return visitChildrenToString(ctx);
-    }
+    } 
 
     std::any visitOC_ReturnItems(LcypherParser::OC_ReturnItemsContext *ctx) override {
         return visitChildrenToString(ctx);
+        // std::cout <<"Return item s"<<std::endl;
+        // // if(ctx->oC_ReturnItem().size()!=2){
+        // //     throw lgraph::CypherException("Views now only support two return nodes");
+        // // }
+        // // std::string start=std::any_cast<std::string>(visit(ctx->oC_ReturnItem(0)));
+        // // std::string end=std::any_cast<std::string>(visit(ctx->oC_ReturnItem(1)));
+        // // const cypher::Node empty;
+        // // auto start_node = &(pattern_graphs_[curr_pattern_graph].GetNode(start));
+        // // auto end_node = &(pattern_graphs_[curr_pattern_graph].GetNode(end));
+        // // // if(start_node->Label().empty()||end_node->Label().empty())
+        // // //     throw lgraph::CypherException("Views need explicit node labels");
+        // // constraints.first=start_node->Label();
+        // // constraints.second=end_node->Label();
+        // // std::string result=start+","+end+" ";
+        // // result.append("CREATE ("+start+")-[r:"+view_name+"]->("+end+")");
+        // std::string result="CREATE (n:"+label+" { "+primary_key+":'"+primary_value+"' })";
+        // return result;
     }
 
     std::any visitOC_ReturnItem(LcypherParser::OC_ReturnItemContext *ctx) override {
@@ -339,45 +312,7 @@ class ReverseRewriteVisitor : public LcypherVisitor {
     }
 
     std::any visitOC_Pattern(LcypherParser::OC_PatternContext *ctx) override {
-        if(_InClauseMATCH()){
-            int i=curr_pattern_graph;
-            auto &pattern_graph=pattern_graphs_[i];
-            std::string opti="";
-            auto &relationships=pattern_graph.GetRelationships();
-            std::vector<cypher::PatternGraph>::size_type j = 0;
-            int temp_index=0;
-            bool have_node=false;
-            for(auto &node:pattern_graph.GetNodes()){
-                if(node.derivation_!=cypher::Node::Derivation::MATCHED)continue;
-                have_node=true;
-                if(temp_index>0)opti.append(",");
-                opti.append(ReverseNode(&node));
-                temp_index++;
-            }
-            for(auto &relationship:relationships){
-                if(relationship.derivation_!=cypher::Relationship::Derivation::MATCHED)continue;
-                // opti.append(" Match ");
-                if(have_node){
-                    opti.append(" Match ");
-                    have_node=false;
-                }
-                cypher::NodeID lhs=relationship.Lhs();
-                cypher::NodeID rhs=relationship.Rhs();
-                auto &lnode=pattern_graph.GetNode(lhs);
-                auto &rnode=pattern_graph.GetNode(rhs);
-                opti.append("("+lnode.Alias()+")");
-                // opti.append("(").append(lnode.Alias()).append(":").append(lnode.Label()).append(")");
-                opti.append(ReverseRelp(&relationship));
-
-                opti.append("("+rnode.Alias()+")");
-                //   opti.append("(").append(rnode.Alias()).append(":").append(rnode.Label()).append(")");
-                j++;
-                if(j!=relationships.size())
-                    opti.append(" Match ");
-            }
-            return opti;
-        }
-        else
+        // return visit(ctx->oC_PatternPart(0)->oC_AnonymousPatternPart()->oC_PatternElement());
         return visitChildrenToString(ctx);
     }
 
@@ -390,7 +325,7 @@ class ReverseRewriteVisitor : public LcypherVisitor {
         return visitChildrenToString(ctx);
     }
 
-    std::any visitOC_PatternElement(LcypherParser::OC_PatternElementContext *ctx) override {
+    std::any visitOC_PatternElement(LcypherParser::OC_PatternElementContext *ctx) override {    
         return visitChildrenToString(ctx);
     }
 
@@ -654,7 +589,7 @@ class ReverseRewriteVisitor : public LcypherVisitor {
         return ctx->getText();
     }
 
-#define CLAUSE_HELPER_FUNC(clause)                                                   \
+    #define CLAUSE_HELPER_FUNC(clause)                                                   \
     inline bool _InClause##clause() {                                                \
         return (_curr_clause_type & static_cast<_ClauseType>(clause)) != NA;         \
     }                                                                                \

@@ -253,7 +253,7 @@ class VarLenExpand : public OpBase {
             (ctx->path_unique_ && pattern_graph_->VisitedEdges().Contains(eits_[k - 1]))) {
             do {
                 eits_[k - 1].Next();
-                if(profile_ && eits_[k - 1].IsValid()){
+                if(profile_){
                     m_expand_cnt[k-1]++;
                     stats.db_hit++;
                 }
@@ -485,9 +485,32 @@ class VarLenExpand : public OpBase {
         auto towards = expand_direction_ == FORWARD    ? "-->"
                        : expand_direction_ == REVERSED ? "<--"
                                                        : "--";
-        return fma_common::StringFormatter::Format(
+        std::string s= fma_common::StringFormatter::Format(
             "{}({}) [{} {}*{}..{} {}]", name, "All", start_->Alias(), towards,
             std::to_string(min_hop_), std::to_string(max_hop_), neighbor_->Alias());
+
+        s.append("{\n");
+        for (size_t i = 0; i < 1; i++) s.append(" ");
+        s.append("node cnt:\n");
+        for(size_t i=0;i<m_node_cnt.size();i++){
+            for(size_t j=0;j<2;j++){
+                s.append(" ");
+            }
+            s.append("layer:");
+            s.append(std::to_string(i));
+            s.append(",count:"+std::to_string(m_node_cnt[i])+"\n");
+        }
+        s.append("expand cnt:\n");
+        for(size_t i=0;i<m_expand_cnt.size();i++){
+            for(size_t j=0;j<2;j++){
+                s.append(" ");
+            }
+            s.append("layer:");
+            s.append(std::to_string(i));
+            s.append(",count:"+std::to_string(m_expand_cnt[i])+"\n");
+        }
+        s.append("}");
+        return s;
     }
 
     Node *GetStartNode() const { return start_; }
