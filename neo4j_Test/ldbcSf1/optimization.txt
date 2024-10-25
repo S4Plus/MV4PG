@@ -1,0 +1,98 @@
+match (n0:Place)<-[r1*2]-(n1:Comment)-[r2:replyOf*..]->(n3:Post) return count(n3)
+cycle: 5
+original_time: 34.515132427215576
+optimized_time: 13.252336502075195
+speed up: 2.604456385620062
+[6156507]
+[6156507]
+
+query1
+match (n0:Comment)-[r1:replyOf*..]->(n1:Post)<-[r2:replyOf*..]-(n2:Comment) where n0<>n2 return count(n1)
+cycle: 1
+original_time: 52.532904624938965
+optimized_time: 21.757710456848145
+speed up: 2.414450028146434
+[27993305]
+[27993305]
+
+query2
+match (n0:Place{name:"China"})<-[r1:isPartOf]-(n1:Place),(n0)<-[r2*2]-(n2:Comment) return count(n2)
+cycle: 1
+original_time: 112.80691313743591
+optimized_time: 46.68498682975769
+speed up: 2.414450028146434
+[57428000]
+[57428000]
+
+query3
+match (n0:Place)<-[r1:personIsLocatedIn]-(n1:Person)-[r2]->(n2)-[r3]->(n3:Place) return count(n3)
+cycle: 1
+original_time: 104.94292640686035
+optimized_time: 2.1078124046325684
+speed up: 49.787602623561696
+[2410213]
+[2410213]
+
+query4
+match (n0:Place)<-[r1*2]-(n1:Comment)-[r2:replyOf*..]->(n2:Post) return count(n2)
+cycle: 1
+original_time: 35.429325342178345
+optimized_time: 13.938714027404785
+speed up: 2.5417929711823524
+[6156507]
+[6156507]
+
+query5
+match (n0:Place{name:'Taiwan'})<-[r1]-(n1)<-[r2]-(n2:Person),(n0)<-[r3*2]-(n3:Comment) return count(n3)
+cycle: 5
+original_time: 354.0644089221954
+optimized_time: 116.81275191307068
+speed up: 3.03104244291481
+[171747840]
+[171747840]
+
+query6
+match (n0:Tag)<-[r1:hasInterest]-(n1:Person)-[r2]->(n2)-[r3]->(n3:Place) where n0.hasType>100 return count(n3)
+cycle: 1
+original_time: 1838.0169332027435
+optimized_time: 27.163779497146606
+speed up: 67.66425612444013
+[41324343]
+[41324343]
+
+query7
+match (n0:Comment)-[r1:replyOf*..]->(n1:Post)-[r2:postHasCreator]->(n2:Person)-[r3]->(n3)-[r4]->(n4:Place) where n0.creationDate<1280000000000 return count(n4)
+cycle: 1
+original_time: 6764.9544768333435
+optimized_time: 61.151978492736816
+speed up: 110.62527564233814
+[100784775]
+[100784775]
+
+MATCH (p1:Person {id: 987}), (p2:Person {id: 2199023265994})
+CREATE (p1)-[:knows {creationDate: 13824310250, weight:0}]->(p2)
+cycle: 1
+original_time: 0.019127845764160156
+optimized_time: 0.8348062038421631
+speed up: 0.022912917604259515
+['created 0 vertices, created 1 edges.']
+['V[27565]']
+
+MATCH (n:Person {id: 65})-[r:likes]->(m:Comment {id: 1649268071638})
+DELETE r
+cycle: 1
+original_time: 0.012847423553466797
+optimized_time: 0.02329230308532715
+speed up: 0.5515737755258713
+['deleted 0 vertices, deleted 1 edges.']
+['V[26061]']
+
+MATCH (n:Post {id: 556})
+DETACH DELETE n
+cycle: 1
+original_time: 0.02654862403869629
+optimized_time: 3.800818681716919
+speed up: 0.006984975149275906
+['deleted 1 vertices, deleted 9 edges.']
+['__null__']
+

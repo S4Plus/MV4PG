@@ -1,0 +1,58 @@
+{
+    "match (n0:Comment),(n1:Post),(n2:Comment), (n0)-[ANON_ROOT_POST0:ROOT_POST]->(n1),(n2)-[ANON_ROOT_POST1:ROOT_POST]->(n1) where n0<>n2 return count(n1)": {
+        "result": "[<Record count(n1)=25941136>]",
+        "time": 35.625866651535034,
+        "add_nodes": 0,
+        "delete_nodes": 0,
+        "add_rel": 0,
+        "delete_rel": 0
+    },
+    "match (n0:Place{name:'China'}),(n1:Place),(n2:Comment), (n0)<-[r1:isPartOf]-(n1),(n2)-[ANON_COMMENT_PLACE0:COMMENT_PLACE]->(n0) return count(n2)": {
+        "result": "[<Record count(n2)=57428000>]",
+        "time": 49.810988664627075,
+        "add_nodes": 0,
+        "delete_nodes": 0,
+        "add_rel": 0,
+        "delete_rel": 0
+    },
+    "match (n0:Place),(n1:Person),(n3:Place), (n0)<-[r1:personIsLocatedIn]-(n1),(n1)-[ANON_PERSON_PLACE0:PERSON_PLACE]->(n3) return count(n3)": {
+        "result": "[<Record count(n3)=2410213>]",
+        "time": 1.4775569438934326,
+        "add_nodes": 0,
+        "delete_nodes": 0,
+        "add_rel": 0,
+        "delete_rel": 0
+    },
+    "match (n0:Place),(n1:Comment),(n2:Post), (n1)-[ANON_COMMENT_PLACE0:COMMENT_PLACE]->(n0),(n1)-[ANON_ROOT_POST0:ROOT_POST]->(n2) return count(n2)": {
+        "result": "[<Record count(n2)=6156507>]",
+        "time": 6.6874473094940186,
+        "add_nodes": 0,
+        "delete_nodes": 0,
+        "add_rel": 0,
+        "delete_rel": 0
+    },
+    "match (n0:Place{name:'Taiwan'}),(n2:Person),(n3:Comment), (n3)-[ANON_COMMENT_PLACE0:COMMENT_PLACE]->(n0),(n2)-[ANON_PERSON_PLACE0:PERSON_PLACE]->(n0) return count(n3)": {
+        "result": "[<Record count(n3)=171747840>]",
+        "time": 148.13326930999756,
+        "add_nodes": 0,
+        "delete_nodes": 0,
+        "add_rel": 0,
+        "delete_rel": 0
+    },
+    "match (n0:Tag),(n1:Person),(n3:Place), (n0)<-[r1:hasInterest]-(n1),(n1)-[ANON_PERSON_PLACE0:PERSON_PLACE]->(n3) where toInteger(n0.hasType)>100 return count(n3)": {
+        "result": "[<Record count(n3)=41324343>]",
+        "time": 26.120301246643066,
+        "add_nodes": 0,
+        "delete_nodes": 0,
+        "add_rel": 0,
+        "delete_rel": 0
+    },
+    "match (n0:Comment),(n1:Post),(n2:Person),(n4:Place), (n1)-[r2:postHasCreator]->(n2),(n2)-[ANON_PERSON_PLACE0:PERSON_PLACE]->(n4),(n0)-[ANON_ROOT_POST0:ROOT_POST]->(n1) where toInteger(n0.creationDate)<1280000000000 return count(n4)": {
+        "result": "[<Record count(n4)=100784775>]",
+        "time": 54.42632722854614,
+        "add_nodes": 0,
+        "delete_nodes": 0,
+        "add_rel": 0,
+        "delete_rel": 0
+    }
+}

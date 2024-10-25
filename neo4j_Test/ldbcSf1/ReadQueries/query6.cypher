@@ -1,0 +1,1 @@
+match (n0:Tag)<-[r1:hasInterest]-(n1:Person)-[r2]->(n2)-[r3]->(n3:Place) where n0.hasType>100 return count(n3)
