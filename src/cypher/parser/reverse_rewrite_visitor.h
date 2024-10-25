@@ -53,6 +53,21 @@ class ReverseRewriteVisitor : public LcypherVisitor {
      * MATCH (n) RETURN exists((n)-->()-->())  */
     size_t _anonymous_idx = 0;
 
+    enum _ClauseType : uint32_t {
+        NA = 0x0,
+        MATCH = 0x1,
+        RETURN = 0x2,
+        WITH = 0x4,
+        UNWIND = 0x8,
+        WHERE = 0x10,
+        ORDERBY = 0x20,
+        CREATE = 0x40,
+        DELETE = 0x80,
+        SET = 0x100,
+        REMOVE = 0x200,
+        MERGE = 0x400,
+        INQUERYCALL = 0x800,
+    } _curr_clause_type = NA;
     std::string GenAnonymousAlias(bool is_node) {
         std::string alias(ANONYMOUS);
         if (is_node) {
@@ -217,41 +232,10 @@ class ReverseRewriteVisitor : public LcypherVisitor {
     }
 
     std::any visitOC_Match(LcypherParser::OC_MatchContext *ctx) override {
-        int i=curr_pattern_graph;
-        auto &pattern_graph=pattern_graphs_[i];
-        std::string opti{"match "};
-        auto &relationships=pattern_graph.GetRelationships();
-        std::vector<cypher::PatternGraph>::size_type j = 0;
-        int temp_index=0;
-        bool have_node=false;
-        for(auto &node:pattern_graph.GetNodes()){
-            if(node.derivation_!=cypher::Node::Derivation::MATCHED)continue;
-            have_node=true;
-            if(temp_index>0)opti.append(",");
-            opti.append(ReverseNode(&node));
-            temp_index++;
-        }
-        for(auto &relationship:relationships){
-            if(relationship.derivation_!=cypher::Relationship::Derivation::MATCHED)continue;
-            if(have_node){
-                opti.append(", ");
-                have_node=false;
-            }
-            cypher::NodeID lhs=relationship.Lhs();
-            cypher::NodeID rhs=relationship.Rhs();
-            auto &lnode=pattern_graph.GetNode(lhs);
-            auto &rnode=pattern_graph.GetNode(rhs);
-            opti.append("("+lnode.Alias()+")");
-            // opti.append("(").append(lnode.Alias()).append(":").append(lnode.Label()).append(")");
-            opti.append(ReverseRelp(&relationship));
-
-            opti.append("("+rnode.Alias()+")");
-            //   opti.append("(").append(rnode.Alias()).append(":").append(rnode.Label()).append(")");
-            j++;
-            if(j!=relationships.size())
-            opti.append(",");
-          }
-          return opti;
+        _EnterClauseMATCH();
+        std::string result=visitChildrenToString(ctx);
+        _LeaveClauseMATCH();
+        return result;
         //return visitChildrenToString(ctx);
     }
 
@@ -355,6 +339,44 @@ class ReverseRewriteVisitor : public LcypherVisitor {
     }
 
     std::any visitOC_Pattern(LcypherParser::OC_PatternContext *ctx) override {
+        if(_InClauseMATCH()){
+            int i=curr_pattern_graph;
+            auto &pattern_graph=pattern_graphs_[i];
+            std::string opti="";
+            auto &relationships=pattern_graph.GetRelationships();
+            std::vector<cypher::PatternGraph>::size_type j = 0;
+            int temp_index=0;
+            bool have_node=false;
+            for(auto &node:pattern_graph.GetNodes()){
+                if(node.derivation_!=cypher::Node::Derivation::MATCHED)continue;
+                have_node=true;
+                if(temp_index>0)opti.append(",");
+                opti.append(ReverseNode(&node));
+                temp_index++;
+            }
+            for(auto &relationship:relationships){
+                if(relationship.derivation_!=cypher::Relationship::Derivation::MATCHED)continue;
+                if(have_node){
+                    opti.append(", ");
+                    have_node=false;
+                }
+                cypher::NodeID lhs=relationship.Lhs();
+                cypher::NodeID rhs=relationship.Rhs();
+                auto &lnode=pattern_graph.GetNode(lhs);
+                auto &rnode=pattern_graph.GetNode(rhs);
+                opti.append("("+lnode.Alias()+")");
+                // opti.append("(").append(lnode.Alias()).append(":").append(lnode.Label()).append(")");
+                opti.append(ReverseRelp(&relationship));
+
+                opti.append("("+rnode.Alias()+")");
+                //   opti.append("(").append(rnode.Alias()).append(":").append(rnode.Label()).append(")");
+                j++;
+                if(j!=relationships.size())
+                opti.append(",");
+            }
+            return opti;
+        }
+        else
         return visitChildrenToString(ctx);
     }
 
@@ -631,6 +653,29 @@ class ReverseRewriteVisitor : public LcypherVisitor {
         return ctx->getText();
     }
 
+#define CLAUSE_HELPER_FUNC(clause)                                                   \
+    inline bool _InClause##clause() {                                                \
+        return (_curr_clause_type & static_cast<_ClauseType>(clause)) != NA;         \
+    }                                                                                \
+    inline void _EnterClause##clause() {                                             \
+        _curr_clause_type = static_cast<_ClauseType>(_curr_clause_type | clause);    \
+    }                                                                                \
+    inline void _LeaveClause##clause() {                                             \
+        _curr_clause_type = static_cast<_ClauseType>(_curr_clause_type & (~clause)); \
+    }
+
+    CLAUSE_HELPER_FUNC(MATCH);
+    CLAUSE_HELPER_FUNC(RETURN);
+    CLAUSE_HELPER_FUNC(WITH);
+    CLAUSE_HELPER_FUNC(UNWIND);
+    CLAUSE_HELPER_FUNC(WHERE);
+    CLAUSE_HELPER_FUNC(ORDERBY);
+    CLAUSE_HELPER_FUNC(CREATE);
+    CLAUSE_HELPER_FUNC(DELETE);
+    CLAUSE_HELPER_FUNC(SET);
+    CLAUSE_HELPER_FUNC(REMOVE);
+    CLAUSE_HELPER_FUNC(MERGE);
+    CLAUSE_HELPER_FUNC(INQUERYCALL);
 };
 
 }  // namespace parser
