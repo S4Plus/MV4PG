@@ -1049,12 +1049,11 @@ bool ExecutionPlan::_PlaceFilterToNode(std::shared_ptr<lgraph::Filter> &f, OpBas
     return false;
 }
 
-void WriteOutput(std::string cypher_query, std::chrono::duration<double> elapsed){
-    std::filesystem::path output_dir = "./output";
+void WriteOutput(std::string output_dir, std::string cypher_query, std::chrono::duration<double> elapsed){
     if (!std::filesystem::exists(output_dir)) {
         std::filesystem::create_directories(output_dir);
     }
-    std::string filename = "./output/output.txt";
+    std::string filename = output_dir+"/output.txt";
     std::ofstream outfile(filename, std::ios::app);
     if (!outfile) {
         LOG_DEBUG() << "无法打开文件: " << filename;
@@ -1097,7 +1096,7 @@ OpBase *ExecutionPlan::BuildPart(const parser::QueryPart &part, int part_id) {
     }
     auto end_opt = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = end_opt - start_opt;
-    WriteOutput(cypher_query_,elapsed);
+    WriteOutput(data_dir+"/output",cypher_query_,elapsed);
     
     // LOG_DEBUG()<<"rewrite end:";
     // for(size_t i=0;i<_view_pattern_graphs.size();i++){

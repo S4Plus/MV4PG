@@ -54,3 +54,30 @@ speed up: 12.678933720799304
 [39595119]
 [39595119]
 
+PROFILE match (n0:Medium)-[r1:signIn]->(n1:Account)
+match (n1)-[r2*..2]->(n2:Loan) return count(n2)
+cycle: 1
+original_time: 314.0151903629303
+optimized_time: 64.23476910591125
+speed up: 4.8885548237151335
+['1026291452', '1']
+['172920252', '1']
+
+PROFILE match (n0:Loan)<-[r1]-(n1)<-[r2]-(n2:Company)
+match (n2)<-[r3*2]-(n3:Person) return count(n3)
+cycle: 1
+original_time: 62.26953387260437
+optimized_time: 20.809541702270508
+speed up: 2.9923548900555654
+['152686389', '1']
+['35587376', '1']
+
+PROFILE match (n0:Account)<-[r1:own]-(n1:Company)
+match (n1)-[r2]->(n2)-[r3]->(n3:Loan) return count(n3)
+cycle: 1
+original_time: 30.731894493103027
+optimized_time: 9.489156723022461
+speed up: 3.238632830095611
+['51231359', '1']
+['11073351', '1']
+

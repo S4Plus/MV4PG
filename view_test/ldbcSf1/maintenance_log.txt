@@ -1,64 +1,21 @@
-delete cypher: match (n:Comment{id:558})-[r:replyOf]->(m:Post{id:556}) with r limit 1 delete r
-       ave time: 0.02537250518798828
-create cypher: match (n:Comment{id:558}),(m:Post{id:556}) with n,m create (n)-[:replyOf{creationDate:1266604713724}]->(m)
-       ave time: 0.025610518455505372
-total time: 0.5098302364349365
-cycle: 10
-total ave time: 0.025491511821746825
-
-delete cypher: match (n:Comment{id:558})-[r:replyOf]->(m:Post{id:556}) with r limit 1 delete r
-       ave time: 0.03042469024658203
-create cypher: match (n:Comment{id:558}),(m:Post{id:556}) with n,m create (n)-[:replyOf{creationDate:1266604713724}]->(m)
-       ave time: 0.028122520446777342
-total time: 0.5854721069335938
-cycle: 10
-total ave time: 0.029273605346679686
-
-delete cypher: match (n:Comment{id:558})-[r:replyOf]->(m:Post{id:556}) with r limit 1 delete r
-       ave time: 0.028232836723327638
-create cypher: match (n:Comment{id:558}),(m:Post{id:556}) with n,m create (n)-[:replyOf{creationDate:1266604713724}]->(m)
-       ave time: 0.027974605560302734
-total time: 0.5620744228363037
-cycle: 10
-total ave time: 0.028103721141815186
-
-delete cypher: match (n:Comment{id:558})-[r:replyOf]->(m:Post{id:556}) with r limit 1 delete r
-       ave time: 0.03250749111175537
-create cypher: match (n:Comment{id:558}),(m:Post{id:556}) with n,m create (n)-[:replyOf{creationDate:1266604713724}]->(m)
-       ave time: 0.03093082904815674
-total time: 0.6343832015991211
-cycle: 10
-total ave time: 0.03171916007995605
-
-delete cypher: match (n:Comment{id:558})-[r:replyOf]->(m:Post{id:556}) with r limit 1 delete r
-       ave time: 0.033237123489379884
-create cypher: match (n:Comment{id:558}),(m:Post{id:556}) with n,m create (n)-[:replyOf{creationDate:1266604713724}]->(m)
-       ave time: 0.031952071189880374
-total time: 0.6518919467926025
-cycle: 10
-total ave time: 0.032594597339630126
-
-delete cypher: match (n:Comment{id:558})-[r:replyOf]->(m:Post{id:556}) with r limit 1 delete r
-       ave time: 0.03243589401245117
-create cypher: match (n:Comment{id:558}),(m:Post{id:556}) with n,m create (n)-[:replyOf{creationDate:1266604713724}]->(m)
-       ave time: 0.030848884582519533
-total time: 0.632847785949707
-cycle: 10
-total ave time: 0.03164238929748535
-
-delete cypher: match (n:Comment{id:558})-[r:replyOf]->(m:Post{id:556}) with r limit 1 delete r
-       ave time: 0.030620789527893065
-create cypher: match (n:Comment{id:558}),(m:Post{id:556}) with n,m create (n)-[:replyOf{creationDate:1266604713724}]->(m)
-       ave time: 0.032188701629638675
-total time: 0.6280949115753174
-cycle: 10
-total ave time: 0.031404745578765866
-
-delete cypher: match (n:Comment{id:558})-[r:replyOf]->(m:Post{id:556}) with r limit 1 delete r
-       ave time: 0.04090723991394043
-create cypher: match (n:Comment{id:558}),(m:Post{id:556}) with n,m create (n)-[:replyOf{creationDate:1266604713724}]->(m)
-       ave time: 0.04001436233520508
-total time: 0.40460801124572754
+MATCH (p1:Person {id: 987}), (p2:Person {id: 2199023265994})
+CREATE (p1)-[:knows {creationDate: 13824310250, weight:0}]->(p2)
 cycle: 5
-total ave time: 0.04046080112457275
+original_time: 0.02508411407470703
+optimized_time: 0.8392332553863525
+speed up: 0.029889323276589195
+
+MATCH (n:Person {id: 65})-[r:likes]->(m:Comment {id: 1649268071638})
+DELETE r
+cycle: 5
+original_time: 0.02259097099304199
+optimized_time: 0.04604482650756836
+speed up: 0.49062995143067223
+
+MATCH (n:Post {id: 556})
+DETACH DELETE n
+cycle: 5
+original_time: 0.02261972427368164
+optimized_time: 0.04144930839538574
+speed up: 0.54572018567624
 

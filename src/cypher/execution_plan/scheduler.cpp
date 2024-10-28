@@ -183,12 +183,11 @@ MaintenanceTemplate GeneratorMaintenanceTemplate(std::string view_query){
     return templates;
 }
 
-void Scheduler::WriteProfile(std::string cypher_query, std::string content){
-    std::filesystem::path output_dir = "./output";
+void Scheduler::WriteProfile(std::string output_dir, std::string cypher_query, std::string content){
     if (!std::filesystem::exists(output_dir)) {
         std::filesystem::create_directories(output_dir);
     }
-    std::string filename = "./output/profile.txt";
+    std::string filename = output_dir+"/profile.txt";
     std::ofstream outfile(filename, std::ios::app);
     if (!outfile) {
         LOG_DEBUG() << "无法打开文件: " << filename;
@@ -249,6 +248,7 @@ const std::string Scheduler::EvalCypher(RTContext *ctx, const std::string &scrip
             LOG_DEBUG() << sql_query.ToString();
         }
         plan = std::make_shared<ExecutionPlan>();
+        plan->data_dir=parent_dir;
         if(visitor.CommandType()==parser::CmdType::MAINTENANCE)
             plan.get()->SetMaintenance(true);
         else if(visitor.CommandType()==parser::CmdType::OPTIMIZE)
@@ -442,7 +442,9 @@ const std::string Scheduler::EvalCypher(RTContext *ctx, const std::string &scrip
         size_t db_hit=plan->GetDBHit();
         std::string profile_inf=plan->DumpPlan(0, true);
         profile_inf="total db hit:"+std::to_string(db_hit)+"\n"+profile_inf;
-        WriteProfile(script,profile_inf);
+        auto parent_dir=ctx->galaxy_->GetConfig().dir;
+        if(parent_dir.end()[-1]=='/')parent_dir.pop_back();
+        WriteProfile(parent_dir+"/output",script,profile_inf);
         size_t result_num=plan->Root()->stats.profileRecordCount;
         ctx->result_info_ = std::make_unique<ResultInfo>();
         ctx->result_ = std::make_unique<lgraph::Result>();

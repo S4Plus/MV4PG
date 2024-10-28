@@ -4,8 +4,10 @@ else
   is_delete=False
 fi
 
-# /tugraph-db-without_opt/build/output/lgraph_server -c /tugraph-db-without_opt/demo/movie/lgraph.json
-# /tugraph-db_graph_views/build/output/lgraph_server -c /tugraph-db_graph_views/demo/movie/lgraph.json
-python3 /tugraph-db_graph_views/view_test/view_test_create.py --is_delete $is_delete
-python3 /tugraph-db_graph_views/view_test/view_test_maintenance.py
-python3 /tugraph-db_graph_views/view_test/view_test_opt.py
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$SCRIPT_DIR"
+./ldbcSf1/test_snb.sh $is_delete
+cd "$SCRIPT_DIR"
+./finbench/test_finbench.sh $is_delete
+cd "$SCRIPT_DIR"
+./profile.sh

@@ -139,6 +139,7 @@ class ExecutionPlan {
 
     const std::vector<PatternGraph>& GetPatternGraphs() const { return _pattern_graphs; }
 
+    std::string data_dir="";
     void SetMaintenance(bool is_view_maintenance) { _is_view_maintenance = is_view_maintenance; }
     void SetOptimize(bool is_optimize) { _is_optimize = is_optimize; }
     void SetCreateView(bool is_create_view) { _is_create_view = is_create_view; }

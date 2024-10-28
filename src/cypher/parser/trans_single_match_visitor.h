@@ -132,11 +132,11 @@ class TransSingleMatchVisitor : public LcypherVisitor {
 
     std::any visitOC_Union(LcypherParser::OC_UnionContext *ctx) override {
         match_num=0;
-        return visitChildren(ctx);
+        return visitChildrenToString(ctx);
     }
 
     std::any visitOC_SingleQuery(LcypherParser::OC_SingleQueryContext *ctx) override {
-        return visitChildren(ctx);
+        return visitChildrenToString(ctx);
     }
 
     std::any visitOC_SinglePartQuery(LcypherParser::OC_SinglePartQueryContext *ctx) override {

@@ -260,7 +260,7 @@ class OpDelete : public OpBase {
                 ViewMaintenanceDeleteEdge(ctx,e);
             if (ctx->txn_->GetTxn()->DeleteEdge(e)) {
                 ctx->result_info_->statistics.edges_deleted++;
-                edge_deleted_++;
+                if(is_view_)edge_deleted_++;
             }
         }
         if(is_view_){

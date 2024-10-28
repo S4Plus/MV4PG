@@ -410,7 +410,7 @@ void Transaction::MaintenanceViewStatistics(lgraph::LabelId lid){
     if(!j.at(0).contains(label))return;
     auto element=j.at(0).at(label);
     j.at(0).at(label).at("result_num") = element.at("result_num").get<int>()-1;
-
+    LOG_DEBUG()<<"view "<<label<<" delete 1";
     std::ofstream output_file(file_path);
     output_file << std::setw(4) << j << std::endl;
 }
@@ -446,7 +446,6 @@ void Transaction::DeleteVertex(graph::VertexIterator& it, size_t* n_in, size_t* 
             const auto& data = edge_value.GetNthEdgeData(i);
             auto edge_schema = curr_schema_->e_schema_manager.GetSchema(data.lid);
             MaintenanceViewStatistics(data.lid);
-
             FMA_ASSERT(edge_schema);
             // LOG_DEBUG() << "Delete vertex in transcation.cpp 5 " << it.GetId();
             if (is_out_edge) {

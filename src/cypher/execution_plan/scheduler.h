@@ -63,7 +63,7 @@ class Scheduler {
 
     static bool DetermineGqlReadOnly(cypher::RTContext *ctx, const std::string &script,
                                      std::string &name, std::string &type);
-    void WriteProfile(std::string cypher_query, std::string content);
+    void WriteProfile(std::string output_dir, std::string cypher_query, std::string content);
     // void UpdateView(RTContext *ctx);
 };
 }  // namespace cypher

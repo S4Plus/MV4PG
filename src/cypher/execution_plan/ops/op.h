@@ -234,8 +234,8 @@ struct OpBase {
         s.append(op->ToString());
         if (statistics) {
             s.append(" (").append(std::to_string(op->stats.profileRecordCount)).append(" rows");
-            if(op->type==OpType::EXPAND_ALL)
-                s.append(", ").append(std::to_string(op->stats.db_hit)).append(" edges");
+            if(op->type==OpType::EXPAND_ALL || op->type==OpType::VAR_LEN_EXPAND)
+                s.append(", ").append(std::to_string(op->stats.db_hit)).append(" hits");
             s.append(")");
         }
         s.append("\n");

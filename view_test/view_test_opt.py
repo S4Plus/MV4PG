@@ -186,28 +186,5 @@ if  __name__ == '__main__':
     else:
         output_path=os.path.join(root_folder,folder_name,"maintenance_log.txt")
     OptTest(is_read,folder_name)
-    # OptTest(False,folder_name)
-    # if folder_name=='':
-    #     folder_name=graph
-    # graph_folder=os.path.join(root_folder,folder_name)
-    # read_folder=os.path.join(graph_folder,"ReadQueries")
-    # write_folder=os.path.join(graph_folder,"WriteQueries")
-    # parameter_folder=os.path.join(graph_folder,"parameter")
-    # for file in os.listdir(cypher_folder):
-    #     with open(os.path.join(cypher_folder,file)) as f:
-    #         cypher_name=file.split(".")[0]
-    #         parameter_path=os.path.join(parameter_folder,cypher_name)
-    #         parameters=[]
-    #         if os.path.exists(parameter_path):
-    #             f2 = open(parameter_path,"r")
-    #             parameter_lines=f2.readlines()
-    #             for line in parameter_lines:
-    #                 parameters.append(convert_to_number(line.strip()))
-    #         cypher=f.read()
-    #         if len(parameters)>0:
-    #             cypher=cypher % tuple(parameters)
-    #         print(cypher)
-    #         test_cypher(cypher)
 
-    # test_cypher(cypher)
     
