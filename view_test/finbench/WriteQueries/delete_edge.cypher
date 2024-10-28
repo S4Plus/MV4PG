@@ -1,2 +1,2 @@
-MATCH (acc:Account {id: $accountId})-[r:repay{timestamp:$repayTime}]->(loan: Loan {id: $loanId})
+MATCH (acc:Account {id: $accountId})-[r:repay]->(loan: Loan {id: $loanId}) where r.timestamp=$repayTime
 delete r
