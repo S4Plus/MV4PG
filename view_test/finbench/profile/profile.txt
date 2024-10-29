@@ -1,80 +1,76 @@
-cypher: PROFILE match (n0:Comment)-[r1:replyOf*..]->(n1:Post) 
-match (n1)<-[r2:replyOf*..]-(n2:Comment) where n0<>n2 return count(n1)
-total db hit:66247456
+cypher: PROFILE match (n0:Person)-[r1*2]->(n1:Company)
+match (n1)<-[r2*2]-(n2:Person) where n0<>n2 return count(n1)
+total db hit:89023313
 Profile statistics:
 Produce Results (1 rows)
     Aggregate [count(n1)] (1 rows)
-        Filter [{n0 != n2}] (27993305 rows)
-            Expand(All) [n1 <-- n2 ] (27993305 rows, 58038779 edges)
-                Expand(All) [n0 --> n1 ] (2052169 rows, 6156507 edges)
-                    Node By Label Scan [n0:Comment] (2052169 rows)
+        Filter [{n0 != n2}] (39631430 rows)
+            Expand(All) [n1 <-- n2 ] (39631430 rows, 82127896 hits)
+                Expand(All) [n0 --> n1 ] (2865036 rows, 6312744 hits)
+                    Node By Label Scan [n0:Person] (582672 rows)
 
 
-cypher: PROFILE match (n0:Place{name:'China'})<-[r1:isPartOf]-(n1:Place)
-match (n0)<-[r2*2]-(n2:Comment) return count(n2)
-total db hit:114856603
+cypher: PROFILE match (n0:Company)-[r1]->(n1)-[r2]->(n2:Loan)
+match (n2)<-[r3:repay]-(n3:Account) return count(n3)
+total db hit:12138150
+Profile statistics:
+Produce Results (1 rows)
+    Aggregate [count(n3)] (1 rows)
+        Expand(All) [n2 <-- n3 ] (3614007 rows, 8670569 hits)
+            Expand(All) [n0 --> n2 ] (1442555 rows, 3176345 hits)
+                Node By Label Scan [n0:Company] (291235 rows)
+
+
+cypher: PROFILE match (n0:Person)-[r1*2]->(n1:Company)
+match (n0)-[r2:own]->(n2:Account) return count(n1)
+total db hit:14538025
+Profile statistics:
+Produce Results (1 rows)
+    Aggregate [count(n1)] (1 rows)
+        Expand(All) [n0 --> n1 ] (5151969 rows, 11326852 hits)
+            Expand(All) [n0 --> n2 ] (1022914 rows, 2628500 hits)
+                Node By Label Scan [n0:Person] (582672 rows)
+
+
+cypher: PROFILE match (n0:Medium)-[r1:signIn]->(n1:Account)
+match (n1)-[r2*..2]->(n2:Loan) return count(n2)
+total db hit:172920356
 Profile statistics:
 Produce Results (1 rows)
     Aggregate [count(n2)] (1 rows)
-        Expand(All) [n0 <-- n2 ] (57428000 rows, 114856200 edges)
-            Expand(All) [n0 <-- n1 ] (200 rows, 401 edges)
-                Node Index Seek [n0] name IN [China,] (1 rows)
+        Expand(All) [n1 --> n2 ] (76828189 rows, 158784291 hits)
+            Expand(All) [n0 --> n1 ] (5127913 rows, 12195945 hits)
+                Node By Label Scan [n0:Medium] (1940119 rows)
 
 
-cypher: PROFILE match (n0:Place)<-[r1:personIsLocatedIn]-(n1:Person)
-match (n1)-[r2]->(n2)-[r3]->(n3:Place) return count(n3)
-total db hit:4853023
+cypher: PROFILE match (n0:Loan)<-[r1]-(n1)<-[r2]-(n2:Company)
+match (n2)<-[r3*2]-(n3:Person) return count(n3)
+total db hit:35587436
 Profile statistics:
 Produce Results (1 rows)
     Aggregate [count(n3)] (1 rows)
-        Expand(All) [n1 --> n3 ] (2410213 rows, 4830318 edges)
-            Expand(All) [n0 <-- n1 ] (9892 rows, 21244 edges)
-                Node By Label Scan [n0:Place] (1460 rows)
+        Expand(All) [n2 <-- n3 ] (14601110 rows, 30644775 hits)
+            Expand(All) [n0 <-- n2 ] (1442555 rows, 3913885 hits)
+                Node By Label Scan [n0:Loan] (1028775 rows)
 
 
-cypher: PROFILE match (n0:Place)<-[r1*2]-(n1:Comment)
-match (n1)-[r2:replyOf*..]->(n2:Post) return count(n2)
-total db hit:30785456
-Profile statistics:
-Produce Results (1 rows)
-    Aggregate [count(n2)] (1 rows)
-        Expand(All) [n1 --> n2 ] (6156507 rows, 18469521 edges)
-            Expand(All) [n0 <-- n1 ] (6156507 rows, 12314474 edges)
-                Node By Label Scan [n0:Place] (1460 rows)
-
-
-cypher: PROFILE match (n0:Place{name:'Taiwan'})<-[r1]-(n1)<-[r2]-(n2:Person)
-match (n0)<-[r3*2]-(n3:Comment) return count(n3)
-total db hit:343533303
+cypher: PROFILE match (n0:Account)<-[r1:own]-(n1:Company)
+match (n1)-[r2]->(n2)-[r3]->(n3:Loan) return count(n3)
+total db hit:11073367
 Profile statistics:
 Produce Results (1 rows)
     Aggregate [count(n3)] (1 rows)
-        Expand(All) [n0 <-- n2 ] (171747840 rows, 343508220 edges)
-            Expand(All) [n0 <-- n3 ] (12540 rows, 25081 edges)
-                Node Index Seek [n0] name IN [Taiwan,] (1 rows)
+        Expand(All) [n1 --> n3 ] (2724147 rows, 5959560 hits)
+            Expand(All) [n0 <-- n1 ] (511266 rows, 3579626 hits)
+                Node By Label Scan [n0:Account] (1534180 rows)
 
 
-cypher: PROFILE match (n0:Tag)<-[r1:hasInterest]-(n1:Person)
-match (n1)-[r2]->(n2)-[r3]->(n3:Place) where n0.hasType>100 return count(n3)
-total db hit:83188652
+cypher: PROFILE match (n0:Account)-[r1*..2]->(n1:Loan)
+match (n1)<-[r2]-(n2)<-[r3]-(n3:Company) return count(n1)
+total db hit:147277407
 Profile statistics:
 Produce Results (1 rows)
-    Aggregate [count(n3)] (1 rows)
-        Expand(All) [n1 --> n3 ] (41324343 rows, 82818732 edges)
-            Expand(All) [n0 <-- n1 ] (170046 rows, 353839 edges)
-                Filter [{n0.hasType > 100}] (13747 rows)
-                    Node By Label Scan [n0:Tag] (16080 rows)
-
-
-cypher: PROFILE match (n0:Comment)-[r1:replyOf*..]->(n1:Post)
-match (n1)-[r2:postHasCreator]->(n2:Person)
-match (n2)-[r3]->(n3)-[r4]->(n4:Place) where n0.creationDate<1280000000000 return count(n4)
-total db hit:204441770
-Profile statistics:
-Produce Results (1 rows)
-    Aggregate [count(n4)] (1 rows)
-        Expand(All) [n2 --> n4 ] (100784775 rows, 201686700 edges)
-            Expand(All) [n1 --> n2 ] (117150 rows, 351450 edges)
-                Expand(All) [n0 --> n1 ] (117150 rows, 351450 edges)
-                    Filter [{n0.creationDate < 1280000000000}] (117150 rows)
-                        Node By Label Scan [n0:Comment] (2052169 rows)
+    Aggregate [count(n1)] (1 rows)
+        Expand(All) [n1 <-- n3 ] (39595119 rows, 100863174 hits)
+            Expand(All) [n0 --> n1 ] (21672936 rows, 44880052 hits)
+                Node By Label Scan [n0:Account] (1534180 rows)

@@ -394,6 +394,11 @@ void Transaction::MaintenanceViewStatistics(lgraph::LabelId lid){
     std::string label=GetEdgeLabel(lid);
     auto parent_dir=db_->GetConfig().dir;
     if(parent_dir.end()[-1]=='/')parent_dir.pop_back();
+    size_t pos = parent_dir.find_last_of('/');
+    if (pos == std::string::npos) {
+        return;
+    }
+    parent_dir=parent_dir.substr(0, pos);
     std::string file_path=parent_dir+"/view/"+db_->GetConfig().name+".json";
     std::ifstream ifs(file_path);
     if (!ifs) {
