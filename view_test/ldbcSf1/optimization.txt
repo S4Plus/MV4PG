@@ -1,11 +1,11 @@
 match (n0:Comment)-[r1:replyOf*..]->(n1:Post) 
-match (n1)<-[r2:replyOf*..]-(n2:Comment) where n0<>n2 return count(n1)
+match (n1)<-[r2:replyOf*..]-(n2:Comment) where id(n0)<>id(n2) return count(n1)
 cycle: 5
-original_time: 52.74813618659973
-optimized_time: 21.910336923599242
-speed up: 2.4074543614062653
-[27993305]
-[27993305]
+original_time: 59.022306251525876
+optimized_time: 26.036685371398924
+speed up: 2.266890174751713
+[25941136]
+[25941136]
 
 match (n0:Place{name:'China'})<-[r1:isPartOf]-(n1:Place)
 match (n0)<-[r2*2]-(n2:Comment) return count(n2)
