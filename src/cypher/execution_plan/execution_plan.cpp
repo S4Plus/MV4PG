@@ -1082,14 +1082,14 @@ OpBase *ExecutionPlan::BuildPart(const parser::QueryPart &part, int part_id) {
     if(!_is_view_maintenance&&!_is_create_view){
         for(auto &view_pattern_graph:_view_pattern_graphs){
             // view_pattern_graph.first
-            // LOG_DEBUG()<<"开始视图重写优化";
-            // LOG_DEBUG()<<"view name:"<<view_pattern_graph.first;
-            // LOG_DEBUG()<<"view graph empty:"<<(view_pattern_graph.second==nullptr);
-            // LOG_DEBUG()<<view_pattern_graph.second->DumpGraph();
-            // LOG_DEBUG()<<pattern_graph.DumpGraph();
+            LOG_DEBUG()<<"开始视图重写优化";
+            LOG_DEBUG()<<"view name:"<<view_pattern_graph.first;
+            LOG_DEBUG()<<"view graph empty:"<<(view_pattern_graph.second==nullptr);
+            LOG_DEBUG()<<view_pattern_graph.second->DumpGraph();
+            LOG_DEBUG()<<pattern_graph.DumpGraph();
             ViewRewriter view_rewriter(&pattern_graph,(view_pattern_graph.second),view_pattern_graph.first);
             view_rewriter.GraphRewriteUseViews();
-            // LOG_DEBUG()<<pattern_graph.DumpGraph();
+            LOG_DEBUG()<<pattern_graph.DumpGraph();
         }
         if(_view_pattern_graphs.size()>0)
             pattern_graph.symbol_table.Recover();
@@ -1384,7 +1384,8 @@ void ExecutionPlan::GetViewPatternGraphs(cypher::RTContext *ctx){
         BuildQueryGraph(visitor.GetQuery().at(0).parts.at(0),*pattern_graph);
         LOG_DEBUG()<<"view graph:";
         LOG_DEBUG()<<pattern_graph->DumpGraph();
-        _view_pattern_graphs[view.first]=pattern_graph;
+        _view_pattern_graphs.push_back(std::make_pair(view.first,pattern_graph));
+        // _view_pattern_graphs[view.first]=pattern_graph;
         // _view_pattern_graphs[j.at(i)["view_name"]]=std::move(pattern_graph);
         LOG_DEBUG()<<"create view graph end";
     }

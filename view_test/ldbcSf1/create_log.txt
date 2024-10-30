@@ -5,8 +5,8 @@ create time: 20.79494547843933
 
 create view cypher: create view COMMENT_PLACE as 
 ( Construct (n)-[r:COMMENT_PLACE]->(m) 
-match (n:Comment)-[r1*2..2]->(m:Place) )
-create time: 1678.34516954422
+match (m:Place)<-[r1*2..2]-(n:Comment) )
+create time: 58.61039900779724
 
 create view cypher: create view PERSON_PLACE as 
 ( Construct (n)-[r:PERSON_PLACE]->(m) 

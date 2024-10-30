@@ -41,7 +41,9 @@ class ExecutionPlan {
     // query parts local member
     std::vector<PatternGraph> _pattern_graphs;
     std::string _view_path;
-    std::map<std::string,PatternGraph*> _view_pattern_graphs;
+    // std::map<std::string,PatternGraph*> _view_pattern_graphs;
+    std::vector<std::pair<std::string, PatternGraph*>> _view_pattern_graphs;
+    // std::vector<PatternGraph*> _view_pattern_graphs;
     std::string cypher_query_="";
     bool _is_view_maintenance = false;
     bool _is_create_view=false;

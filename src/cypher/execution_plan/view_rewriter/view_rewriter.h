@@ -35,6 +35,10 @@ namespace cypher{
                     if(node.LhsDegree()==0)start_node_id=node.ID();
                     else if(node.RhsDegree()==0)end_node_id=node.ID();
                 }
+                for(auto &node:view_graph_->GetNodes()){
+                    if(node.Alias()=="n")start_node_id=node.ID();
+                    else if(node.Alias()=="m")end_node_id=node.ID();
+                }
             }
         ~ViewRewriter() = default;
 
@@ -185,7 +189,7 @@ namespace cypher{
                 }
                 if(view_node->Label()!=target_node->Label()){
 #ifndef NDEBUG
-                LOG_DEBUG()<<"match feasible end7";
+                LOG_DEBUG()<<"match feasible end9";
 #endif
                 return false;
                 }
@@ -213,10 +217,10 @@ namespace cypher{
             return true;
         }
 
-        bool RelpFeasible(RelpID view_relp_id,RelpID target_relp_id,bool is_opposite_direction=false){
+        bool RelpFeasible(RelpID view_relp_id,RelpID target_relp_id,cypher::NodeID view_relp_src,cypher::NodeID target_relp_src){
             auto view_relp=&(view_graph_->GetRelationship(view_relp_id));
             auto target_relp=&(target_graph_->GetRelationship(target_relp_id));
-            return RelpFeasible(view_relp,target_relp,is_opposite_direction);
+            return RelpFeasible(view_relp,target_relp,view_relp_src,target_relp_src);
         }
         //     if(view_relp->Empty()||target_relp->Empty())return false;
         //     // 匹配的边最后要全部删除，所以需要保证没有别的地方引用
@@ -264,7 +268,7 @@ namespace cypher{
         //     return true;
         // }
 
-        bool RelpFeasible(cypher::Relationship *view_relp,cypher::Relationship *target_relp,bool is_opposite_direction=false){
+        bool RelpFeasible(cypher::Relationship *view_relp,cypher::Relationship *target_relp,cypher::NodeID view_relp_src,cypher::NodeID target_relp_src){
             if(view_relp->Empty()||target_relp->Empty())return false;
             // 匹配的边最后要全部删除，所以需要保证没有别的地方引用
             auto target_symbols=target_graph_->symbol_table.symbols;
@@ -279,33 +283,41 @@ namespace cypher{
                     return false;
             }
 
-            if(!is_opposite_direction){
-                if(view_relp->direction_!=target_relp->direction_){
-                    return false;
-                }
+            if(!((view_relp->Src()==view_relp_src && target_relp->Src()==target_relp_src)
+              || (view_relp->Dst()==view_relp_src && target_relp->Dst()==target_relp_src))){
+                // LOG_DEBUG()<<"view_relp_src: "<<view_graph_->GetNode(view_relp_src).Alias();
+                // LOG_DEBUG()<<"target relp src: "<<target_graph_->GetNode(target_relp_src).Alias();
+                return false;
             }
-            else{
-                if(view_relp->direction_==parser::DIR_NOT_SPECIFIED){
-                    if(target_relp->direction_!=parser::DIR_NOT_SPECIFIED){
-                        return false;
-                    }
-                }
-                else if(view_relp->direction_==parser::LEFT_TO_RIGHT){
-                    if(target_relp->direction_!=parser::RIGHT_TO_LEFT){
-                        return false;
-                    }
-                }
-                else if(view_relp->direction_==parser::RIGHT_TO_LEFT){
-                    if(target_relp->direction_!=parser::LEFT_TO_RIGHT){
-                        return false;
-                    }
-                }
-                else return false;
-            }
+            // if(!is_opposite_direction){
+            //     if(view_relp->direction_!=target_relp->direction_){
+            //         return false;
+            //     }
+            // }
+            // else{
+            //     if(view_relp->direction_==parser::DIR_NOT_SPECIFIED){
+            //         if(target_relp->direction_!=parser::DIR_NOT_SPECIFIED){
+            //             return false;
+            //         }
+            //     }
+            //     else if(view_relp->direction_==parser::LEFT_TO_RIGHT){
+            //         if(target_relp->direction_!=parser::RIGHT_TO_LEFT){
+            //             return false;
+            //         }
+            //     }
+            //     else if(view_relp->direction_==parser::RIGHT_TO_LEFT){
+            //         if(target_relp->direction_!=parser::LEFT_TO_RIGHT){
+            //             return false;
+            //         }
+            //     }
+            //     else return false;
+            // }
             if(view_relp->Types()!=target_relp->Types()){
+                // LOG_DEBUG()<<"match feasible end4";
                 return false;
             }
             if(view_relp->min_hop_!=target_relp->min_hop_ || view_relp->max_hop_!=target_relp->max_hop_){
+                // LOG_DEBUG()<<"match feasible end5";
                 return false;
             }
             if(view_relp->no_duplicate_edge_!=target_relp->no_duplicate_edge_){
@@ -315,7 +327,7 @@ namespace cypher{
                 return false;
             }
             //TODO:属性一致，添加边的属性
-
+            // LOG_DEBUG()<<"relp feasible true";
             return true;
         }
 
@@ -372,7 +384,7 @@ namespace cypher{
                         if(target_rhs_relp->Empty())continue;
                         auto neighbor_target_id=target_rhs_relp->Rhs();
                         if(target_to_view.find(neighbor_target_id)!=target_to_view.end())continue;
-                        if(RelpFeasible(view_rhs_relp,target_rhs_relp,false)&&NodeFeasible(neighbor_view_id,neighbor_target_id)){
+                        if(RelpFeasible(view_rhs_relp,target_rhs_relp,now_view_id,now_target_id)&&NodeFeasible(neighbor_view_id,neighbor_target_id)){
                             now_view_id=neighbor_view_id;
                             now_target_id=neighbor_target_id;
                             view_to_target[neighbor_view_id]=neighbor_target_id;
@@ -391,7 +403,7 @@ namespace cypher{
                         if(target_lhs_relp->Empty())continue;
                         auto neighbor_target_id=target_lhs_relp->Lhs();
                         if(target_to_view.find(neighbor_target_id)!=target_to_view.end())continue;
-                        if(RelpFeasible(view_rhs_relp,target_lhs_relp,true)&&NodeFeasible(neighbor_view_id,neighbor_target_id)){
+                        if(RelpFeasible(view_rhs_relp,target_lhs_relp,now_view_id,now_target_id)&&NodeFeasible(neighbor_view_id,neighbor_target_id)){
                             now_view_id=neighbor_view_id;
                             now_target_id=neighbor_target_id;
                             view_to_target[neighbor_view_id]=neighbor_target_id;
@@ -418,7 +430,7 @@ namespace cypher{
                         if(target_rhs_relp->Empty())continue;
                         auto neighbor_target_id=target_rhs_relp->Rhs();
                         if(target_to_view.find(neighbor_target_id)!=target_to_view.end())continue;
-                        if(RelpFeasible(view_lhs_relp,target_rhs_relp,true)&&NodeFeasible(neighbor_view_id,neighbor_target_id)){
+                        if(RelpFeasible(view_lhs_relp,target_rhs_relp,now_view_id,now_target_id)&&NodeFeasible(neighbor_view_id,neighbor_target_id)){
                             now_view_id=neighbor_view_id;
                             now_target_id=neighbor_target_id;
                             view_to_target[neighbor_view_id]=neighbor_target_id;
@@ -435,9 +447,9 @@ namespace cypher{
                     for(auto target_lhs_relp_id:now_target_node->LhsRelps()){
                         auto target_lhs_relp=&(target_graph_->GetRelationship(target_lhs_relp_id));
                         if(target_lhs_relp->Empty())continue;
-                        auto neighbor_target_id=target_lhs_relp->Rhs();
+                        auto neighbor_target_id=target_lhs_relp->Lhs();
                         if(target_to_view.find(neighbor_target_id)!=target_to_view.end())continue;
-                        if(RelpFeasible(view_lhs_relp,target_lhs_relp,false)&&NodeFeasible(neighbor_view_id,neighbor_target_id)){
+                        if(RelpFeasible(view_lhs_relp,target_lhs_relp,now_view_id,now_target_id)&&NodeFeasible(neighbor_view_id,neighbor_target_id)){
                             now_view_id=neighbor_view_id;
                             now_target_id=neighbor_target_id;
                             view_to_target[neighbor_view_id]=neighbor_target_id;
