@@ -119,8 +119,11 @@ class ExpandAll : public OpBase {
 
     bool _CheckIfDuplicate() const {
         if(!no_dup_edge){return false;}
-        else return expand_pair_node.find(std::make_pair(start_->PullVid(),eit_->GetNbr(expand_direction_)))
-                        !=expand_pair_node.end();
+        if(deleted_view_edges.find(eit_->GetUid().ToString())!=deleted_view_edges.end())return true;
+        else{
+            return expand_pair_node.find(std::make_pair(start_->PullVid(),eit_->GetNbr(expand_direction_)))
+                            !=expand_pair_node.end();
+        }
     }
 
     bool _FilterNeighborLabel(RTContext *ctx) {
@@ -199,6 +202,7 @@ class ExpandAll : public OpBase {
     std::set<std::string> view_types_;
     bool no_dup_edge = false;
     std::unordered_set<std::pair<lgraph::VertexId,lgraph::VertexId>, pair_hash> expand_pair_node;
+    std::unordered_set<std::string> deleted_view_edges;
     /* ExpandAllStates
      * Different states in which ExpandAll can be at. */
     enum ExpandAllState {
@@ -311,6 +315,7 @@ class ExpandAll : public OpBase {
         CYPHER_THROW_ASSERT(!children.empty());
         auto child = children[0];
         while (state_ == ExpandAllUninitialized || Next(ctx) == OP_REFRESH) {
+            expand_pair_node.clear();
             auto res = child->Consume(ctx);
             state_ = ExpandAllResetted;
             if (res != OP_OK) {
@@ -323,6 +328,7 @@ class ExpandAll : public OpBase {
              * returns OK, except when the child is an OPTIONAL operation.  */
         }
         if(no_dup_edge && start_->PullVid()>=0 && neighbor_->PullVid()>=0){
+            deleted_view_edges.emplace(eit_->GetUid().ToString());
             expand_pair_node.emplace(start_->PullVid(),neighbor_->PullVid());
 #ifndef NDEBUG
             LOG_DEBUG()<<"expand pair:"<<start_->PullVid()<<","<<neighbor_->PullVid();
