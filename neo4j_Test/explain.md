@@ -1,33 +1,16 @@
-# neo4j触发器设置
-
-使用脚本链接neo4j服务器设置视图维护触发器，以及新的tugrph维护语句逻辑
-
 # 使用说明
-
-- 在tugraph-compiler环境中，clone项目。
-- 新建build文件夹，执行cmake ..以及make，得到两个可执行文件一个为CypherRewrite，以及CypherRewriteneo4j。CypherRewriteneo4j执行需要一个test_input.txt,其中放置需要创立的视图语句，通过运行之后会生成output.json
-其中放置了所有视图的视图维护语句.
-## json
-{
-    "match (n:Comment)-[:replyOf*..]->(m:Post) WITH n,m CREATE (n)-[r:ROOT_POST]->(m)": [
-        [
-            "match (n:Comment)-[*0]-(viewvetex)-[:replyOf*..]->(m:Post) WITH n,m match (n)-[r:ROOT_POST]->(m) WITH n,m,collect(r) as view delete view[0]",
-            "match (n:Comment)-[:replyOf*..]->(m:Post)-[*0]-(viewvetex) WITH n,m match (n)-[r:ROOT_POST]->(m) WITH n,m,collect(r) as view delete view[0]",
-            "match (n:Comment)-[:replyOf*1..]->(viewvetex)->[:replyOf*0..]->(m:Post) WITH n,m match (n)-[r:ROOT_POST]->(m) WITH n,m,collect(r) as view delete view[0]"
-        ],
-        [
-            "match (n:Comment)-[:replyOf*0..]->()-[viewedge:replyOf]->()-[:replyOf*0..]->(m:Post) WITH n,m CREATE (n)-[r:ROOT_POST]->(m)"
-        ],
-        [
-            "match (n:Comment)-[:replyOf*0..]->()-[viewedge:replyOf]->()-[:replyOf*0..]->(m:Post) WITH n,m match (n)-[r:ROOT_POST]->(m) WITH n,m,collect(r) as view delete view[0]"
-        ]
-    ]
-}
-
-- 其中key为视图创建语句，val保存的依次是其key对应视图删除点，增加边，删除边的视图维护语句。
-- 在生成json文件之后，运行neo4j_neo4j_trigger.py 
-此脚本获得json文件中的keys，并且链接neo4j，执行视图创建，并且获得json的vals，借此生成其对应的触发器生成语句，并交给neo4j执行。
-
+- neo4j服务器在docker:wxdneo4j1和wxdneo4j2
+- 测试snb 执行ldbc_test.sh 需要修改其中path路径为ldbcSf1的绝对路径 若要创建视图执行 ldbc_test.sh true
+- 测试finbench 同理
+# result
+对应的测试结果保存在path/result下
+- oldtime.json 未优化的读语句测试结果
+- opttime.json 优化的读语句测试结果
+- oldwritetime.json 未优化的写语句测试结果
+- optwritetime.json 优化后的写语句测试结果
+- all_writetime.json 未优化的五次写语句测试结果
+- all_opt_writetime.json 优化后的五次写语句测试结果
+- createviews.json 视图创建测试结果
 # 创建视图语句
 ```
 match (n:Comment)-[:replyOf*1..]->(m:Post) WITH n,m CREATE (n)-[r:ROOT_POST]->(m)

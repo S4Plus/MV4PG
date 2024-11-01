@@ -1,0 +1,3 @@
+MATCH (p1:Person {id:"987"}), (p2:Person {id:"2199023265994"}) create (p1)-[r:knows {creationDate: "13824310250", weight:"0"}]->(p2)
+MATCH (n:Person {id:"65"})-[r:likes]->(m:Comment {id:"1649268071638"}) delete r
+MATCH (n:Post {id:"556"}) detach delete n

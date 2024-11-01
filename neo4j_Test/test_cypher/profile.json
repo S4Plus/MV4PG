@@ -1,0 +1,31 @@
+{
+    "profile profile match(n:Account) return n limit 10": {
+        "result_available_after": 2,
+        "result_consumed_after": 1,
+        "time": 3,
+        "AllDbHits": 121,
+        "profile": {
+            "operatorType": "ProduceResults@finbenchsf10",
+            "Details": "n",
+            "dbHits": 110,
+            "rows": 10,
+            "children": [
+                {
+                    "operatorType": "Limit@finbenchsf10",
+                    "Details": "10",
+                    "dbHits": 0,
+                    "rows": 10,
+                    "children": [
+                        {
+                            "operatorType": "NodeByLabelScan@finbenchsf10",
+                            "Details": "n:Account",
+                            "dbHits": 11,
+                            "rows": 10,
+                            "children": []
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

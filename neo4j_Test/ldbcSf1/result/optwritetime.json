@@ -1,0 +1,26 @@
+{
+    "MATCH (p1:Person {id:\"987\"}), (p2:Person {id:\"2199023265994\"}) create (p1)-[r:knows {creationDate: \"13824310250\", weight:\"0\"}]->(p2)": {
+        "result": "[]",
+        "time": 7,
+        "add_nodes": 0,
+        "delete_nodes": 0,
+        "add_rel": 2,
+        "delete_rel": 0
+    },
+    "MATCH (n:Person {id:\"65\"})-[r:likes]->(m:Comment {id:\"1649268071638\"}) delete r": {
+        "result": "[]",
+        "time": 2,
+        "add_nodes": 0,
+        "delete_nodes": 0,
+        "add_rel": 0,
+        "delete_rel": 2
+    },
+    "MATCH (n:Post {id:\"556\"}) detach delete n": {
+        "result": "[]",
+        "time": 4,
+        "add_nodes": 0,
+        "delete_nodes": 1,
+        "add_rel": 0,
+        "delete_rel": 26
+    }
+}

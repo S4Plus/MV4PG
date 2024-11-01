@@ -1,2 +1,1 @@
-MATCH (n:Post {id: $postId})
-DETACH DELETE n
+MATCH (n:Post {id: $postId}) DETACH DELETE n

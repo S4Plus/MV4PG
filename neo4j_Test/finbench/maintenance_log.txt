@@ -1,0 +1,27 @@
+MATCH (acc:Account {id: 1694622296319520}), (loan: Loan {id: 254459151382484580})
+CREATE (acc)<-[:deposit {timestamp: 1729822775000, amount: 100000000}]-(loan)
+cycle: 1
+original_time: 0.02618408203125
+optimized_time: 0.017867326736450195
+speed up: 1.465472838633058
+['created 0 vertices, created 0 edges.']
+['created 0 vertices, created 0 edges.']
+
+MATCH (acc:Account {id: 1974997761410411})-[r:repay{timestamp: 1656838704782}]->(loan: Loan {id: 226310554199796320})
+delete r
+cycle: 1
+original_time: 0.013518810272216797
+optimized_time: 0.016981124877929688
+speed up: 0.7961080534651241
+['deleted 0 vertices, deleted 0 edges.']
+['deleted 0 vertices, deleted 0 edges.']
+
+MATCH (loan:Loan {id: 569547023196251})
+DETACH DELETE loan
+cycle: 1
+original_time: 0.011735677719116211
+optimized_time: 11.557931661605835
+speed up: 0.0010153787081213525
+['deleted 1 vertices, deleted 6 edges.']
+['__null__']
+

@@ -1,0 +1,26 @@
+{
+    "MATCH (acc:Account {id:\"1694622296319520\"})<-[r:deposit]-(loan: Loan {createTime: \"1656084982460\"}) create (acc)-[r1:repay{timestamp:\"1729822775000\",amount:\"39419373.84\"}]->(loan)": {
+        "result": "[]",
+        "time": 2,
+        "add_nodes": 0,
+        "delete_nodes": 0,
+        "add_rel": 1,
+        "delete_rel": 0
+    },
+    "MATCH (acc:Account {id: \"7606696318861801\"})-[r:repay]->(loan: Loan {id: \"288346924384537\"}) where r.timestamp=\"1645739703489\" delete r": {
+        "result": "[]",
+        "time": 1,
+        "add_nodes": 0,
+        "delete_nodes": 0,
+        "add_rel": 0,
+        "delete_rel": 1
+    },
+    "MATCH (loan:Loan {id: \"569547023196251\"}) detach delete loan": {
+        "result": "[]",
+        "time": 1,
+        "add_nodes": 0,
+        "delete_nodes": 1,
+        "add_rel": 0,
+        "delete_rel": 6
+    }
+}

@@ -1,0 +1,56 @@
+match (n0:Person)-[r1*2]->(n1:Company)<-[r2*2]-(n2:Person) where n0<>n2 return count(n1)
+cycle: 5
+original_time: 90.65147213935852
+optimized_time: 35.82679557800293
+speed up: 2.530270170046049
+[39631430]
+[39631430]
+
+match (n0:Company)-[r1]->(n1)-[r2]->(n2:Loan)<-[r3:repay]-(n3:Account) return count(n3)
+cycle: 5
+original_time: 15.566128063201905
+optimized_time: 7.234055900573731
+speed up: 2.1517843208769456
+[3614007]
+[3614007]
+
+match (n0:Person)-[r1*2]->(n1:Company),(n0)-[r2:own]->(n2:Account) return count(n1)
+cycle: 5
+original_time: 32.57743921279907
+optimized_time: 7.543841171264648
+speed up: 4.318415310344848
+[5151969]
+[5151969]
+
+match (n0:Medium)-[r1:signIn]->(n1:Account)-[r2*..2]->(n2:Loan) return count(n2)
+cycle: 5
+original_time: 316.619230222702
+optimized_time: 61.14794020652771
+speed up: 5.177921433711712
+[76828189]
+[76828189]
+
+match (n0:Loan)<-[r1]-(n1)<-[r2]-(n2:Company)<-[r3*2]-(n3:Person) return count(n3)
+cycle: 5
+original_time: 62.92726640701294
+optimized_time: 17.789649057388306
+speed up: 3.5372966720149157
+[14601110]
+[14601110]
+
+match (n0:Account)<-[r1:own]-(n1:Company)-[r2]->(n2)-[r3]->(n3:Loan) return count(n3)
+cycle: 5
+original_time: 31.579827737808227
+optimized_time: 9.059272050857544
+speed up: 3.4859122852833306
+[2724147]
+[2724147]
+
+match (n0:Account)-[r1*..2]->(n1:Loan)<-[r2]-(n2)<-[r3]-(n3:Company) return count(n1)
+cycle: 5
+original_time: 3432.133145046234
+optimized_time: 270.69572415351865
+speed up: 12.678933720799304
+[39595119]
+[39595119]
+
