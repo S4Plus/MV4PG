@@ -59,6 +59,7 @@ class RTContext : public SubmitQueryContext {
     std::unique_ptr<lgraph_api::Transaction> txn_;
     std::unique_ptr<ResultInfo> result_info_;
     std::unique_ptr<lgraph_api::Result> result_;
+    std::unordered_set<std::string> deleted_view_edges;
     bolt::BoltConnection* bolt_conn_ = nullptr;
 
     RTContext() = default;
