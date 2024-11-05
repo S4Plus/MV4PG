@@ -949,11 +949,11 @@ class CypherBaseVisitor : public LcypherVisitor {
     }
 
     std::any visitOC_NodeLabels(LcypherParser::OC_NodeLabelsContext *ctx) override {
-        if (ctx->oC_NodeLabel().size() > 1) {
-            LOG_WARN()
-                << "More than one labels are provided, the first is picked [" << ctx->getText()
-                << "]";
-        }
+        // if (ctx->oC_NodeLabel().size() > 1) {
+        //     LOG_WARN()
+        //         << "More than one labels are provided, the first is picked [" << ctx->getText()
+        //         << "]";
+        // }
         VEC_STR labels;
         for (auto &ctx_label : ctx->oC_NodeLabel()) {
             std::string label = std::any_cast<std::string>(visit(ctx_label));

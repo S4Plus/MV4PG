@@ -62,6 +62,10 @@ class NodeByLabelScan : public OpBase {
         // TODO(anyone) remove patternGraph's state (ctx)
         // LOG_DEBUG()<<"label scan grand grand parent size2:"<<parent->parent->parent->children.size();
         auto primary_filed = ctx->txn_->GetVertexPrimaryField(node_->Label());
+        auto all_labels=ctx->txn_->ListVertexLabels();
+        if(std::find(all_labels.begin(), all_labels.end(), node_->Label()) == all_labels.end()){
+            return OP_OK;
+        }
         // LOG_DEBUG()<<"label scan grand grand parent size3:"<<parent->parent->parent->children.size();
         node_->ItRef()->Initialize(ctx->txn_->GetTxn().get(), lgraph::VIter::INDEX_ITER,
                                    node_->Label(), primary_filed,

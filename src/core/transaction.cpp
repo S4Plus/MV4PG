@@ -450,7 +450,7 @@ void Transaction::DeleteVertex(graph::VertexIterator& it, size_t* n_in, size_t* 
         for (size_t i = 0; i < edge_value.GetEdgeCount(); i++) {
             const auto& data = edge_value.GetNthEdgeData(i);
             auto edge_schema = curr_schema_->e_schema_manager.GetSchema(data.lid);
-            MaintenanceViewStatistics(data.lid);
+            // MaintenanceViewStatistics(data.lid);
             FMA_ASSERT(edge_schema);
             // LOG_DEBUG() << "Delete vertex in transcation.cpp 5 " << it.GetId();
             if (is_out_edge) {

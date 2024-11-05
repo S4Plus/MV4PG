@@ -1,0 +1,89 @@
+cypher: Maintenance match (m:Place)<-[*0]-(:Person{id:2199023265994})<-[VR]-(:Person{id:987})<-[*1..1]-(n:Comment) where euid(VR)='27565_26581_11_0_0'  WITH n,m CREATE (n)-[r:COMMENT_PLACE]->(m)
+Union 
+match (m:Place)<-[*1]-(:Person{id:2199023265994})<-[VR]-(:Person{id:987})<-[*0..0]-(n:Comment) where euid(VR)='27565_26581_11_0_0'  WITH n,m CREATE (n)-[r:COMMENT_PLACE]->(m)
+total db hit:4247
+Profile statistics:
+Produce Results (0 rows)
+    Union (0 rows)
+        Create [r] (0 rows)
+            Apply (0 rows)
+                Argument [n,m] (0 rows)
+                Project [n,m] (0 rows)
+                    Variable Length Expand(All) [@ANON_N2 <--*1..1 n]{
+ node cnt:
+  layer:0,count:0
+  layer:1,count:0
+expand cnt:
+  layer:0,count:0
+} (0 rows, 0 hits)
+                        Filter [{@ANON_N2.id = 987}] (0 rows)
+                            Expand(All) [@ANON_N1 <-- @ANON_N2 EdgeFilter ({euid(false,VR) = 27565_26581_11_0_0})] (0 rows, 0 hits)
+                                Variable Length Expand(All) [@ANON_N1 -->*0..0 m]{
+ node cnt:
+  layer:0,count:0
+expand cnt:
+} (0 rows, 1 hits)
+                                    Node Index Seek [@ANON_N1] id IN [2199023265994,] (1 rows)
+        Create [r] (0 rows)
+            Apply (0 rows)
+                Argument [n,m] (0 rows)
+                Project [n,m] (0 rows)
+                    Variable Length Expand(All) [@ANON_N2 <--*0..0 n]{
+ node cnt:
+  layer:0,count:0
+expand cnt:
+} (0 rows, 1 hits)
+                        Filter [{@ANON_N2.id = 987}] (1 rows)
+                            Expand(All) [@ANON_N1 <-- @ANON_N2 EdgeFilter ({euid(false,VR) = 27565_26581_11_0_0})] (1 rows, 2572 hits)
+                                Variable Length Expand(All) [@ANON_N1 -->*1..1 m]{
+ node cnt:
+  layer:0,count:0
+  layer:1,count:833
+expand cnt:
+  layer:0,count:834
+} (1 rows, 1669 hits)
+                                    Node Index Seek [@ANON_N1] id IN [2199023265994,] (1 rows)
+
+
+cypher: Maintenance match (n:Comment)-[:replyOf*0..]->(:Person{id:987})-[VR:replyOf]->(:Person{id:2199023265994})-[:replyOf*0..]->(m:Post) where euid(VR)='27565_26581_11_0_0'  WITH n,m CREATE (n)-[r:ROOT_POST]->(m)
+total db hit:4
+Profile statistics:
+Produce Results (1 rows)
+    Create [r] (1 rows)
+        Apply (0 rows)
+            Argument [n,m] (0 rows)
+            Project [n,m] (0 rows)
+                Variable Length Expand(All) [@ANON_N2 -->*0..128 m]{
+                } (0 rows, 0 hits)
+                    Filter [{@ANON_N2.id = 2199023265994}] (0 rows)
+                        Expand(All) [@ANON_N1 --> @ANON_N2 EdgeFilter ({euid(false,VR) = 27565_26581_11_0_0})] (0 rows, 0 hits)
+                            Variable Length Expand(All) [@ANON_N1 <--*0..128 n]{
+                            } (0 rows, 2 hits)
+                                Node Index Seek [@ANON_N1] id IN [987,] (1 rows)
+
+
+cypher: Maintenance match (n:Person:Person{id:987})-[VR]->(:Person{id:2199023265994})-[r2]->(m:Place) where euid(VR)='27565_26581_11_0_0'  WITH n,m CREATE (n)-[r:PERSON_PLACE]->(m)
+Union 
+match (n:Person)-[r1]->(:Person{id:987})-[VR]->(m:Place:Person{id:2199023265994}) where euid(VR)='27565_26581_11_0_0'  WITH n,m CREATE (n)-[r:PERSON_PLACE]->(m)
+total db hit:8478
+Profile statistics:
+Produce Results (1 rows)
+    Union (1 rows)
+        Create [r] (1 rows)
+            Apply (1 rows)
+                Argument [n,m] (1 rows)
+                Project [n,m] (1 rows)
+                    Expand(All) [@ANON_N0 --> m ] (1 rows, 3 hits)
+                        Filter [{@ANON_N0.id = 2199023265994}] (1 rows)
+                            Expand(All) [n --> @ANON_N0 EdgeFilter ({euid(false,VR) = 27565_26581_11_0_0})] (1 rows, 187 hits)
+                                Node Index Seek [n] id IN [987,] (1 rows)
+        Create [r] (0 rows)
+            Apply (0 rows)
+                Argument [n,m] (0 rows)
+                Project [n,m] (0 rows)
+                    Filter [{m.id = 2199023265994}] (0 rows)
+                        Expand(All) [@ANON_N0 --> m EdgeFilter ({euid(false,VR) = 27565_26581_11_0_0})] (0 rows, 1698 hits)
+                            Expand(All) [@ANON_N0 <-- n ] (1 rows, 6586 hits)
+                                Node Index Seek [@ANON_N0] id IN [987,] (1 rows)
+
+

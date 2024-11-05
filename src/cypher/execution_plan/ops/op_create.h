@@ -105,7 +105,10 @@ class OpCreate : public OpBase {
             Scheduler scheduler;
             // scheduler.Eval(ctx,lgraph_api::GraphQueryType::CYPHER,"match (n) return count(n)",temp);
             LOG_DEBUG()<<"in create op txn exist:"<<(ctx->txn_!=nullptr);
+            auto start_time=fma_common::GetTime();
             scheduler.EvalCypherWithoutNewTxn(ctx,result,temp);
+            auto end_time=fma_common::GetTime();
+            LOG_DEBUG()<<"create maintenance time:"<<(end_time-start_time);
             std::cout<<"View maintenance6: "<<std::endl;
             // ANTLRInputStream input(view_query);
             // LcypherLexer lexer(&input);

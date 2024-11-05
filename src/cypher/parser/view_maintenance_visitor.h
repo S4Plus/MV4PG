@@ -433,7 +433,7 @@ class ViewMaintenance : public LcypherVisitor {
                 if (_is_vertex) {  // 操作点
                     is_unfold = false;
                     int node_size = ctx->oC_PatternElementChain().size() + 1;
-                    for (int i = 1; i < (node_size-1); i++) {
+                    for (int i = 0; i < (node_size); i++) {
                         if (i == 0) {
                             bool can_rewrite = true;
                             std::string result;

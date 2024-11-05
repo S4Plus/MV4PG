@@ -86,6 +86,12 @@ class NodeIndexSeek : public OpBase {
         }
         CYPHER_THROW_ASSERT(!target_values_.empty());
         auto value = target_values_[0];
+        if(!node_->Label().empty()){
+            auto all_labels=ctx->txn_->ListVertexLabels();
+            if(std::find(all_labels.begin(), all_labels.end(), node_->Label()) == all_labels.end()){
+                return OP_OK;
+            }
+        }
         if (!node_->Label().empty() && ctx->txn_->GetTxn()->IsIndexed(node_->Label(), field_)) {
             it_->Initialize(ctx->txn_->GetTxn().get(), lgraph::VIter::INDEX_ITER, node_->Label(),
                             field_, value, value);

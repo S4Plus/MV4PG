@@ -1,0 +1,157 @@
+cypher: Maintenance match (n:Account:Loan{id:569547023196251})-[r1*..2]->(m:Loan) WITH n,m match (n)-[r:ACCOUNT_LOAN NoDupEdge ]->(m) delete r
+Union 
+match (n:Account)-[r1*..2]->(m:Loan:Loan{id:569547023196251}) WITH n,m match (n)-[r:ACCOUNT_LOAN NoDupEdge ]->(m) delete r
+Union 
+match (n:Account)-[*1]->(:Loan{id:569547023196251})-[*1..1]->(m:Loan) WITH n,m match (n)-[r:ACCOUNT_LOAN NoDupEdge ]->(m) delete r
+total db hit:34465
+Profile statistics:
+Produce Results (3 rows)
+    Union (3 rows)
+        Delete (1 rows)
+            Apply (0 rows)
+                Expand(Into) [n --> m ] (0 rows, 0 hits)
+                    Argument [n,m] (0 rows)
+                Project [n,m] (0 rows)
+                    Variable Length Expand(All) [n -->*1..2 m]{
+ node cnt:
+  layer:0,count:0
+  layer:1,count:0
+  layer:2,count:0
+expand cnt:
+  layer:0,count:0
+  layer:1,count:0
+} (0 rows, 0 hits)
+                        Node Index Seek [n] id IN [569547023196251,] (0 rows)
+        Delete (1 rows)
+            Apply (20 rows)
+                Expand(Into) [n --> m ] (20 rows, 34288 hits)
+                    Argument [n,m] (20 rows)
+                Project [n,m] (20 rows)
+                    Variable Length Expand(All) [m <--*1..2 n]{
+ node cnt:
+  layer:0,count:0
+  layer:1,count:8
+  layer:2,count:63
+expand cnt:
+  layer:0,count:10
+  layer:1,count:64
+} (20 rows, 150 hits)
+                        Node Index Seek [m] id IN [569547023196251,] (1 rows)
+        Delete (1 rows)
+            Apply (0 rows)
+                Expand(Into) [n --> m ] (0 rows, 0 hits)
+                    Argument [n,m] (0 rows)
+                Project [n,m] (0 rows)
+                    Variable Length Expand(All) [@ANON_N1 -->*1..1 m]{
+ node cnt:
+  layer:0,count:0
+  layer:1,count:0
+expand cnt:
+  layer:0,count:4
+} (0 rows, 12 hits)
+                        Variable Length Expand(All) [@ANON_N1 <--*1..1 n]{
+ node cnt:
+  layer:0,count:0
+  layer:1,count:4
+expand cnt:
+  layer:0,count:5
+} (4 rows, 11 hits)
+                            Node Index Seek [@ANON_N1] id IN [569547023196251,] (1 rows)
+
+
+cypher: Maintenance match (n:Company:Loan{id:569547023196251})-[r1]->()-[r2]->(m:Loan) WITH n,m match (n)-[r:COMPANY_LOAN NoDupEdge ]->(m) delete r
+Union 
+match (n:Company)-[r1]->(:Loan{id:569547023196251})-[r2]->(m:Loan) WITH n,m match (n)-[r:COMPANY_LOAN NoDupEdge ]->(m) delete r
+Union 
+match (n:Company)-[r1]->()-[r2]->(m:Loan:Loan{id:569547023196251}) WITH n,m match (n)-[r:COMPANY_LOAN NoDupEdge ]->(m) delete r
+total db hit:229
+Profile statistics:
+Produce Results (3 rows)
+    Union (3 rows)
+        Delete (1 rows)
+            Apply (0 rows)
+                Expand(Into) [n --> m ] (0 rows, 0 hits)
+                    Argument [n,m] (0 rows)
+                Project [n,m] (0 rows)
+                    Expand(All) [@ANON_N0 --> m ] (0 rows, 0 hits)
+                        Expand(All) [n --> @ANON_N0 ] (0 rows, 0 hits)
+                            Node Index Seek [n] id IN [569547023196251,] (0 rows)
+        Delete (1 rows)
+            Apply (0 rows)
+                Expand(Into) [n --> m ] (0 rows, 0 hits)
+                    Argument [n,m] (0 rows)
+                Project [n,m] (0 rows)
+                    Expand(All) [@ANON_N0 --> m ] (0 rows, 2 hits)
+                        Expand(All) [@ANON_N0 <-- n ] (1 rows, 11 hits)
+                            Node Index Seek [@ANON_N0] id IN [569547023196251,] (1 rows)
+        Delete (1 rows)
+            Apply (6 rows)
+                Expand(Into) [n --> m ] (6 rows, 68 hits)
+                    Argument [n,m] (6 rows)
+                Project [n,m] (6 rows)
+                    Expand(All) [@ANON_N0 <-- n ] (6 rows, 133 hits)
+                        Expand(All) [m <-- @ANON_N0 ] (5 rows, 11 hits)
+                            Node Index Seek [m] id IN [569547023196251,] (1 rows)
+
+
+cypher: Maintenance match (n:Person:Loan{id:569547023196251})-[r1*2]->(m:Company) WITH n,m match (n)-[r:PERSON_COMPANY NoDupEdge ]->(m) delete r
+Union 
+match (n:Person)-[r1*2]->(m:Company:Loan{id:569547023196251}) WITH n,m match (n)-[r:PERSON_COMPANY NoDupEdge ]->(m) delete r
+Union 
+match (n:Person)-[*1]->(:Loan{id:569547023196251})-[*1..1]->(m:Company) WITH n,m match (n)-[r:PERSON_COMPANY NoDupEdge ]->(m) delete r
+total db hit:13
+Profile statistics:
+Produce Results (3 rows)
+    Union (3 rows)
+        Delete (1 rows)
+            Apply (0 rows)
+                Expand(Into) [n --> m ] (0 rows, 0 hits)
+                    Argument [n,m] (0 rows)
+                Project [n,m] (0 rows)
+                    Variable Length Expand(All) [n -->*2..2 m]{
+ node cnt:
+  layer:0,count:0
+  layer:1,count:0
+  layer:2,count:0
+expand cnt:
+  layer:0,count:0
+  layer:1,count:0
+} (0 rows, 0 hits)
+                        Node Index Seek [n] id IN [569547023196251,] (0 rows)
+        Delete (1 rows)
+            Apply (0 rows)
+                Expand(Into) [n --> m ] (0 rows, 0 hits)
+                    Argument [n,m] (0 rows)
+                Project [n,m] (0 rows)
+                    Variable Length Expand(All) [m <--*2..2 n]{
+ node cnt:
+  layer:0,count:0
+  layer:1,count:0
+  layer:2,count:0
+expand cnt:
+  layer:0,count:0
+  layer:1,count:0
+} (0 rows, 0 hits)
+                        Node Index Seek [m] id IN [569547023196251,] (0 rows)
+        Delete (1 rows)
+            Apply (0 rows)
+                Expand(Into) [n --> m ] (0 rows, 0 hits)
+                    Argument [n,m] (0 rows)
+                Project [n,m] (0 rows)
+                    Variable Length Expand(All) [@ANON_N1 -->*1..1 m]{
+ node cnt:
+  layer:0,count:0
+  layer:1,count:0
+expand cnt:
+  layer:0,count:0
+} (0 rows, 0 hits)
+                        Variable Length Expand(All) [@ANON_N1 <--*1..1 n]{
+ node cnt:
+  layer:0,count:0
+  layer:1,count:4
+expand cnt:
+  layer:0,count:5
+} (0 rows, 11 hits)
+                            Node Index Seek [@ANON_N1] id IN [569547023196251,] (1 rows)
+
+

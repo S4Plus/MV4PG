@@ -354,6 +354,7 @@ const std::string Scheduler::EvalCypher(RTContext *ctx, const std::string &scrip
         LOG_DEBUG()<<"build start";
         plan->SetCypherQuery(script);
         plan->Build(visitor.GetQuery(), visitor.CommandType(), ctx,visitor.CommandType()==parser::CmdType::PROFILE);
+        // plan->Build(visitor.GetQuery(), visitor.CommandType(), ctx,visitor.CommandType()==parser::CmdType::PROFILE|| visitor.CommandType()==parser::CmdType::MAINTENANCE);
         LOG_DEBUG()<<"build end";
         // LOG_DEBUG()<<"EvalCypherWithoutNewTxn txn exist7:"<<(ctx->txn_!=nullptr);
         plan->Validate(ctx);
@@ -439,6 +440,7 @@ const std::string Scheduler::EvalCypher(RTContext *ctx, const std::string &scrip
     elapsed.t_total = fma_common::GetTime() - t0;
     elapsed.t_exec = elapsed.t_total - elapsed.t_compile;
     if (plan->CommandType() == parser::CmdType::PROFILE){
+    // if (plan->CommandType() == parser::CmdType::PROFILE || plan->CommandType()==parser::CmdType::MAINTENANCE){
         size_t db_hit=plan->GetDBHit();
         std::string profile_inf=plan->DumpPlan(0, true);
         profile_inf="total db hit:"+std::to_string(db_hit)+"\n"+profile_inf;
@@ -446,13 +448,15 @@ const std::string Scheduler::EvalCypher(RTContext *ctx, const std::string &scrip
         if(parent_dir.end()[-1]=='/')parent_dir.pop_back();
         WriteProfile(parent_dir+"/output",script,profile_inf);
         size_t result_num=plan->Root()->stats.profileRecordCount;
-        ctx->result_info_ = std::make_unique<ResultInfo>();
-        ctx->result_ = std::make_unique<lgraph::Result>();
+        // if(plan->CommandType() == parser::CmdType::PROFILE){
+            ctx->result_info_ = std::make_unique<ResultInfo>();
+            ctx->result_ = std::make_unique<lgraph::Result>();
 
-        ctx->result_->ResetHeader({{"db_hit", lgraph_api::LGraphType::STRING},{"result_num", lgraph_api::LGraphType::STRING}});
-        auto r = ctx->result_->MutableRecord();
-        r->Insert("db_hit", lgraph::FieldData(std::to_string(db_hit)));
-        r->Insert("result_num", lgraph::FieldData(std::to_string(result_num)));
+            ctx->result_->ResetHeader({{"db_hit", lgraph_api::LGraphType::STRING},{"result_num", lgraph_api::LGraphType::STRING}});
+            auto r = ctx->result_->MutableRecord();
+            r->Insert("db_hit", lgraph::FieldData(std::to_string(db_hit)));
+            r->Insert("result_num", lgraph::FieldData(std::to_string(result_num)));
+        // }
     }
     return std::string();
 
