@@ -1,0 +1,9 @@
+match (acc{id:"1694622296319520"})-[r:repay]->(loan{createTime:"1656084982460"}) where r.timestamp="1729822775000" delete r
+MATCH (acc:Account {id: "7606696318861801"}),(loan: Loan {id: "288346924384537"}) create (acc)-[r:repay{timestamp: "1645739703489",amount: "26291892.6"}]->(loan)
+create (n:Loan{id:"569547023196251",createTime:"1578056331433",balance:"49222390",interestRate:"0.044",loanAmount:"49222390",loanUsage:"vacations"})
+MATCH (n:Loan {id:"569547023196251"}),(m:Company{id:"298213"}) create (n)<-[r:apply{timestamp:"1578056331433",org:"Upgrade"}]-(m)
+MATCH (n:Loan {id:"569547023196251"}),(m:Account) where m.nickname="Renetta Guarriello" and m.lastLoginTime="1769172279289" create (n)-[r:deposit{timestamp:"1666883006453",amount:"7984070.02"}]->(m)
+MATCH (n:Loan {id:"569547023196251"}),(m:Account) where m.nickname="Renetta Guarriello" and m.lastLoginTime="1769172279289" create (n)<-[r:repay{timestamp:"1667848081686",amount:"8394244.26"}]-(m)
+MATCH (n:Loan {id:"569547023196251"}),(m:Account) where m.nickname="Renetta Guarriello" and m.lastLoginTime="1769172279289" create (n)<-[r:repay{timestamp:"1655888588951",amount:"32315623.19"}]-(m)
+MATCH (n:Loan {id:"569547023196251"}),(m:Account) where m.nickname="Lucien Grabowiecki" and m.lastLoginTime="1859227592920" create (n)<-[r:repay{timestamp:"1669430496462",amount:"952660.18"}]-(m)
+MATCH (n:Loan {id:"569547023196251"}),(m:Account) where m.nickname="Lucien Grabowiecki" and m.lastLoginTime="1859227592920" create (n)<-[r:repay{timestamp:"1644281458549",amount:"3059914.45"}]-(m)

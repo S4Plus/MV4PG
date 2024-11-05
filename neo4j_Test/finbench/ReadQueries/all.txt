@@ -1,0 +1,7 @@
+match (n0:Person)-[r1*2]->(n1:Company) match (n1)<-[r2*2]-(n2:Person) where id(n0)<>id(n2)  return count(n1)
+match (n0:Company)-[r1]->(n1)-[r2]->(n2:Loan) match (n2)<-[r3:repay]-(n3:Account) return count(n3)
+match (n0:Person)-[r1*2]->(n1:Company) match (n0)-[r2:own]->(n2:Account) return count(n1)
+match (n0:Medium)-[r1:signIn]->(n1:Account) match (n1)-[r2*..2]->(n2:Loan) return count(n2)
+match (n0:Loan)<-[r1]-(n1)<-[r2]-(n2:Company) match (n2)<-[r3*2]-(n3:Person) return count(n3)
+match (n0:Account)<-[r1:own]-(n1:Company) match (n1)-[r2]->(n2)-[r3]->(n3:Loan) return count(n3)
+match (n0:Account)-[r1*..2]->(n1:Loan) match (n1)<-[r2]-(n2)<-[r3]-(n3:Company) return count(n1)

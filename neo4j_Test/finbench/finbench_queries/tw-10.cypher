@@ -1,0 +1,1 @@
+MATCH (p1:Person{id:%d}), (p2:Person{id:%d}) CREATE (p1)-[:guarantee{timestamp: %d}]->(p2);

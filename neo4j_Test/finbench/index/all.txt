@@ -1,0 +1,5 @@
+CREATE CONSTRAINT unique_person_id1 FOR (p:Account) REQUIRE p.id IS UNIQUE
+CREATE CONSTRAINT unique_person_id2 FOR (p:Company) REQUIRE p.id IS UNIQUE
+CREATE CONSTRAINT unique_person_id3 FOR (p:Loan) REQUIRE p.id IS UNIQUE
+CREATE CONSTRAINT unique_person_id4 FOR (p:Medium) REQUIRE p.id IS UNIQUE
+CREATE CONSTRAINT unique_person_id5 FOR (p:Person) REQUIRE p.id IS UNIQUE

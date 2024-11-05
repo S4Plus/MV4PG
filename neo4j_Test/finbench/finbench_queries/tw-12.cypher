@@ -1,0 +1,1 @@
+MATCH (a1:Account{id:%d}), (a2:Account{id:%d}) CREATE (a1)-[:transfer{timestamp: %d, amount: %f}]->(a2);

@@ -1,0 +1,1 @@
+Match (acc:Account {id: 1694622296319520})<-[r:deposit {timestamp: 1729822775000}]-(loan: Loan {id: 254459151382484580}) delete r

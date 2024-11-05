@@ -354,3 +354,18 @@ create view cypher: create view PERSON_PLACE as
 MATCH (n:Person)-[r1]->()-[r2]->(m:Place))
 create time: 154.48113441467285
 
+create view cypher: create view ROOT_POST as 
+( Construct (n)-[r:ROOT_POST]->(m) 
+match (n:Comment)-[r1:replyOf*..]->(m:Post) )
+create time: 28.712801456451416
+
+create view cypher: create view COMMENT_PLACE as 
+( Construct (n)-[r:COMMENT_PLACE]->(m) 
+match (n:Comment)-[r1*2..2]->(m:Place) )
+create time: 2461.325954437256
+
+create view cypher: create view PERSON_PLACE as 
+( Construct (n)-[r:PERSON_PLACE]->(m) 
+MATCH (n:Person)-[r1]->()-[r2]->(m:Place))
+create time: 343.09825897216797
+

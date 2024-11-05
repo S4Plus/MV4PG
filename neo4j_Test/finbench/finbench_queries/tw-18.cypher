@@ -1,0 +1,1 @@
+MATCH (a:Account {id:%d}) SET a.isBlocked = true;

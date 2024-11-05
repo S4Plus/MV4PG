@@ -96,3 +96,153 @@ speed up: 0.006984975149275906
 ['deleted 1 vertices, deleted 9 edges.']
 ['__null__']
 
+MATCH (p1:Person {id: 987}), (p2:Person {id: 2199023265994})
+CREATE (p1)-[:knows {creationDate: 13824310250, weight:0}]->(p2)
+cycle: 1
+original_time: 0.01950526237487793
+optimized_time: 0.8495056629180908
+speed up: 0.022960720836017103
+['created 0 vertices, created 1 edges.']
+['V[27565]']
+
+MATCH (n:Person {id: 65})-[r:likes]->(m:Comment {id: 1649268071638})
+DELETE r
+cycle: 1
+original_time: 0.012416601181030273
+optimized_time: 0.012892961502075195
+speed up: 0.9630526841355844
+['deleted 0 vertices, deleted 0 edges.']
+['deleted 0 vertices, deleted 0 edges.']
+
+MATCH (n:Post {id: 556})
+DETACH DELETE n
+cycle: 1
+original_time: 0.01105189323425293
+optimized_time: 0.015291213989257812
+speed up: 0.7227610078583011
+['deleted 0 vertices, deleted 0 edges.']
+['deleted 0 vertices, deleted 0 edges.']
+
+MATCH (p1:Person {id: 987}), (p2:Person {id: 2199023265994})
+CREATE (p1)-[:knows {creationDate: 13824310250, weight:0}]->(p2)
+cycle: 1
+original_time: 0.019644737243652344
+optimized_time: 0.8427791595458984
+speed up: 0.023309472026144088
+['created 0 vertices, created 1 edges.']
+['V[27565]']
+
+MATCH (n:Person {id: 65})-[r:likes]->(m:Comment {id: 1649268071638})
+DELETE r
+cycle: 1
+original_time: 0.012219667434692383
+optimized_time: 0.025089502334594727
+speed up: 0.48704303783033837
+['deleted 0 vertices, deleted 1 edges.']
+['V[26061]']
+
+MATCH (n:Post {id: 556})
+DETACH DELETE n
+cycle: 1
+original_time: 0.01104116439819336
+optimized_time: 0.03048872947692871
+speed up: 0.36213920972169006
+['deleted 1 vertices, deleted 9 edges.']
+['deleted 0 vertices, deleted 0 edges.']
+
+PROFILE match (n0:Comment)-[r1:replyOf*..]->(n1:Post)<-[r2:replyOf*..]-(n2:Comment) where n0<>n2 return count(n1)
+cycle: 1
+original_time: 355.9281487464905
+optimized_time: 162.59047102928162
+speed up: 2.189108294559217
+['230264328', '1']
+['66247456', '1']
+
+PROFILE match (n0:Place{name:'China'})<-[r1:isPartOf]-(n1:Place),(n0)<-[r2*2]-(n2:Comment) return count(n2)
+cycle: 1
+original_time: 200.04620599746704
+optimized_time: 235.8687870502472
+speed up: 0.8481249617604179
+['461810003', '1']
+['114856603', '1']
+
+PROFILE match (n0:Place)<-[r1:personIsLocatedIn]-(n1:Person)-[r2]->(n2)-[r3]->(n3:Place) return count(n3)
+cycle: 1
+original_time: 177.784765958786
+optimized_time: 683.2607250213623
+speed up: 0.2602004761114105
+['297445717', '1']
+['4853023', '1']
+
+PROFILE match (n0:Place)<-[r1*2]-(n1:Comment)-[r2:replyOf*..]->(n2:Post) return count(n2)
+cycle: 1
+original_time: 97.67967581748962
+optimized_time: 14.140995025634766
+speed up: 6.907553226658811
+['110052325', '1']
+['30785456', '1']
+
+PROFILE match (n0:Place{name:'Taiwan'})<-[r1]-(n1)<-[r2]-(n2:Person),(n0)<-[r3*2]-(n3:Comment) return count(n3)
+cycle: 1
+original_time: 344.2867019176483
+optimized_time: 124.33679032325745
+speed up: 2.7689849562832793
+['1381763168', '1']
+['343533303', '1']
+
+PROFILE match (n0:Tag)<-[r1:hasInterest]-(n1:Person)-[r2]->(n2)-[r3]->(n3:Place) where n0.hasType>100 return count(n3)
+cycle: 1
+original_time: 1691.0957515239716
+optimized_time: 29.75852870941162
+speed up: 56.82726347250948
+['5064505758', '1']
+['83188652', '1']
+
+PROFILE match (n0:Comment)-[r1:replyOf*..]->(n1:Post)<-[r2:replyOf*..]-(n2:Comment) where n0<>n2 return count(n1)
+cycle: 1
+original_time: 58.10391163825989
+optimized_time: 23.46219825744629
+speed up: 2.4764905232108516
+['230264328', '1']
+['66247456', '1']
+
+PROFILE match (n0:Place{name:'China'})<-[r1:isPartOf]-(n1:Place),(n0)<-[r2*2]-(n2:Comment) return count(n2)
+cycle: 1
+original_time: 117.0989830493927
+optimized_time: 48.8055899143219
+speed up: 2.3992944917776775
+['461810003', '1']
+['114856603', '1']
+
+PROFILE match (n0:Place)<-[r1:personIsLocatedIn]-(n1:Person)-[r2]->(n2)-[r3]->(n3:Place) return count(n3)
+cycle: 1
+original_time: 117.10277342796326
+optimized_time: 2.192440986633301
+speed up: 53.41205265815869
+['297445717', '1']
+['4853023', '1']
+
+PROFILE match (n0:Place)<-[r1*2]-(n1:Comment)-[r2:replyOf*..]->(n2:Post) return count(n2)
+cycle: 1
+original_time: 39.91933727264404
+optimized_time: 15.765456199645996
+speed up: 2.5320762537490293
+['110052325', '1']
+['30785456', '1']
+
+PROFILE match (n0:Place{name:'Taiwan'})<-[r1]-(n1)<-[r2]-(n2:Person),(n0)<-[r3*2]-(n3:Comment) return count(n3)
+cycle: 1
+original_time: 371.31455159187317
+optimized_time: 125.59723138809204
+speed up: 2.956391215699025
+['1381763168', '1']
+['343533303', '1']
+
+PROFILE match (n0:Tag)<-[r1:hasInterest]-(n1:Person)-[r2]->(n2)-[r3]->(n3:Place) where n0.hasType>100 return count(n3)
+cycle: 1
+original_time: 1754.9594724178314
+optimized_time: 29.263474225997925
+speed up: 59.97098836811079
+['5064505758', '1']
+['83188652', '1']
+

@@ -13,6 +13,7 @@ class Neo4jConnector:
             # 提取所有记录到列表
             records = [record for record in result]
             # 获取查询的 summary
+            
             summary = result.consume()
             return records, summary
 
@@ -24,11 +25,7 @@ if __name__ == "__main__":
     connector = Neo4jConnector(url, user, password)
     
     # 执行查询
-    result1, summary = connector.run_cypher("MATCH (n:Comment) RETURN count(n)")
-
+    result1, summary = connector.run_cypher("profile match(n:Account) return n limit 10")
+    print(summary.profile)
     # 打印查询的结果
-    a=str(result1) # 每个记录是一个包含查询结果的字典
-    print(a)
-    # 打印查询的摘要信息
-    print("Execution Time: ", summary.result_available_after, "ms")
-    print("Records Returned: ", summary.counters)
+    print(result1)

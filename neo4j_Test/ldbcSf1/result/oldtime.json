@@ -1,0 +1,690 @@
+{
+    "match (n0:Comment)-[r1:replyOf*..]->(n1:Post) match (n1)<-[r2:replyOf*..]-(n2:Comment) where id(n0)<>id(n2) return count(n1)": {
+        "result0": "[<Record count(n1)=25941136>]",
+        "profile": {
+            "operatorType": "ProduceResults@ldbcsf1",
+            "Details": "`count(n1)`",
+            "dbHits": 0,
+            "rows": 1,
+            "children": [
+                {
+                    "operatorType": "EagerAggregation@ldbcsf1",
+                    "Details": "count(n1) AS `count(n1)`",
+                    "dbHits": 0,
+                    "rows": 1,
+                    "children": [
+                        {
+                            "operatorType": "Filter@ldbcsf1",
+                            "Details": "not id(n0) = id(n2) AND n0:Comment",
+                            "dbHits": 25941136,
+                            "rows": 25941136,
+                            "children": [
+                                {
+                                    "operatorType": "VarLengthExpand(All)@ldbcsf1",
+                                    "Details": "(n1)<-[r1:replyOf*]-(n0)",
+                                    "dbHits": 58038779,
+                                    "rows": 27993305,
+                                    "children": [
+                                        {
+                                            "operatorType": "Filter@ldbcsf1",
+                                            "Details": "n2:Comment",
+                                            "dbHits": 2052169,
+                                            "rows": 2052169,
+                                            "children": [
+                                                {
+                                                    "operatorType": "VarLengthExpand(All)@ldbcsf1",
+                                                    "Details": "(n1)<-[r2:replyOf*]-(n2)",
+                                                    "dbHits": 5107943,
+                                                    "rows": 2052169,
+                                                    "children": [
+                                                        {
+                                                            "operatorType": "NodeByLabelScan@ldbcsf1",
+                                                            "Details": "n1:Post",
+                                                            "dbHits": 1003606,
+                                                            "rows": 1003605,
+                                                            "children": []
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        "time0": 43180,
+        "add_nodes": 0,
+        "delete_nodes": 0,
+        "add_rel": 0,
+        "delete_rel": 0,
+        "result1": "[<Record count(n1)=25941136>]",
+        "time1": 43100,
+        "result2": "[<Record count(n1)=25941136>]",
+        "time2": 43473,
+        "result3": "[<Record count(n1)=25941136>]",
+        "time3": 43380,
+        "result4": "[<Record count(n1)=25941136>]",
+        "time4": 44835,
+        "alltime": 217968.0,
+        "ave_time": 43593.6
+    },
+    "match (n0:Place{name:'China'})<-[r1:isPartOf]-(n1:Place) match (n0)<-[r2*2]-(n2:Comment) return count(n2)": {
+        "result0": "[<Record count(n2)=57428000>]",
+        "profile": {
+            "operatorType": "ProduceResults@ldbcsf1",
+            "Details": "`count(n2)`",
+            "dbHits": 0,
+            "rows": 1,
+            "children": [
+                {
+                    "operatorType": "EagerAggregation@ldbcsf1",
+                    "Details": "count(n2) AS `count(n2)`",
+                    "dbHits": 0,
+                    "rows": 1,
+                    "children": [
+                        {
+                            "operatorType": "Filter@ldbcsf1",
+                            "Details": "n2:Comment",
+                            "dbHits": 147715000,
+                            "rows": 57428000,
+                            "children": [
+                                {
+                                    "operatorType": "VarLengthExpand(All)@ldbcsf1",
+                                    "Details": "(n0)<-[r2*2..2]-(n2)",
+                                    "dbHits": 314094400,
+                                    "rows": 147715000,
+                                    "children": [
+                                        {
+                                            "operatorType": "Filter@ldbcsf1",
+                                            "Details": "n1:Place",
+                                            "dbHits": 200,
+                                            "rows": 200,
+                                            "children": [
+                                                {
+                                                    "operatorType": "Expand(All)@ldbcsf1",
+                                                    "Details": "(n0)<-[r1:isPartOf]-(n1)",
+                                                    "dbHits": 201,
+                                                    "rows": 200,
+                                                    "children": [
+                                                        {
+                                                            "operatorType": "Filter@ldbcsf1",
+                                                            "Details": "n0.name = $autostring_0",
+                                                            "dbHits": 1460,
+                                                            "rows": 1,
+                                                            "children": [
+                                                                {
+                                                                    "operatorType": "NodeByLabelScan@ldbcsf1",
+                                                                    "Details": "n0:Place",
+                                                                    "dbHits": 1461,
+                                                                    "rows": 1460,
+                                                                    "children": []
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        "time0": 161545,
+        "add_nodes": 0,
+        "delete_nodes": 0,
+        "add_rel": 0,
+        "delete_rel": 0,
+        "result1": "[<Record count(n2)=57428000>]",
+        "time1": 160293,
+        "result2": "[<Record count(n2)=57428000>]",
+        "time2": 160185,
+        "result3": "[<Record count(n2)=57428000>]",
+        "time3": 159399,
+        "result4": "[<Record count(n2)=57428000>]",
+        "time4": 158373,
+        "alltime": 799795.0,
+        "ave_time": 159959.0
+    },
+    "match (n0:Place)<-[r1:personIsLocatedIn]-(n1:Person) match (n1)-[r2]->(n2)-[r3]->(n3:Place) return count(n3)": {
+        "result0": "[<Record count(n3)=2410213>]",
+        "profile": {
+            "operatorType": "ProduceResults@ldbcsf1",
+            "Details": "`count(n3)`",
+            "dbHits": 0,
+            "rows": 1,
+            "children": [
+                {
+                    "operatorType": "EagerAggregation@ldbcsf1",
+                    "Details": "count(n3) AS `count(n3)`",
+                    "dbHits": 0,
+                    "rows": 1,
+                    "children": [
+                        {
+                            "operatorType": "Filter@ldbcsf1",
+                            "Details": "not r2 = r3",
+                            "dbHits": 0,
+                            "rows": 2410213,
+                            "children": [
+                                {
+                                    "operatorType": "NodeHashJoin@ldbcsf1",
+                                    "Details": "n2",
+                                    "dbHits": 0,
+                                    "rows": 2410213,
+                                    "children": [
+                                        {
+                                            "operatorType": "Expand(All)@ldbcsf1",
+                                            "Details": "(n1)-[r2]->(n2)",
+                                            "dbHits": 2649271,
+                                            "rows": 2639379,
+                                            "children": [
+                                                {
+                                                    "operatorType": "Filter@ldbcsf1",
+                                                    "Details": "n1:Person",
+                                                    "dbHits": 9892,
+                                                    "rows": 9892,
+                                                    "children": [
+                                                        {
+                                                            "operatorType": "Expand(All)@ldbcsf1",
+                                                            "Details": "(n0)<-[r1:personIsLocatedIn]-(n1)",
+                                                            "dbHits": 11352,
+                                                            "rows": 9892,
+                                                            "children": [
+                                                                {
+                                                                    "operatorType": "NodeByLabelScan@ldbcsf1",
+                                                                    "Details": "n0:Place",
+                                                                    "dbHits": 1461,
+                                                                    "rows": 1460,
+                                                                    "children": []
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "operatorType": "Expand(All)@ldbcsf1",
+                                            "Details": "(n3)<-[r3]-(n2)",
+                                            "dbHits": 3076535,
+                                            "rows": 3075075,
+                                            "children": [
+                                                {
+                                                    "operatorType": "NodeByLabelScan@ldbcsf1",
+                                                    "Details": "n3:Place",
+                                                    "dbHits": 1461,
+                                                    "rows": 1460,
+                                                    "children": []
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        "time0": 8628,
+        "add_nodes": 0,
+        "delete_nodes": 0,
+        "add_rel": 0,
+        "delete_rel": 0,
+        "result1": "[<Record count(n3)=2410213>]",
+        "time1": 8931,
+        "result2": "[<Record count(n3)=2410213>]",
+        "time2": 6992,
+        "result3": "[<Record count(n3)=2410213>]",
+        "time3": 7082,
+        "result4": "[<Record count(n3)=2410213>]",
+        "time4": 7053,
+        "alltime": 38686.0,
+        "ave_time": 7737.2
+    },
+    "match (n0:Place)<-[r1*2]-(n1:Comment) match (n1)-[r2:replyOf*..]->(n2:Post) return count(n2)": {
+        "result0": "[<Record count(n2)=6156507>]",
+        "profile": {
+            "operatorType": "ProduceResults@ldbcsf1",
+            "Details": "`count(n2)`",
+            "dbHits": 0,
+            "rows": 1,
+            "children": [
+                {
+                    "operatorType": "EagerAggregation@ldbcsf1",
+                    "Details": "count(n2) AS `count(n2)`",
+                    "dbHits": 0,
+                    "rows": 1,
+                    "children": [
+                        {
+                            "operatorType": "NodeHashJoin@ldbcsf1",
+                            "Details": "n1",
+                            "dbHits": 0,
+                            "rows": 6156507,
+                            "children": [
+                                {
+                                    "operatorType": "Filter@ldbcsf1",
+                                    "Details": "n1:Comment",
+                                    "dbHits": 2052169,
+                                    "rows": 2052169,
+                                    "children": [
+                                        {
+                                            "operatorType": "VarLengthExpand(All)@ldbcsf1",
+                                            "Details": "(n2)<-[r2:replyOf*]-(n1)",
+                                            "dbHits": 5107943,
+                                            "rows": 2052169,
+                                            "children": [
+                                                {
+                                                    "operatorType": "NodeByLabelScan@ldbcsf1",
+                                                    "Details": "n2:Post",
+                                                    "dbHits": 1003606,
+                                                    "rows": 1003605,
+                                                    "children": []
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "operatorType": "VarLengthExpand(All)@ldbcsf1",
+                                    "Details": "(n0)<-[r1*2..2]-(n1)",
+                                    "dbHits": 19440806,
+                                    "rows": 13289196,
+                                    "children": [
+                                        {
+                                            "operatorType": "NodeByLabelScan@ldbcsf1",
+                                            "Details": "n0:Place",
+                                            "dbHits": 1461,
+                                            "rows": 1460,
+                                            "children": []
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        "time0": 21700,
+        "add_nodes": 0,
+        "delete_nodes": 0,
+        "add_rel": 0,
+        "delete_rel": 0,
+        "result1": "[<Record count(n2)=6156507>]",
+        "time1": 24117,
+        "result2": "[<Record count(n2)=6156507>]",
+        "time2": 24963,
+        "result3": "[<Record count(n2)=6156507>]",
+        "time3": 24508,
+        "result4": "[<Record count(n2)=6156507>]",
+        "time4": 23689,
+        "alltime": 118977.0,
+        "ave_time": 23795.4
+    },
+    "match (n0:Place{name:'Taiwan'})<-[r1]-(n1)<-[r2]-(n2:Person) match (n0)<-[r3*2]-(n3:Comment) return count(n3)": {
+        "result0": "[<Record count(n3)=171747840>]",
+        "profile": {
+            "operatorType": "ProduceResults@ldbcsf1",
+            "Details": "`count(n3)`",
+            "dbHits": 0,
+            "rows": 1,
+            "children": [
+                {
+                    "operatorType": "EagerAggregation@ldbcsf1",
+                    "Details": "count(n3) AS `count(n3)`",
+                    "dbHits": 0,
+                    "rows": 1,
+                    "children": [
+                        {
+                            "operatorType": "NodeHashJoin@ldbcsf1",
+                            "Details": "n0",
+                            "dbHits": 0,
+                            "rows": 171747840,
+                            "children": [
+                                {
+                                    "operatorType": "Filter@ldbcsf1",
+                                    "Details": "n2:Person AND not r1 = r2",
+                                    "dbHits": 32554,
+                                    "rows": 13696,
+                                    "children": [
+                                        {
+                                            "operatorType": "Expand(All)@ldbcsf1",
+                                            "Details": "(n1)<-[r2]-(n2)",
+                                            "dbHits": 50439,
+                                            "rows": 32554,
+                                            "children": [
+                                                {
+                                                    "operatorType": "Expand(All)@ldbcsf1",
+                                                    "Details": "(n0)<-[r1]-(n1)",
+                                                    "dbHits": 17886,
+                                                    "rows": 17885,
+                                                    "children": [
+                                                        {
+                                                            "operatorType": "Filter@ldbcsf1",
+                                                            "Details": "cache[n0.name] = $autostring_0",
+                                                            "dbHits": 1460,
+                                                            "rows": 1,
+                                                            "children": [
+                                                                {
+                                                                    "operatorType": "NodeByLabelScan@ldbcsf1",
+                                                                    "Details": "n0:Place",
+                                                                    "dbHits": 1461,
+                                                                    "rows": 1460,
+                                                                    "children": []
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "operatorType": "Filter@ldbcsf1",
+                                    "Details": "n3:Comment",
+                                    "dbHits": 32554,
+                                    "rows": 12540,
+                                    "children": [
+                                        {
+                                            "operatorType": "VarLengthExpand(All)@ldbcsf1",
+                                            "Details": "(n0)<-[r3*2..2]-(n3)",
+                                            "dbHits": 68325,
+                                            "rows": 32554,
+                                            "children": [
+                                                {
+                                                    "operatorType": "Filter@ldbcsf1",
+                                                    "Details": "cache[n0.name] = $autostring_0",
+                                                    "dbHits": 1460,
+                                                    "rows": 1,
+                                                    "children": [
+                                                        {
+                                                            "operatorType": "NodeByLabelScan@ldbcsf1",
+                                                            "Details": "n0:Place",
+                                                            "dbHits": 1461,
+                                                            "rows": 1460,
+                                                            "children": []
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        "time0": 168972,
+        "add_nodes": 0,
+        "delete_nodes": 0,
+        "add_rel": 0,
+        "delete_rel": 0,
+        "result1": "[<Record count(n3)=171747840>]",
+        "time1": 166589,
+        "result2": "[<Record count(n3)=171747840>]",
+        "time2": 153630,
+        "result3": "[<Record count(n3)=171747840>]",
+        "time3": 154655,
+        "result4": "[<Record count(n3)=171747840>]",
+        "time4": 155430,
+        "alltime": 799276.0,
+        "ave_time": 159855.2
+    },
+    "match (n0:Tag)<-[r1:hasInterest]-(n1:Person) match (n1)-[r2]->(n2)-[r3]->(n3:Place) where toInteger(n0.hasType)>100 return count(n3)": {
+        "result0": "[<Record count(n3)=41324343>]",
+        "profile": {
+            "operatorType": "ProduceResults@ldbcsf1",
+            "Details": "`count(n3)`",
+            "dbHits": 0,
+            "rows": 1,
+            "children": [
+                {
+                    "operatorType": "EagerAggregation@ldbcsf1",
+                    "Details": "count(n3) AS `count(n3)`",
+                    "dbHits": 0,
+                    "rows": 1,
+                    "children": [
+                        {
+                            "operatorType": "NodeHashJoin@ldbcsf1",
+                            "Details": "n1",
+                            "dbHits": 0,
+                            "rows": 41324343,
+                            "children": [
+                                {
+                                    "operatorType": "Filter@ldbcsf1",
+                                    "Details": "n1:Person",
+                                    "dbHits": 170046,
+                                    "rows": 170046,
+                                    "children": [
+                                        {
+                                            "operatorType": "Expand(All)@ldbcsf1",
+                                            "Details": "(n0)<-[r1:hasInterest]-(n1)",
+                                            "dbHits": 183793,
+                                            "rows": 170046,
+                                            "children": [
+                                                {
+                                                    "operatorType": "Filter@ldbcsf1",
+                                                    "Details": "toInteger(n0.hasType) > $autoint_0",
+                                                    "dbHits": 16080,
+                                                    "rows": 13747,
+                                                    "children": [
+                                                        {
+                                                            "operatorType": "NodeByLabelScan@ldbcsf1",
+                                                            "Details": "n0:Tag",
+                                                            "dbHits": 16081,
+                                                            "rows": 16080,
+                                                            "children": []
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "operatorType": "Filter@ldbcsf1",
+                                    "Details": "not r2 = r3",
+                                    "dbHits": 0,
+                                    "rows": 2410213,
+                                    "children": [
+                                        {
+                                            "operatorType": "NodeHashJoin@ldbcsf1",
+                                            "Details": "n2",
+                                            "dbHits": 0,
+                                            "rows": 2410213,
+                                            "children": [
+                                                {
+                                                    "operatorType": "Expand(All)@ldbcsf1",
+                                                    "Details": "(n1)-[r2]->(n2)",
+                                                    "dbHits": 2649271,
+                                                    "rows": 2639379,
+                                                    "children": [
+                                                        {
+                                                            "operatorType": "NodeByLabelScan@ldbcsf1",
+                                                            "Details": "n1:Person",
+                                                            "dbHits": 9893,
+                                                            "rows": 9892,
+                                                            "children": []
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "operatorType": "Expand(All)@ldbcsf1",
+                                                    "Details": "(n3)<-[r3]-(n2)",
+                                                    "dbHits": 3076535,
+                                                    "rows": 3075075,
+                                                    "children": [
+                                                        {
+                                                            "operatorType": "NodeByLabelScan@ldbcsf1",
+                                                            "Details": "n3:Place",
+                                                            "dbHits": 1461,
+                                                            "rows": 1460,
+                                                            "children": []
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        "time0": 30978,
+        "add_nodes": 0,
+        "delete_nodes": 0,
+        "add_rel": 0,
+        "delete_rel": 0,
+        "result1": "[<Record count(n3)=41324343>]",
+        "time1": 33549,
+        "result2": "[<Record count(n3)=41324343>]",
+        "time2": 31350,
+        "result3": "[<Record count(n3)=41324343>]",
+        "time3": 28011,
+        "result4": "[<Record count(n3)=41324343>]",
+        "time4": 31548,
+        "alltime": 155436.0,
+        "ave_time": 31087.2
+    },
+    "match (n0:Comment)-[r1:replyOf*..]->(n1:Post) match (n1)-[r2:postHasCreator]->(n2:Person) match (n2)-[r3]->(n3)-[r4]->(n4:Place) where toInteger(n0.creationDate)<1280000000000 return count(n4)": {
+        "result0": "[<Record count(n4)=100784775>]",
+        "profile": {
+            "operatorType": "ProduceResults@ldbcsf1",
+            "Details": "`count(n4)`",
+            "dbHits": 0,
+            "rows": 1,
+            "children": [
+                {
+                    "operatorType": "EagerAggregation@ldbcsf1",
+                    "Details": "count(n4) AS `count(n4)`",
+                    "dbHits": 0,
+                    "rows": 1,
+                    "children": [
+                        {
+                            "operatorType": "NodeHashJoin@ldbcsf1",
+                            "Details": "n2",
+                            "dbHits": 0,
+                            "rows": 100784775,
+                            "children": [
+                                {
+                                    "operatorType": "Filter@ldbcsf1",
+                                    "Details": "toInteger(n0.creationDate) < $autoint_0 AND n0:Comment",
+                                    "dbHits": 2169319,
+                                    "rows": 117150,
+                                    "children": [
+                                        {
+                                            "operatorType": "VarLengthExpand(All)@ldbcsf1",
+                                            "Details": "(n1)<-[r1:replyOf*]-(n0)",
+                                            "dbHits": 5107943,
+                                            "rows": 2052169,
+                                            "children": [
+                                                {
+                                                    "operatorType": "Filter@ldbcsf1",
+                                                    "Details": "n1:Post",
+                                                    "dbHits": 1003605,
+                                                    "rows": 1003605,
+                                                    "children": [
+                                                        {
+                                                            "operatorType": "Expand(All)@ldbcsf1",
+                                                            "Details": "(n2)<-[r2:postHasCreator]-(n1)",
+                                                            "dbHits": 1013497,
+                                                            "rows": 1003605,
+                                                            "children": [
+                                                                {
+                                                                    "operatorType": "NodeByLabelScan@ldbcsf1",
+                                                                    "Details": "n2:Person",
+                                                                    "dbHits": 9893,
+                                                                    "rows": 9892,
+                                                                    "children": []
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "operatorType": "Filter@ldbcsf1",
+                                    "Details": "not r3 = r4",
+                                    "dbHits": 0,
+                                    "rows": 2410213,
+                                    "children": [
+                                        {
+                                            "operatorType": "NodeHashJoin@ldbcsf1",
+                                            "Details": "n3",
+                                            "dbHits": 0,
+                                            "rows": 2410213,
+                                            "children": [
+                                                {
+                                                    "operatorType": "Expand(All)@ldbcsf1",
+                                                    "Details": "(n2)-[r3]->(n3)",
+                                                    "dbHits": 2649271,
+                                                    "rows": 2639379,
+                                                    "children": [
+                                                        {
+                                                            "operatorType": "NodeByLabelScan@ldbcsf1",
+                                                            "Details": "n2:Person",
+                                                            "dbHits": 9893,
+                                                            "rows": 9892,
+                                                            "children": []
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "operatorType": "Expand(All)@ldbcsf1",
+                                                    "Details": "(n4)<-[r4]-(n3)",
+                                                    "dbHits": 3076535,
+                                                    "rows": 3075075,
+                                                    "children": [
+                                                        {
+                                                            "operatorType": "NodeByLabelScan@ldbcsf1",
+                                                            "Details": "n4:Place",
+                                                            "dbHits": 1461,
+                                                            "rows": 1460,
+                                                            "children": []
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        "time0": 77153,
+        "add_nodes": 0,
+        "delete_nodes": 0,
+        "add_rel": 0,
+        "delete_rel": 0,
+        "result1": "[<Record count(n4)=100784775>]",
+        "time1": 75257,
+        "result2": "[<Record count(n4)=100784775>]",
+        "time2": 73971,
+        "result3": "[<Record count(n4)=100784775>]",
+        "time3": 75748,
+        "result4": "[<Record count(n4)=100784775>]",
+        "time4": 72230,
+        "alltime": 374359.0,
+        "ave_time": 74871.8
+    }
+}

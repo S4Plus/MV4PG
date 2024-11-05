@@ -1,0 +1,49 @@
+{
+    "match (n:Account)-[r1*..2]->(m:Loan) where all(rel in r1 where rel.is_view is null) with n,m CREATE (n)-[r:ACCOUNT_LOAN{is_view:true}]->(m)": [
+        [
+            "optional match (n:Account)-[*0]-(view_vetex)-[r1*..2]->(m:Loan) WHERE ALL(rel IN r1 WHERE rel.is_view is null)  with n,m,collect(view_vetex) as view_vetexs with n,m,size(view_vetexs) as num,view_vetexs optional match (n)-[r:ACCOUNT_LOAN{is_view:true}]->(m) with collect(r) as views, n,m,num,view_vetexs UNWIND range(0,num-1) as i delete views[i]",
+            "optional match (n:Account)-[r1*..2]->(m:Loan)-[*0]-(view_vetex) WHERE ALL(rel IN r1 WHERE rel.is_view is null)  with n,m,collect(view_vetex) as view_vetexs with n,m,size(view_vetexs) as num,view_vetexs optional match (n)-[r:ACCOUNT_LOAN{is_view:true}]->(m) with collect(r) as views, n,m,num,view_vetexs UNWIND range(0,num-1) as i delete views[i]",
+            "optional match (n:Account)-[ANONR0*1]->(view_vetex)-[ANONR1*0..1]->(m:Loan) WHERE ALL(rel IN ANONR0 WHERE rel.is_view is null)  AND ALL(rel IN ANONR1 WHERE rel.is_view is null)  with n,m,collect(view_vetex) as view_vetexs with n,m,size(view_vetexs) as num,view_vetexs optional match (n)-[r:ACCOUNT_LOAN{is_view:true}]->(m) with collect(r) as views, n,m,num,view_vetexs UNWIND range(0,num-1) as i delete views[i]",
+            "optional match (n:Account)-[ANONR2*2]->(view_vetex)-[ANONR3*0]->(m:Loan) WHERE ALL(rel IN ANONR2 WHERE rel.is_view is null)  AND ALL(rel IN ANONR3 WHERE rel.is_view is null)  with n,m,collect(view_vetex) as view_vetexs with n,m,size(view_vetexs) as num,view_vetexs optional match (n)-[r:ACCOUNT_LOAN{is_view:true}]->(m) with collect(r) as views, n,m,num,view_vetexs UNWIND range(0,num-1) as i delete views[i]"
+        ],
+        [
+            "optional match (n:Account)-[ANONR0*0]->()-[view_edge]->()-[ANONR1*0..1]->(m:Loan) WHERE ALL(rel IN ANONR0 WHERE rel.is_view is null)  AND view_edge.is_view is null  AND ALL(rel IN ANONR1 WHERE rel.is_view is null)  with n,m,view_edge CREATE (n)-[r:ACCOUNT_LOAN{is_view:true}]->(m)",
+            "optional match (n:Account)-[ANONR2*1]->()-[view_edge]->()-[ANONR3*0]->(m:Loan) WHERE ALL(rel IN ANONR2 WHERE rel.is_view is null)  AND view_edge.is_view is null  AND ALL(rel IN ANONR3 WHERE rel.is_view is null)  with n,m,view_edge CREATE (n)-[r:ACCOUNT_LOAN{is_view:true}]->(m)"
+        ],
+        [
+            "optional match (n:Account)-[ANONR0*0]->()-[view_edge]->()-[ANONR1*0..1]->(m:Loan) WHERE ALL(rel IN ANONR0 WHERE rel.is_view is null)  AND view_edge.is_view is null  AND ALL(rel IN ANONR1 WHERE rel.is_view is null)  with n,m,collect(view_edge) as view_edges with n,m,size(view_edges) as num,view_edges optional match (n)-[r:ACCOUNT_LOAN{is_view:true}]->(m) with collect(r) as views, n,m,num,view_edges UNWIND range(0,num-1) as i delete views[i]",
+            "optional match (n:Account)-[ANONR2*1]->()-[view_edge]->()-[ANONR3*0]->(m:Loan) WHERE ALL(rel IN ANONR2 WHERE rel.is_view is null)  AND view_edge.is_view is null  AND ALL(rel IN ANONR3 WHERE rel.is_view is null)  with n,m,collect(view_edge) as view_edges with n,m,size(view_edges) as num,view_edges optional match (n)-[r:ACCOUNT_LOAN{is_view:true}]->(m) with collect(r) as views, n,m,num,view_edges UNWIND range(0,num-1) as i delete views[i]"
+        ]
+    ],
+    "match (n:Company)-[r1]->()-[r2]->(m:Loan) where r1.is_view is null and r2.is_view is null with n,m CREATE(n)-[r:COMPANY_LOAN{is_view:true}]->(m)": [
+        [
+            "optional match (n:Company)-[*0]-(view_vetex)-[r1]->()-[r2]->(m:Loan) WHERE r1.is_view is null  AND r2.is_view is null  with n,m,collect(view_vetex) as view_vetexs with n,m,size(view_vetexs) as num,view_vetexs optional match (n)-[r:COMPANY_LOAN{is_view:true}]->(m) with collect(r) as views, n,m,num,view_vetexs UNWIND range(0,num-1) as i delete views[i]",
+            "optional match (n:Company)-[r1]->()-[*0]-(view_vetex)-[r2]->(m:Loan) WHERE r1.is_view is null  AND r2.is_view is null  with n,m,collect(view_vetex) as view_vetexs with n,m,size(view_vetexs) as num,view_vetexs optional match (n)-[r:COMPANY_LOAN{is_view:true}]->(m) with collect(r) as views, n,m,num,view_vetexs UNWIND range(0,num-1) as i delete views[i]",
+            "optional match (n:Company)-[r1]->()-[r2]->(m:Loan)-[*0]-(view_vetex) WHERE r1.is_view is null  AND r2.is_view is null  with n,m,collect(view_vetex) as view_vetexs with n,m,size(view_vetexs) as num,view_vetexs optional match (n)-[r:COMPANY_LOAN{is_view:true}]->(m) with collect(r) as views, n,m,num,view_vetexs UNWIND range(0,num-1) as i delete views[i]"
+        ],
+        [
+            "optional match (n:Company)-[view_edge]->()-[r2]->(m:Loan) WHERE view_edge.is_view is null  AND r2.is_view is null  with n,m,view_edge CREATE(n)-[r:COMPANY_LOAN{is_view:true}]->(m)",
+            "optional match (n:Company)-[r1]->()-[view_edge]->(m:Loan) WHERE r1.is_view is null  AND view_edge.is_view is null  with n,m,view_edge CREATE(n)-[r:COMPANY_LOAN{is_view:true}]->(m)"
+        ],
+        [
+            "optional match (n:Company)-[view_edge]->()-[r2]->(m:Loan) WHERE view_edge.is_view is null  AND r2.is_view is null  with n,m,collect(view_edge) as view_edges with n,m,size(view_edges) as num,view_edges optional match (n)-[r:COMPANY_LOAN{is_view:true}]->(m) with collect(r) as views, n,m,num,view_edges UNWIND range(0,num-1) as i delete views[i]",
+            "optional match (n:Company)-[r1]->()-[view_edge]->(m:Loan) WHERE r1.is_view is null  AND view_edge.is_view is null  with n,m,collect(view_edge) as view_edges with n,m,size(view_edges) as num,view_edges optional match (n)-[r:COMPANY_LOAN{is_view:true}]->(m) with collect(r) as views, n,m,num,view_edges UNWIND range(0,num-1) as i delete views[i]"
+        ]
+    ],
+    "match (n:Person)-[r1*2]->(m:Company) where all(rel in r1 where rel.is_view is null) with n,m CREATE (n)-[r:PERSON_COMPANY{is_view:true}]->(m)": [
+        [
+            "optional match (n:Person)-[*0]-(view_vetex)-[r1*2]->(m:Company) WHERE ALL(rel IN r1 WHERE rel.is_view is null)  with n,m,collect(view_vetex) as view_vetexs with n,m,size(view_vetexs) as num,view_vetexs optional match (n)-[r:PERSON_COMPANY{is_view:true}]->(m) with collect(r) as views, n,m,num,view_vetexs UNWIND range(0,num-1) as i delete views[i]",
+            "optional match (n:Person)-[r1*2]->(m:Company)-[*0]-(view_vetex) WHERE ALL(rel IN r1 WHERE rel.is_view is null)  with n,m,collect(view_vetex) as view_vetexs with n,m,size(view_vetexs) as num,view_vetexs optional match (n)-[r:PERSON_COMPANY{is_view:true}]->(m) with collect(r) as views, n,m,num,view_vetexs UNWIND range(0,num-1) as i delete views[i]",
+            "optional match (n:Person)-[ANONR0*1]->(view_vetex)-[ANONR1*1..1]->(m:Company) WHERE ALL(rel IN ANONR0 WHERE rel.is_view is null)  AND ALL(rel IN ANONR1 WHERE rel.is_view is null)  with n,m,collect(view_vetex) as view_vetexs with n,m,size(view_vetexs) as num,view_vetexs optional match (n)-[r:PERSON_COMPANY{is_view:true}]->(m) with collect(r) as views, n,m,num,view_vetexs UNWIND range(0,num-1) as i delete views[i]",
+            "optional match (n:Person)-[ANONR2*2]->(view_vetex)-[ANONR3*0]->(m:Company) WHERE ALL(rel IN ANONR2 WHERE rel.is_view is null)  AND ALL(rel IN ANONR3 WHERE rel.is_view is null)  with n,m,collect(view_vetex) as view_vetexs with n,m,size(view_vetexs) as num,view_vetexs optional match (n)-[r:PERSON_COMPANY{is_view:true}]->(m) with collect(r) as views, n,m,num,view_vetexs UNWIND range(0,num-1) as i delete views[i]"
+        ],
+        [
+            "optional match (n:Person)-[ANONR0*0]->()-[view_edge]->()-[ANONR1*1..1]->(m:Company) WHERE ALL(rel IN ANONR0 WHERE rel.is_view is null)  AND view_edge.is_view is null  AND ALL(rel IN ANONR1 WHERE rel.is_view is null)  with n,m,view_edge CREATE (n)-[r:PERSON_COMPANY{is_view:true}]->(m)",
+            "optional match (n:Person)-[ANONR2*1]->()-[view_edge]->()-[ANONR3*0..0]->(m:Company) WHERE ALL(rel IN ANONR2 WHERE rel.is_view is null)  AND view_edge.is_view is null  AND ALL(rel IN ANONR3 WHERE rel.is_view is null)  with n,m,view_edge CREATE (n)-[r:PERSON_COMPANY{is_view:true}]->(m)"
+        ],
+        [
+            "optional match (n:Person)-[ANONR0*0]->()-[view_edge]->()-[ANONR1*1..1]->(m:Company) WHERE ALL(rel IN ANONR0 WHERE rel.is_view is null)  AND view_edge.is_view is null  AND ALL(rel IN ANONR1 WHERE rel.is_view is null)  with n,m,collect(view_edge) as view_edges with n,m,size(view_edges) as num,view_edges optional match (n)-[r:PERSON_COMPANY{is_view:true}]->(m) with collect(r) as views, n,m,num,view_edges UNWIND range(0,num-1) as i delete views[i]",
+            "optional match (n:Person)-[ANONR2*1]->()-[view_edge]->()-[ANONR3*0..0]->(m:Company) WHERE ALL(rel IN ANONR2 WHERE rel.is_view is null)  AND view_edge.is_view is null  AND ALL(rel IN ANONR3 WHERE rel.is_view is null)  with n,m,collect(view_edge) as view_edges with n,m,size(view_edges) as num,view_edges optional match (n)-[r:PERSON_COMPANY{is_view:true}]->(m) with collect(r) as views, n,m,num,view_edges UNWIND range(0,num-1) as i delete views[i]"
+        ]
+    ]
+}

@@ -35,28 +35,30 @@ class tool:
 
         delete_Start=cypher.find("delete")
         create_Start=cypher.find("create")
+        detach_Start=cypher.find("detach")
         if(delete_Start !=-1):
-            match_cypher=cypher[:delete_Start]
+            match_cypher=""
+            if detach_Start !=-1:
+                match_cypher=cypher[:detach_Start]
+                is_vetex=True 
+            else:
+                is_vetex=False               
+                match_cypher=cypher[:delete_Start]
             varibale_cypher=cypher[delete_Start+len("delete"):].strip()
             #print("vars",varibale_cypher)
             varss=varibale_cypher.split(",")
-            first_var=varss[0]
-            first_start=cypher.find(first_var)-1
-            if(cypher[first_start]=="["):
-                is_vetex=False
-            else:
-                is_vetex=True
-            print("vars",varss)
-            with_cypher="WITH ["+",".join(varss)+"] as deleviews "
+            #print(is_vetex)
+            #print("vars",varss)
+            with_cypher="WITH ["+",".join(varss)+"] as delete_views "
             new_cypher=match_cypher+with_cypher
             if(is_vetex):
-                new_cypher+=" UNWIND deleviews as viewvetex "
-                new_cypher+=" with viewvetex ".join(self.dele_node)
-                
+                new_cypher+=" UNWIND delete_views as view_vetex "
+                new_cypher+=" with view_vetexs UNWIND view_vetexs as view_vetex with DISTINCT view_vetex ".join(self.dele_node)
+                new_cypher+=" with DISTINCT view_vetex "+cypher
             else:
-                new_cypher+=" UNWIND deleviews as viewedge "
-                new_cypher+=" with viewedge ".join(self.dele_rela)
-            new_cypher+=" with viewedge "+cypher
+                new_cypher+=" UNWIND delete_views as view_edge "
+                new_cypher+=" with view_edges UNWIND view_edges as view_edge with DISTINCT view_edge ".join(self.dele_rela)
+                new_cypher+=" with DISTINCT view_edge "+cypher
             return new_cypher
         if create_Start !=-1:
             edges=[]
@@ -76,10 +78,10 @@ class tool:
                 return new_cypher
             else:
                 edge_cypher="["+",".join(edges)+"]"
-                with_cypher=" WITH "+edge_cypher+" as "+"createviews "
+                with_cypher=" WITH "+edge_cypher+" as "+"create_views "
                 new_cypher=cypher+with_cypher
-                new_cypher+=" UNWIND createviews as viewedge "
-                new_cypher+=" with viewedge ".join(self.add_rela)
+                new_cypher+=" UNWIND create_views as view_edge "
+                new_cypher+=" with DISTINCT view_edge ".join(self.add_rela)
                 return new_cypher
         return cypher
 if __name__=="__main__":
@@ -88,16 +90,24 @@ if __name__=="__main__":
     #password="352541141"
     #connector=connector(url,user,password)
     # types=["addnodes","deletenodes","addrelationship","deleterelaships"]
-    path="/home/wxd/neo4j_test/graph-views/view_maintance_2024/build/output.json"
+    path="/home/wxd/neo4j_test/graph-views/view_maintance_2024/neo4j_Test/finbench/output.json"
     my_tool=tool(path)
     #for view in my_tool.views:
     #     result2=connector.run_cypher(view)
     #     print(result2)
-    result={}
-    with open("/home/wxd/neo4j_test/graph-views/view_maintance_2024/neo4j_Test/input.txt",'r') as inputfile:
+    result1={}
+    result2={}
+    with open("/home/wxd/neo4j_test/graph-views/view_maintance_2024/neo4j_Test/finbench/WriteQueries/all.txt",'r') as inputfile:
         lines=inputfile.readlines()
         for line in lines:
             line=line.rstrip("\n")
-            result[line]=my_tool.tran(line)
-    with open('/home/wxd/neo4j_test/graph-views/view_maintance_2024/neo4j_Test/new_cypher.json', 'w') as json_file:
-        json.dump(result,json_file, indent=4)  # indent 参数用于美化输出
+            result1[line]=my_tool.tran(line)
+    with open('/home/wxd/neo4j_test/graph-views/view_maintance_2024/neo4j_Test/test_cypher/new_cypher.json', 'w') as json_file:
+        json.dump(result1,json_file, indent=4)  # indent 参数用于美化输出
+    with open("/home/wxd/neo4j_test/graph-views/view_maintance_2024/neo4j_Test/finbench/recover/all.txt",'r') as inputfile:
+        lines=inputfile.readlines()
+        for line in lines:
+            line=line.rstrip("\n")
+            result2[line]=my_tool.tran(line)
+    with open('/home/wxd/neo4j_test/graph-views/view_maintance_2024/neo4j_Test/test_cypher/new_cypherq.json', 'w') as json_file:
+        json.dump(result2,json_file, indent=4)  # indent 参数用于美化输出

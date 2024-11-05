@@ -1,0 +1,8 @@
+CREATE CONSTRAINT unique_person_i FOR (p:Comment) REQUIRE p.id IS UNIQUE
+CREATE CONSTRAINT unique_person_i2 FOR (p:Forum) REQUIRE p.id IS UNIQUE
+CREATE CONSTRAINT unique_person_i3 FOR (p:Organisation) REQUIRE p.id IS UNIQUE
+CREATE CONSTRAINT unique_person_i4 FOR (p:Person) REQUIRE p.id IS UNIQUE
+CREATE CONSTRAINT unique_person_i5 FOR (p:Place) REQUIRE p.id IS UNIQUE
+CREATE CONSTRAINT unique_person_i6 FOR (p:Post) REQUIRE p.id IS UNIQUE
+CREATE CONSTRAINT unique_person_i7 FOR (p:Tag) REQUIRE p.id IS UNIQUE
+CREATE CONSTRAINT unique_person_i8 FOR (p:Tagclass) REQUIRE p.id IS UNIQUE
