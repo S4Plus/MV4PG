@@ -1,21 +1,21 @@
 MATCH (p1:Person {id: 987}), (p2:Person {id: 2199023265994})
 CREATE (p1)-[:knows {creationDate: 13824310250, weight:0}]->(p2)
 cycle: 5
-original_time: 0.02165513038635254
-optimized_time: 0.0554603099822998
-speed up: 0.39046176253367115
+original_time: 0.0456885814666748
+optimized_time: 0.07124133110046386
+speed up: 0.6413212774231463
 
 MATCH (n:Person {id: 65})-[r:likes]->(m:Comment {id: 1649268071638})
 DELETE r
 cycle: 5
-original_time: 0.02069263458251953
-optimized_time: 0.05232172012329102
-speed up: 0.39548842304418436
+original_time: 0.03553786277770996
+optimized_time: 0.06256647109985351
+speed up: 0.5680017132657681
 
 MATCH (n:Post {id: 556})
 DETACH DELETE n
 cycle: 5
-original_time: 0.01938481330871582
-optimized_time: 0.05576105117797851
-speed up: 0.34764074383826155
+original_time: 0.04051685333251953
+optimized_time: 0.06353793144226075
+speed up: 0.6376797672322506
 

@@ -122,6 +122,158 @@ class OpDelete : public OpBase {
         std::cout<<"View maintenance7: "<<std::endl;
     }
 
+    void ViewMaintenanceDeleteVertex(RTContext *ctx,std::vector<int64_t> vids) {
+        if(vids.size()<=0)return;
+        std::sort(vids.begin(), vids.end());
+        auto last = std::unique(vids.begin(), vids.end());
+        vids.erase(last, vids.end());
+        std::string node_ids="[";
+        // auto txn=ctx->txn_->GetTxn().get();
+        int index=0;
+        for(auto vid : vids){
+            if(index>0){
+                node_ids.append(",");
+            }
+            node_ids.append(std::to_string(vid));
+            index++;
+        }
+        node_ids.append("]");
+        using namespace parser;
+        using namespace antlr4;
+        for(auto view_query:vertex_maintenances_){
+            auto result=Replace(view_query,"\\$NIDs",node_ids);
+            std::cout<<"delete vertex result: "<<result<<std::endl;
+            cypher::ElapsedTime temp;
+            Scheduler scheduler;
+            // scheduler.Eval(ctx,lgraph_api::GraphQueryType::CYPHER,"match (n) return count(n)",temp);
+            LOG_DEBUG()<<"in create op txn exist:"<<(ctx->txn_!=nullptr);
+            auto start_time=fma_common::GetTime();
+            scheduler.EvalCypherWithoutNewTxn(ctx,result,temp);
+            auto end_time=fma_common::GetTime();
+            LOG_DEBUG()<<"delete maintenance time:"<<(end_time-start_time);
+            std::cout<<"View maintenance6: "<<std::endl;
+            // ANTLRInputStream input(view_query);
+            // LcypherLexer lexer(&input);
+            // CommonTokenStream tokens(&lexer);
+            // // std::cout <<"parser s1"<<std::endl; // de
+            // LcypherParser parser(&tokens);
+            // VarlenUnfoldVisitor visitor(parser.oC_Cypher());
+            // auto unfold_queries=visitor.GetRewriteQueries();
+            // for(auto unfold_auery:unfold_queries){
+                // schema重写优化
+                // cypher::ElapsedTime temp;
+                // Scheduler scheduler;
+                // auto new_unfold_query=scheduler.EvalCypherWithoutNewTxn(ctx,"optimize "+unfold_auery,temp);
+                //获得视图更新语句
+                // ANTLRInputStream input(view_query);
+                // LcypherLexer lexer(&input);
+                // CommonTokenStream tokens(&lexer);
+                // // std::cout <<"parser s1"<<std::endl; // de
+                // LcypherParser parser(&tokens);
+                // ViewMaintenance visitor(parser.oC_Cypher(),label,primary_field,primary_value.ToString(),is_string,false);
+                // std::cout<<"View maintenance4: "<<std::endl;
+                // std::vector<std::string> queries=visitor.GetRewriteQueries();
+                // for(auto query:queries){
+                //     std::cout<<"View maintenance5: "<<query<<std::endl;
+                //     cypher::ElapsedTime temp;
+                //     Scheduler scheduler;
+                //     // scheduler.Eval(ctx,lgraph_api::GraphQueryType::CYPHER,"match (n) return count(n)",temp);
+                //     LOG_DEBUG()<<"in create op txn exist:"<<(ctx->txn_!=nullptr);
+                //     scheduler.EvalCypherWithoutNewTxn(ctx,query,temp);
+                //     std::cout<<"View maintenance6: "<<std::endl; 
+                // } 
+            // }
+        }
+        std::cout<<"View maintenance7: "<<std::endl;
+    }
+
+    bool Find(std::vector<int64_t> vecs,int64_t id){
+        if(std::find(vecs.begin(), vecs.end(), id)!=vecs.end())return true;
+        else return false;
+    }
+
+    void ViewMaintenanceDeleteEdge(RTContext *ctx,std::vector<lgraph::EdgeUid> edge_uids) {
+        if(edge_uids.size()<=0)return;
+        std::vector<int64_t> src_ids,dst_ids;
+        std::string src_string="[";
+        std::string dst_string="[";
+        std::string edge_string="[";
+        auto txn=ctx->txn_->GetTxn().get();
+        int index=0;
+        for(auto edge_uid : edge_uids){
+            auto label=txn->GetEdgeLabel(edge_uid.lid);
+            if(view_names_.find(label)!=view_names_.end())continue;
+            
+            if(!Find(src_ids,edge_uid.src)){
+                if(index>0)src_string.append(",");
+                src_string.append(std::to_string(edge_uid.src));
+                src_ids.push_back(edge_uid.src);
+            }
+            
+            if(!Find(dst_ids,edge_uid.dst)){
+                if(index>0)dst_string.append(",");
+                dst_string.append(std::to_string(edge_uid.dst));
+                dst_ids.push_back(edge_uid.dst);
+            }
+
+            if(index>0)edge_string.append(",");
+            edge_string.append("'"+edge_uid.ToString()+"'");
+            index++;
+        }
+        src_string.append("]");
+        dst_string.append("]");
+        edge_string.append("]");
+        // auto txn=ctx->txn_->GetTxn().get();
+        // auto label=txn->GetEdgeLabel(edge_uid.lid);
+        // // auto label=txn->GetEdgeLabel(edge_uid);
+        // if(view_names_.find(label)!=view_names_.end())return;
+
+        // auto src_label=txn->GetVertexLabel(edge_uid.src);
+        // auto src_primary_field=txn->GetVertexPrimaryField(src_label);
+
+        // std::cout<<"View maintenance2"<<std::endl;
+        // auto src_primary_value=(ctx->txn_->GetTxn().get()->GetVertexField(edge_uid.src,src_primary_field));
+        // bool src_is_string=src_primary_value.IsString();
+
+        // auto dst_label=txn->GetVertexLabel(edge_uid.dst);
+        // auto dst_primary_field=txn->GetVertexPrimaryField(dst_label);
+
+        // std::cout<<"View maintenance2"<<std::endl;
+        // auto dst_primary_value=(ctx->txn_->GetTxn().get()->GetVertexField(edge_uid.dst,dst_primary_field));
+        // bool dst_is_string=dst_primary_value.IsString();
+        // std::tuple<std::string,std::string,std::string,bool> src_info(src_label,src_primary_field,src_primary_value.ToString(),src_is_string);
+        // std::tuple<std::string,std::string,std::string,bool> dst_info(dst_label,dst_primary_field,dst_primary_value.ToString(),dst_is_string);  
+        using namespace parser;
+        using namespace antlr4;
+        for(auto view_query:edge_maintenances_){
+            auto temp1=Replace(view_query,"\\$SIDs",src_string);
+            auto temp2=Replace(temp1,"\\$RIDs",edge_string);
+            auto result=Replace(temp2,"\\$DIDs",dst_string);
+            // if(src_is_string)
+            //     temp3=Replace(temp2,"\\$SV","'"+src_primary_value.ToString()+"'");
+            // else
+            //     temp3=Replace(temp2,"\\$SV",src_primary_value.ToString());
+            // auto temp4=Replace(temp3,"\\$DL",dst_label);
+            // auto temp5=Replace(temp4,"\\$DK",dst_primary_field);
+            // std::string temp6;
+            // if(dst_is_string)
+            //     temp6=Replace(temp5,"\\$DV","'"+dst_primary_value.ToString()+"'");
+            // else
+            //     temp6=Replace(temp5,"\\$DV",dst_primary_value.ToString());
+            // auto result=Replace(temp6,"\\$RID","'"+edge_uid.ToString()+"'");
+            LOG_DEBUG()<<"delete edge maintenance5: "<<result<<std::endl;
+            cypher::ElapsedTime temp;
+            Scheduler scheduler;
+            // scheduler.Eval(ctx,lgraph_api::GraphQueryType::CYPHER,"match (n) return count(n)",temp);
+            LOG_DEBUG()<<"in create op txn exist:"<<(ctx->txn_!=nullptr);
+            auto start_time=fma_common::GetTime();
+            scheduler.EvalCypherWithoutNewTxn(ctx,result,temp);
+            auto end_time=fma_common::GetTime();
+            LOG_DEBUG()<<"delete maintenance time:"<<(end_time-start_time);
+            std::cout<<"View maintenance6: "<<std::endl;
+        }
+    }
+
     void ViewMaintenanceDeleteEdge(RTContext *ctx,lgraph::EdgeUid edge_uid) {
         auto txn=ctx->txn_->GetTxn().get();
         auto label=txn->GetEdgeLabel(edge_uid.lid);
@@ -168,37 +320,6 @@ class OpDelete : public OpBase {
             LOG_DEBUG()<<"in create op txn exist:"<<(ctx->txn_!=nullptr);
             scheduler.EvalCypherWithoutNewTxn(ctx,result,temp);
             std::cout<<"View maintenance6: "<<std::endl;
-            // ANTLRInputStream input(view_query);
-            // LcypherLexer lexer(&input);
-            // CommonTokenStream tokens(&lexer);
-            // // std::cout <<"parser s1"<<std::endl; // de
-            // LcypherParser parser(&tokens);
-            // VarlenUnfoldVisitor visitor(parser.oC_Cypher());
-            // auto unfold_queries=visitor.GetRewriteQueries();
-            // for(auto unfold_auery:unfold_queries){
-                // schema重写优化
-                // cypher::ElapsedTime temp;
-                // Scheduler scheduler;
-                // auto new_unfold_query=scheduler.EvalCypherWithoutNewTxn(ctx,"optimize "+unfold_auery,temp);
-                // //获得视图更新语句
-                // ANTLRInputStream input(view_query);
-                // LcypherLexer lexer(&input);
-                // CommonTokenStream tokens(&lexer);
-                // // std::cout <<"parser s1"<<std::endl; // de
-                // LcypherParser parser(&tokens);
-                // ViewMaintenance visitor(parser.oC_Cypher(),label,edge_uid.eid,src_info,dst_info,false);
-                // std::cout<<"View maintenance4: "<<std::endl;
-                // std::vector<std::string> queries=visitor.GetRewriteQueries();
-                // for(auto query:queries){
-                //     std::cout<<"View maintenance5: "<<query<<std::endl;
-                //     cypher::ElapsedTime temp;
-                //     Scheduler scheduler;
-                //     // scheduler.Eval(ctx,lgraph_api::GraphQueryType::CYPHER,"match (n) return count(n)",temp);
-                //     LOG_DEBUG()<<"in create op txn exist:"<<(ctx->txn_!=nullptr);
-                //     scheduler.EvalCypherWithoutNewTxn(ctx,query,temp);
-                //     std::cout<<"View maintenance6: "<<std::endl; 
-                // }
-            // }
         }
     }
 
@@ -255,9 +376,9 @@ class OpDelete : public OpBase {
             auto txn=ctx->txn_->GetTxn().get();
             view_label=txn->GetEdgeLabel(edges_to_delete_[0].lid);
         }
+        if(!is_view_)
+            ViewMaintenanceDeleteEdge(ctx,edges_to_delete_);
         for (auto &e : edges_to_delete_) {
-            if(!is_view_)
-                ViewMaintenanceDeleteEdge(ctx,e);
             if (ctx->txn_->GetTxn()->DeleteEdge(e)) {
                 ctx->result_info_->statistics.edges_deleted++;
                 if(is_view_)edge_deleted_++;
@@ -267,10 +388,10 @@ class OpDelete : public OpBase {
             MaintenanceViewStatistics(view_path_,view_label,edge_deleted_,true);
             edge_deleted_=0;
         }
+        if(!is_view_)
+            ViewMaintenanceDeleteVertex(ctx,vertices_to_delete_);
         for (auto &v : vertices_to_delete_) {
             size_t n_in, n_out;
-            if(!is_view_)
-                ViewMaintenanceDeleteVertex(ctx,v);
             // LOG_DEBUG() << "Delete vertex: " << v;
             // // lgraph_api::GraphDB db(ctx->ac_db_.get(), false);
             // LOG_DEBUG() << "get db : " << v;

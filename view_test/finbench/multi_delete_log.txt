@@ -1,0 +1,168 @@
+MATCH (acc:Account {id: 1694622296319520})<-[r:deposit]-(loan: Loan {createTime: '1656084982460'}) 
+create (acc)-[:repay{timestamp:1729822775000,amount:39419373.84}]->(loan)
+cycle: 5
+create edge: 1
+original_time: 0.01861271858215332
+optimized_time: 0.05296926498413086
+speed up: 0.3513871409718359
+
+MATCH (acc:Account {id: 1694622296319520})<-[r:deposit]-(loan: Loan {createTime: '1656084982460'}) 
+create (acc)-[:repay{timestamp:1729822775000,amount:39419373.84}]->(loan)
+cycle: 5
+create edge: 10
+original_time: 0.024407625198364258
+optimized_time: 0.20952558517456055
+speed up: 0.11648995122972551
+
+MATCH (acc:Account {id: 1694622296319520})<-[r:deposit]-(loan: Loan {createTime: '1656084982460'}) 
+create (acc)-[:repay{timestamp:1729822775000,amount:39419373.84}]->(loan)
+cycle: 5
+create edge: 100
+original_time: 0.02311983108520508
+optimized_time: 1.202476406097412
+speed up: 0.019226848001317166
+
+MATCH (acc:Account {id: 1694622296319520})<-[r:deposit]-(loan: Loan {createTime: '1656084982460'}) 
+create (acc)-[:repay{timestamp:1729822775000,amount:39419373.84}]->(loan)
+cycle: 5
+create edge: 1000
+original_time: 0.04875659942626953
+optimized_time: 11.883213138580322
+speed up: 0.004102981143035733
+
+MATCH (acc:Account {id: 1694622296319520})<-[r:deposit]-(loan: Loan {createTime: '1656084982460'}) 
+create (acc)-[:repay{timestamp:1729822775000,amount:39419373.84}]->(loan)
+cycle: 5
+create edge: 10000
+original_time: 0.19553470611572266
+optimized_time: 243.83590121269225
+speed up: 0.0008019110604437301
+
+MATCH (acc:Account {id: 1694622296319520})<-[r:deposit]-(loan: Loan {createTime: '1656084982460'}) 
+create (acc)-[:repay{timestamp:1729822775000,amount:39419373.84}]->(loan)
+cycle: 5
+create edge: 1
+original_time: 0.033443260192871097
+optimized_time: 0.06642990112304688
+speed up: 0.5034368503864662
+
+MATCH (acc:Account {id: 1694622296319520})<-[r:deposit]-(loan: Loan {createTime: '1656084982460'}) 
+create (acc)-[:repay{timestamp:1729822775000,amount:39419373.84}]->(loan)
+cycle: 5
+create edge: 10
+original_time: 0.032983255386352536
+optimized_time: 0.11385669708251953
+speed up: 0.28969095566198777
+
+MATCH (acc:Account {id: 1694622296319520})<-[r:deposit]-(loan: Loan {createTime: '1656084982460'}) 
+create (acc)-[:repay{timestamp:1729822775000,amount:39419373.84}]->(loan)
+cycle: 5
+create edge: 100
+original_time: 0.034412288665771486
+optimized_time: 6.872956037521362
+speed up: 0.005006912379172122
+
+MATCH (acc:Account {id: 1694622296319520})<-[r:deposit]-(loan: Loan {createTime: '1656084982460'}) 
+create (acc)-[:repay{timestamp:1729822775000,amount:39419373.84}]->(loan)
+cycle: 5
+create edge: 1
+original_time: 0.020230770111083984
+optimized_time: 0.04390835762023926
+speed up: 0.46074987103955695
+
+MATCH (acc:Account {id: 1694622296319520})<-[r:deposit]-(loan: Loan {createTime: '1656084982460'}) 
+create (acc)-[:repay{timestamp:1729822775000,amount:39419373.84}]->(loan)
+cycle: 5
+create edge: 10
+original_time: 0.03381705284118652
+optimized_time: 0.07040243148803711
+speed up: 0.4803392741759604
+
+MATCH (acc:Account {id: 1694622296319520})<-[r:deposit]-(loan: Loan {createTime: '1656084982460'}) 
+create (acc)-[:repay{timestamp:1729822775000,amount:39419373.84}]->(loan)
+cycle: 5
+create edge: 100
+original_time: 0.03595328330993652
+optimized_time: 0.13086843490600586
+speed up: 0.27472845790323225
+
+MATCH (acc:Account {id: 1694622296319520})<-[r:deposit]-(loan: Loan {createTime: '1656084982460'}) 
+create (acc)-[:repay{timestamp:1729822775000,amount:39419373.84}]->(loan)
+cycle: 5
+create edge: 1000
+original_time: 0.05712251663208008
+optimized_time: 3.3540483951568603
+speed up: 0.017030916045982874
+
+MATCH (acc:Account {id: 1694622296319520})<-[r:deposit]-(loan: Loan {createTime: '1656084982460'}) 
+create (acc)-[:repay{timestamp:1729822775000,amount:39419373.84}]->(loan)
+cycle: 1
+create edge: 1
+original_time: 0.019902944564819336
+optimized_time: 0.02888011932373047
+speed up: 0.6891572829640392
+
+MATCH (acc:Account {id: 1694622296319520})<-[r:deposit]-(loan: Loan {createTime: '1656084982460'}) 
+create (acc)-[:repay{timestamp:1729822775000,amount:39419373.84}]->(loan)
+cycle: 1
+create edge: 10
+original_time: 0.03468060493469238
+optimized_time: 0.08043384552001953
+speed up: 0.43116930081455046
+
+MATCH (acc:Account {id: 1694622296319520})<-[r:deposit]-(loan: Loan {createTime: '1656084982460'}) 
+create (acc)-[:repay{timestamp:1729822775000,amount:39419373.84}]->(loan)
+cycle: 1
+create edge: 100
+original_time: 0.03725385665893555
+optimized_time: 0.15992522239685059
+speed up: 0.23294547351943648
+
+MATCH (acc:Account {id: 1694622296319520})<-[r:deposit]-(loan: Loan {createTime: '1656084982460'}) 
+create (acc)-[:repay{timestamp:1729822775000,amount:39419373.84}]->(loan)
+cycle: 1
+create edge: 1000
+original_time: 0.05865192413330078
+optimized_time: 3.3481686115264893
+speed up: 0.017517613638507987
+
+MATCH (acc:Account {id: 1694622296319520})<-[r:deposit]-(loan: Loan {createTime: '1656084982460'}) 
+create (acc)-[:repay{timestamp:1729822775000,amount:39419373.84}]->(loan)
+cycle: 5
+create edge: 1
+original_time: 0.023152637481689452
+optimized_time: 0.058035850524902344
+speed up: 0.39893681702407363
+
+MATCH (acc:Account {id: 1694622296319520})<-[r:deposit]-(loan: Loan {createTime: '1656084982460'}) 
+create (acc)-[:repay{timestamp:1729822775000,amount:39419373.84}]->(loan)
+cycle: 5
+create edge: 10
+original_time: 0.03175926208496094
+optimized_time: 0.0672309398651123
+speed up: 0.47239057119654454
+
+MATCH (acc:Account {id: 1694622296319520})<-[r:deposit]-(loan: Loan {createTime: '1656084982460'}) 
+create (acc)-[:repay{timestamp:1729822775000,amount:39419373.84}]->(loan)
+cycle: 5
+create edge: 100
+original_time: 0.034241676330566406
+optimized_time: 0.14585471153259277
+speed up: 0.2347656511796312
+
+MATCH (acc:Account {id: 1694622296319520})<-[r:deposit]-(loan: Loan {createTime: '1656084982460'}) 
+create (acc)-[:repay{timestamp:1729822775000,amount:39419373.84}]->(loan)
+cycle: 5
+create edge: 1000
+original_time: 0.05649657249450683
+optimized_time: 3.338487958908081
+speed up: 0.016922802535128855
+
+MATCH (acc:Account {id: 1694622296319520})<-[r:deposit]-(loan: Loan {createTime: '1656084982460'}) 
+create (acc)-[:repay{timestamp:1729822775000,amount:39419373.84}]->(loan)
+cycle: 5
+create edge: 10000
+original_time: 0.19679694175720214
+optimized_time: 311.13633012771606
+speed up: 0.0006325103265067773
+

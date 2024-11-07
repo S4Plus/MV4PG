@@ -49,7 +49,7 @@ class LocateNodeByVid : public OptPass {
         OpFilter *op_filter = nullptr;
         ArithExprNode ae;
         std::vector<lgraph::VertexId> target_vids;
-        if (_FindNodeVidFilter(root, op_filter, target_vids)) {
+        while (_FindNodeVidFilter(root, op_filter, target_vids)) {
             auto op_post = op_filter->parent;
             Node *node;
             const SymbolTable *symtab;

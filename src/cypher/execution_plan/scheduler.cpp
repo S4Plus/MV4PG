@@ -42,6 +42,7 @@
 
 #include "server/bolt_session.h"
 
+#define MaintenanceProfile false
 #define MaintenanceTemplate std::tuple<std::string,std::string,std::string>
 
 namespace cypher {
@@ -161,7 +162,7 @@ MaintenanceTemplate GeneratorMaintenanceTemplate(std::string view_query){
     CommonTokenStream tokensDV(&lexerDV);
     // std::cout <<"parser s1"<<std::endl; // de
     LcypherParser parserDV(&tokensDV);
-    ViewMaintenance visitorDV(parserDV.oC_Cypher(),"$L","$K","$V",false,false);
+    ViewMaintenance visitorDV(parserDV.oC_Cypher(),"$NIDs",false);
     deleteVertex=visitorDV.GetRewriteQuery();
 
     ANTLRInputStream inputCE(view_query);
@@ -169,7 +170,7 @@ MaintenanceTemplate GeneratorMaintenanceTemplate(std::string view_query){
     CommonTokenStream tokensCE(&lexerCE);
     // std::cout <<"parser s1"<<std::endl; // de
     LcypherParser parserCE(&tokensCE);
-    ViewMaintenance visitorCE(parserCE.oC_Cypher(),"VR","$RID",src,dst,true);
+    ViewMaintenance visitorCE(parserCE.oC_Cypher(),"VR","$RIDs","$SIDs","$DIDs",true);
     createEdge=visitorCE.GetRewriteQuery();
 
     ANTLRInputStream inputDE(view_query);
@@ -177,7 +178,7 @@ MaintenanceTemplate GeneratorMaintenanceTemplate(std::string view_query){
     CommonTokenStream tokensDE(&lexerDE);
     // std::cout <<"parser s1"<<std::endl; // de
     LcypherParser parserDE(&tokensDE);
-    ViewMaintenance visitorDE(parserDE.oC_Cypher(),"VR","$RID",src,dst,false);
+    ViewMaintenance visitorDE(parserDE.oC_Cypher(),"VR","$RIDs","$SIDs","$DIDs",false);
     deleteEdge=visitorDE.GetRewriteQuery();
     MaintenanceTemplate templates=std::make_tuple(deleteVertex,createEdge,deleteEdge);
     return templates;
@@ -353,7 +354,11 @@ const std::string Scheduler::EvalCypher(RTContext *ctx, const std::string &scrip
         // LOG_DEBUG()<<"EvalCypherWithoutNewTxn txn exist6:"<<(ctx->txn_!=nullptr);
         LOG_DEBUG()<<"build start";
         plan->SetCypherQuery(script);
+#if MaintenanceProfile
+        plan->Build(visitor.GetQuery(), visitor.CommandType(), ctx,visitor.CommandType()==parser::CmdType::PROFILE|| visitor.CommandType()==parser::CmdType::MAINTENANCE);
+#else
         plan->Build(visitor.GetQuery(), visitor.CommandType(), ctx,visitor.CommandType()==parser::CmdType::PROFILE);
+#endif
         // plan->Build(visitor.GetQuery(), visitor.CommandType(), ctx,visitor.CommandType()==parser::CmdType::PROFILE|| visitor.CommandType()==parser::CmdType::MAINTENANCE);
         LOG_DEBUG()<<"build end";
         // LOG_DEBUG()<<"EvalCypherWithoutNewTxn txn exist7:"<<(ctx->txn_!=nullptr);
@@ -439,8 +444,11 @@ const std::string Scheduler::EvalCypher(RTContext *ctx, const std::string &scrip
     // if(!plan->ReadOnly())UpdateView(ctx);
     elapsed.t_total = fma_common::GetTime() - t0;
     elapsed.t_exec = elapsed.t_total - elapsed.t_compile;
+#if MaintenanceProfile
+    if (plan->CommandType() == parser::CmdType::PROFILE || plan->CommandType()==parser::CmdType::MAINTENANCE){
+#else
     if (plan->CommandType() == parser::CmdType::PROFILE){
-    // if (plan->CommandType() == parser::CmdType::PROFILE || plan->CommandType()==parser::CmdType::MAINTENANCE){
+#endif
         size_t db_hit=plan->GetDBHit();
         std::string profile_inf=plan->DumpPlan(0, true);
         profile_inf="total db hit:"+std::to_string(db_hit)+"\n"+profile_inf;
@@ -448,7 +456,7 @@ const std::string Scheduler::EvalCypher(RTContext *ctx, const std::string &scrip
         if(parent_dir.end()[-1]=='/')parent_dir.pop_back();
         WriteProfile(parent_dir+"/output",script,profile_inf);
         size_t result_num=plan->Root()->stats.profileRecordCount;
-        // if(plan->CommandType() == parser::CmdType::PROFILE){
+        if(plan->CommandType() == parser::CmdType::PROFILE){
             ctx->result_info_ = std::make_unique<ResultInfo>();
             ctx->result_ = std::make_unique<lgraph::Result>();
 
@@ -456,7 +464,7 @@ const std::string Scheduler::EvalCypher(RTContext *ctx, const std::string &scrip
             auto r = ctx->result_->MutableRecord();
             r->Insert("db_hit", lgraph::FieldData(std::to_string(db_hit)));
             r->Insert("result_num", lgraph::FieldData(std::to_string(result_num)));
-        // }
+        }
     }
     return std::string();
 

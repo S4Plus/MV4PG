@@ -154,6 +154,50 @@ class OpCreate : public OpBase {
         }
     }
 
+    void ViewMaintenanceCreateEdge(RTContext *ctx,std::vector<lgraph::EdgeUid> edge_uids) {
+        if(edge_uids.size()<=0)return;
+        std::string src_ids="[";
+        std::string dst_ids="[";
+        std::string edge_ids="[";
+        auto txn=ctx->txn_->GetTxn().get();
+        int index=0;
+        for(auto edge_uid : edge_uids){
+            auto label=txn->GetEdgeLabel(edge_uid.lid);
+            if(view_names_.find(label)!=view_names_.end())continue;
+            if(index>0){
+                src_ids.append(",");
+                dst_ids.append(",");
+                edge_ids.append(",");
+            }
+            src_ids.append(std::to_string(edge_uid.src));
+            dst_ids.append(std::to_string(edge_uid.dst));
+            edge_ids.append("'"+edge_uid.ToString()+"'");
+            index++;
+        }
+        src_ids.append("]");
+        dst_ids.append("]");
+        edge_ids.append("]");
+
+        using namespace parser;
+        using namespace antlr4;
+        for(auto view_query:edge_maintenances_){
+            auto temp1=Replace(view_query,"\\$SIDs",src_ids);
+            auto temp2=Replace(temp1,"\\$RIDs",edge_ids);
+            auto result=Replace(temp2,"\\$DIDs",dst_ids);
+
+            cypher::ElapsedTime temp;
+            Scheduler scheduler;
+            // scheduler.Eval(ctx,lgraph_api::GraphQueryType::CYPHER,"match (n) return count(n)",temp);
+            LOG_DEBUG()<<"in create op txn exist:"<<(ctx->txn_!=nullptr);
+            auto start_time=fma_common::GetTime();
+            LOG_DEBUG()<<"create maintenance:"<<result;
+            scheduler.EvalCypherWithoutNewTxn(ctx,result,temp);
+            auto end_time=fma_common::GetTime();
+            LOG_DEBUG()<<"create maintenance time:"<<(end_time-start_time);
+            std::cout<<"View maintenance6: "<<std::endl;
+        }
+    }
+
     void ExtractProperties(RTContext *ctx, const parser::TUP_PROPERTIES &properties,
                            VEC_STR &fields, std::vector<lgraph::FieldData> &values) {
         using namespace parser;
@@ -269,7 +313,7 @@ class OpCreate : public OpBase {
             }
         }
         if(!is_create_view_&&!is_maintenance_view_)
-            ViewMaintenanceCreateEdge(ctx,euid);
+            ViewMaintenanceCreateEdge(ctx,std::vector<lgraph::EdgeUid>{euid});
     }
 
     void CreateVE(RTContext *ctx) {

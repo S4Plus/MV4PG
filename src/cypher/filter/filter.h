@@ -598,8 +598,8 @@ class TestInFilter : public Filter {
             }
         } else {
             // only process argument in a loop
-            LOG_WARN() << "[" << __FILE__ << "] "
-                       << "do not use unordered_set";
+            // LOG_WARN() << "[" << __FILE__ << "] "
+            //            << "do not use unordered_set";
             for (auto &r : *right.constant.array) {
                 if (left.constant.scalar == r) return true;
             }

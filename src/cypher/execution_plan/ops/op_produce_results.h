@@ -227,9 +227,9 @@ class ProduceResults : public OpBase {
         }
         if (children.empty()) return OP_DEPLETED;
         if (ctx->bolt_conn_) {
-#ifndef NDEBUG
+// #ifndef NDEBUG
             LOG_DEBUG()<<"produce consume start 1";
-#endif
+// #endif
             if (ctx->bolt_conn_->has_closed()) {
                 LOG_INFO() << "The bolt connection is closed, cancel the op execution.";
                 return OP_ERR;
@@ -340,9 +340,9 @@ class ProduceResults : public OpBase {
             // LOG_DEBUG()<<"produce consume end 1";
             return OP_OK;
         } else {
-#ifndef NDEBUG
+// #ifndef NDEBUG
             LOG_DEBUG()<<"produce consume start child size:"<<children.size();
-#endif
+// #endif
             auto child = children[0];
             auto res = child->Consume(ctx);
             // LOG_DEBUG()<<"produce child consume:"<<res;
@@ -351,9 +351,9 @@ class ProduceResults : public OpBase {
             auto record = ctx->result_->MutableRecord();
             // LOG_DEBUG()<<"produce consume RRToU："<<child->record->ToString();
             RRecordToURecord(ctx->txn_.get(), ctx->result_->Header(), child->record, *record);
-#ifndef NDEBUG
+// #ifndef NDEBUG
             LOG_DEBUG()<<"produce consume end";
-#endif
+// #endif
             return OP_OK;
         }
     }

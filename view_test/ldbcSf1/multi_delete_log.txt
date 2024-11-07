@@ -1,0 +1,75 @@
+MATCH (p1:Person {id: 987}), (p2:Person {id: 2199023265994})
+CREATE (p1)-[:knows {creationDate: 13824310250, weight:0}]->(p2)
+cycle: 5
+create edge: 1
+original_time: 0.028090715408325195
+optimized_time: 0.07235488891601563
+speed up: 0.38823520883199597
+
+MATCH (p1:Person {id: 987}), (p2:Person {id: 2199023265994})
+CREATE (p1)-[:knows {creationDate: 13824310250, weight:0}]->(p2)
+cycle: 5
+create edge: 10
+original_time: 0.03144335746765137
+optimized_time: 0.23874616622924805
+speed up: 0.1317020413951231
+
+MATCH (p1:Person {id: 987}), (p2:Person {id: 2199023265994})
+CREATE (p1)-[:knows {creationDate: 13824310250, weight:0}]->(p2)
+cycle: 5
+create edge: 100
+original_time: 0.03396034240722656
+optimized_time: 1.395180082321167
+speed up: 0.024341189239690548
+
+MATCH (p1:Person {id: 987}), (p2:Person {id: 2199023265994})
+CREATE (p1)-[:knows {creationDate: 13824310250, weight:0}]->(p2)
+cycle: 5
+create edge: 1000
+original_time: 0.05790691375732422
+optimized_time: 12.882639265060424
+speed up: 0.004494957327135296
+
+MATCH (p1:Person {id: 987}), (p2:Person {id: 2199023265994})
+CREATE (p1)-[:knows {creationDate: 13824310250, weight:0}]->(p2)
+cycle: 5
+create edge: 10000
+original_time: 0.18758344650268555
+optimized_time: 172.1502682209015
+speed up: 0.0010896494582394746
+
+match (n:Comment{id:2199029813921}),(m:Post{id:2199029813920}) create (n)-[r:replyOf{creationDate:1700000000000}]->(m)
+cycle: 5
+create edge: 1
+original_time: 0.03342185020446777
+optimized_time: 0.062218761444091795
+speed up: 0.5371667553122188
+
+match (n:Comment{id:2199029813921}),(m:Post{id:2199029813920}) create (n)-[r:replyOf{creationDate:1700000000000}]->(m)
+cycle: 5
+create edge: 10
+original_time: 0.04157423973083496
+optimized_time: 0.06764078140258789
+speed up: 0.6146327536252317
+
+match (n:Comment{id:2199029813921}),(m:Post{id:2199029813920}) create (n)-[r:replyOf{creationDate:1700000000000}]->(m)
+cycle: 5
+create edge: 100
+original_time: 0.0429588794708252
+optimized_time: 0.11327452659606933
+speed up: 0.3792457206553965
+
+match (n:Comment{id:2199029813921}),(m:Post{id:2199029813920}) create (n)-[r:replyOf{creationDate:1700000000000}]->(m)
+cycle: 5
+create edge: 1000
+original_time: 0.06665663719177246
+optimized_time: 1.0489122867584229
+speed up: 0.06354834244316969
+
+match (n:Comment{id:2199029813921}),(m:Post{id:2199029813920}) create (n)-[r:replyOf{creationDate:1700000000000}]->(m)
+cycle: 1
+create edge: 10000
+original_time: 0.18657398223876953
+optimized_time: 77.37275099754333
+speed up: 0.002411365497973485
+

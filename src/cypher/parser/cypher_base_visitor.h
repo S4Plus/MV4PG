@@ -50,6 +50,7 @@ class CypherBaseVisitor : public LcypherVisitor {
     size_t _curr_query = 0;
     size_t _curr_part = 0;
     std::string _curr_procedure_name;
+    std::vector<std::string> _id_seek_variable;
     /* alias carry between query parts */
     std::vector<std::pair<std::string, cypher::SymbolNode::Type>> _carry;
     std::string _listcompr_placeholder = "";
@@ -79,6 +80,7 @@ class CypherBaseVisitor : public LcypherVisitor {
     size_t _anonymous_idx = 0;
 
     // bool valid = true; //检查点Pattern有多个label时是否相同，不相同则valid为false
+
 
     std::string GenAnonymousAlias(bool is_node) {
         std::string alias(ANONYMOUS);

@@ -45,11 +45,14 @@ namespace parser {
 class ViewMaintenance : public LcypherVisitor {
     size_t curr_pattern_graph = 0;  // 在整个Cypher中的第几个pattern_graph
     // 点
-    std::string _label, _primary_key, _primary_value;
-    bool _value_is_string;
+    std::string _node_ids;
+    std::string _node_variable="VN";
+    std::string node_name;
     // 边
-    std::string _edge_variable, _edge_id;
-    NODE_INF _src_inf, _dst_inf;
+    std::string _edge_variable, _edge_ids;
+    std::string _src_variable="VS",_dst_variable="VD"; // 可变长中的
+    std::string _src_ids, _dst_ids;
+    std::string src_name,dst_name; // 非可变长中的
     bool is_src;
     bool is_unfold = false;
     bool is_inneed = false;
@@ -78,7 +81,7 @@ class ViewMaintenance : public LcypherVisitor {
     } _curr_clause_type = NA;
 
     std::string GenAnonymousAlias(bool is_node) {
-        std::string alias(ANONYMOUS);
+        std::string alias("ANON_");
         if (is_node) {
             alias.append("N").append(std::to_string(_anonymous_idx));
         } else {
@@ -91,18 +94,17 @@ class ViewMaintenance : public LcypherVisitor {
  public:
     ViewMaintenance() = default;
     // 点
-    ViewMaintenance(antlr4::tree::ParseTree *tree, std::string label, std::string primary_key,
-                    std::string primary_value, bool value_is_string, bool is_create)
-        : _label(label), _primary_key(primary_key), _primary_value(primary_value) {
-        _value_is_string = value_is_string;
+    ViewMaintenance(antlr4::tree::ParseTree *tree, std::string node_ids, bool is_create)
+        : _node_ids(node_ids) {
+        // _value_is_string = value_is_string;
         _is_create = is_create;
         _is_vertex = true;
         tree->accept(this);
     }
     // 边
-    ViewMaintenance(antlr4::tree::ParseTree *tree, std::string edge_variable, std::string edge_id,
-                    NODE_INF src_inf, NODE_INF dst_inf, bool is_create)
-        : _edge_variable(edge_variable), _edge_id(edge_id), _src_inf(src_inf), _dst_inf(dst_inf) {
+    ViewMaintenance(antlr4::tree::ParseTree *tree, std::string edge_variable, std::string edge_ids,
+                    std::string src_ids, std::string dst_ids, bool is_create)
+        : _edge_variable(edge_variable), _edge_ids(edge_ids), _src_ids(src_ids), _dst_ids(dst_ids) {
         _is_create = is_create;
         _is_vertex = false;
         tree->accept(this);
@@ -434,9 +436,10 @@ class ViewMaintenance : public LcypherVisitor {
                     is_unfold = false;
                     int node_size = ctx->oC_PatternElementChain().size() + 1;
                     for (int i = 0; i < (node_size); i++) {
+                        std::string result;
                         if (i == 0) {
                             bool can_rewrite = true;
-                            std::string result;
+                            // std::string result;
                             _change = true;
                             std::string node_pattern =
                                 std::any_cast<std::string>(visit(ctx->oC_NodePattern()));
@@ -448,10 +451,11 @@ class ViewMaintenance : public LcypherVisitor {
                                 std::string pattern_chain = std::any_cast<std::string>(visit(pch));
                                 result.append(pattern_chain);
                             }
+                            result.append(" where id("+node_name+") in "+_node_ids+" ");
                             if (can_rewrite) pattern_elements.push_back(result);
                         } else {
                             bool can_rewrite = true;
-                            std::string result;
+                            // std::string result;
                             std::string node_pattern =
                                 std::any_cast<std::string>(visit(ctx->oC_NodePattern()));
                             result.append(node_pattern);
@@ -471,6 +475,7 @@ class ViewMaintenance : public LcypherVisitor {
                                 result.append(node_pattern);
                                 now_node++;
                             }
+                            result.append(" where id("+node_name+") in "+_node_ids+" ");
                             if (can_rewrite) pattern_elements.push_back(result);
                         }
                     }
@@ -500,6 +505,7 @@ class ViewMaintenance : public LcypherVisitor {
                             for (int j = 1; j < size; j++) {
                                 results[i + 1] = all_pattern_chains[i][j];
                                 std::string result = vetostring(results);
+                                result.append(" where id(" + _node_variable + ") in " + _node_ids);
                                 pattern_elements.push_back(result);
                             }
                             results[i + 1] = all_pattern_chains[i][0];
@@ -544,7 +550,9 @@ class ViewMaintenance : public LcypherVisitor {
                                     result.append(pattern_chain);
                                 }
                             }
-                            result.append(" where euid(" + _edge_variable + ")=" + _edge_id + " ");
+                            result.append(" where euid(" + _edge_variable + ") in " + _edge_ids);
+                            result.append(" and id("+src_name+") in "+_src_ids+" ");
+                            // result.append(" and id("+dst_name+") in "+_dst_ids+" ");
                             if (can_rewrite) pattern_elements.push_back(result);
                         } else {
                             std::string result;
@@ -594,7 +602,9 @@ class ViewMaintenance : public LcypherVisitor {
                                     result.append(pattern_chain);
                                 }
                             }
-                            result.append(" where euid(" + _edge_variable + ")=" + _edge_id + " ");
+                            result.append(" where euid(" + _edge_variable + ") in " + _edge_ids);
+                            result.append(" and id("+src_name+") in "+_src_ids+" ");
+                            // result.append(" and id("+dst_name+") in "+_dst_ids+" ");
                             if (can_rewrite) pattern_elements.push_back(result);
                         }
                     }
@@ -622,8 +632,9 @@ class ViewMaintenance : public LcypherVisitor {
                             for (int j = 1; j < size; j++) {
                                 results[i + 1] = all_pattern_chains[i][j];
                                 std::string result = vetostring(results);
-                                result.append(" where euid(" + _edge_variable + ")=" + _edge_id +
-                                              " ");
+                                result.append(" where euid(" + _edge_variable + ") in " + _edge_ids);
+                                result.append(" and id("+_src_variable+") in "+_src_ids+" ");
+                                // result.append(" and id("+_dst_variable+") in "+_dst_ids+" ");
                                 pattern_elements.push_back(result);
                             }
                             results[i + 1] = all_pattern_chains[i][0];
@@ -648,42 +659,51 @@ class ViewMaintenance : public LcypherVisitor {
         std::string result = "(";
 
         std::string node_label, primary_key, primary_value;
-        bool is_string = false;
-        if (_change) {
-            if (_is_vertex) {
-                node_label = _label;
-                primary_key = _primary_key;
-                primary_value = _primary_value;
-                is_string = _value_is_string;
-            } else {
-                if (is_src) {
-                    node_label = std::get<0>(_src_inf);
-                    primary_key = std::get<1>(_src_inf);
-                    primary_value = std::get<2>(_src_inf);
-                    is_string = std::get<3>(_src_inf);
-                } else {
-                    node_label = std::get<0>(_dst_inf);
-                    primary_key = std::get<1>(_dst_inf);
-                    primary_value = std::get<2>(_dst_inf);
-                    is_string = std::get<3>(_dst_inf);
-                }
-            }
-        }
+        // bool is_string = false;
+        // if (_change) {
+        //     if (_is_vertex) {
+        //         node_label = _label;
+        //         primary_key = _primary_key;
+        //         primary_value = _primary_value;
+        //         is_string = _value_is_string;
+        //     } 
+        //     // else {
+        //     //     if (is_src) {
+        //     //         node_label = std::get<0>(_src_inf);
+        //     //         primary_key = std::get<1>(_src_inf);
+        //     //         primary_value = std::get<2>(_src_inf);
+        //     //         is_string = std::get<3>(_src_inf);
+        //     //     } else {
+        //     //         node_label = std::get<0>(_dst_inf);
+        //     //         primary_key = std::get<1>(_dst_inf);
+        //     //         primary_value = std::get<2>(_dst_inf);
+        //     //         is_string = std::get<3>(_dst_inf);
+        //     //     }
+        //     // }
+        // }
         if (ctx->oC_Variable() != nullptr) {
             variable = std::any_cast<std::string>(visit(ctx->oC_Variable()));
             result.append(variable);
         } else {
             // if alias is absent, generate an alias for the node
             variable = GenAnonymousAlias(true);
+            result.append(variable);
+        }
+        if (_change ) {
+            if(_is_vertex)node_name=variable;
+            else{
+                if(is_src)src_name=variable;
+                else dst_name=variable;
+            }
         }
         std::string label;
         if (ctx->oC_NodeLabels() != nullptr) {
             label = std::any_cast<std::string>(visit(ctx->oC_NodeLabels()));
             result.append(label);
         }
-        if (_change) {
-            result.append(":" + node_label);
-        };
+        // if (_change) {
+        //     result.append(":" + node_label);
+        // };
         // auto node = &(pattern_graphs_[curr_pattern_graph].GetNode(variable));
         // if (!node->Label().empty()) {
         //     result.append(":" + node->Label());
@@ -695,25 +715,27 @@ class ViewMaintenance : public LcypherVisitor {
                 std::string properties = std::any_cast<std::string>(visit(ctx->oC_Properties()));
                 result.append(properties);
             }
-        } else {
-            if (_change) {
-                if (is_string)
-                    result.append("{" + primary_key + ":'" + primary_value + "'}");
-                else
-                    result.append("{" + primary_key + ":" + primary_value + "}");
-            }
-        }
+        } 
+        // else {
+        //     if (_change) {
+        //         if (is_string)
+        //             result.append("{" + primary_key + ":'" + primary_value + "'}");
+        //         else
+        //             result.append("{" + primary_key + ":" + primary_value + "}");
+        //     }
+        // }
         result.append(")");
         return result;
     }
     std::string getvetex() {
         std::string result{"("};
-        // result.append(GenAnonymousAlias(true));
-        result.append(":").append(_label).append("{").append(_primary_key).append(":");
-        if (_value_is_string) result.append("'");
-        result.append(_primary_value);
-        if (_value_is_string) result.append("'");
-        result.append("})");
+        result.append(_node_variable+")");
+        // // result.append(GenAnonymousAlias(true));
+        // result.append(":").append(_label).append("{").append(_primary_key).append(":");
+        // if (_value_is_string) result.append("'");
+        // result.append(_primary_value);
+        // if (_value_is_string) result.append("'");
+        // result.append("})");
         return result;
     }
     // oC_PatternElementChain : oC_RelationshipPattern SP? oC_NodePattern ;
@@ -1251,26 +1273,26 @@ class ViewMaintenance : public LcypherVisitor {
     std::string getedge(std::string edgetypes, LinkDirection direction)
     {
         std::string result;
-        std::string node1{"(:"};
+        std::string node1{"("};
         std::string edge("[");
-        std::string node2{"(:"};
-        node1.append(std::get<0>(_src_inf)).append("{").append(std::get<1>(_src_inf));
-        node1.append(":");
-        if (std::get<3>(_src_inf))
-            node1.append("'");
-        node1.append(std::get<2>(_src_inf));
-        if (std::get<3>(_src_inf))
-            node1.append("'");
-        node1.append("})");
-
-        node2.append(std::get<0>(_dst_inf)).append("{").append(std::get<1>(_dst_inf));
-        node2.append(":");
-        if (std::get<3>(_dst_inf))
-            node2.append("'");
-        node2.append(std::get<2>(_dst_inf));
-        if (std::get<3>(_dst_inf))
-            node2.append("'");
-        node2.append("})");
+        std::string node2{"("};
+        node1.append(_src_variable+")");
+        // node1.append(":");
+        // if (std::get<3>(_src_inf))
+        //     node1.append("'");
+        // node1.append(std::get<2>(_src_inf));
+        // if (std::get<3>(_src_inf))
+        //     node1.append("'");
+        // node1.append("})");
+        node2.append(_dst_variable+")");
+        // node2.append(std::get<0>(_dst_inf)).append("{").append(std::get<1>(_dst_inf));
+        // node2.append(":");
+        // if (std::get<3>(_dst_inf))
+        //     node2.append("'");
+        // node2.append(std::get<2>(_dst_inf));
+        // if (std::get<3>(_dst_inf))
+        //     node2.append("'");
+        // node2.append("})");
         edge.append(_edge_variable);
         if(edgetypes.size()>0)
             edge.append(":");

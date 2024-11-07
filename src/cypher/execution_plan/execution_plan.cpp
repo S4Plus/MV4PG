@@ -505,7 +505,7 @@ static bool _SkipHangingArgumentOp(const PatternGraph &graph, const SymbolTable 
 
 // Build expand ops in DFS traversal order
 void ExecutionPlan::_BuildExpandOps(const parser::QueryPart &part, PatternGraph &pattern_graph,
-                                    OpBase *&root) {
+                                    OpBase *&root, int part_id) {
     CYPHER_THROW_ASSERT(part.match_clause);
     /* Construct start nodes for traversal  */
     VEC_STR join_hints, start_hints;
@@ -533,6 +533,20 @@ void ExecutionPlan::_BuildExpandOps(const parser::QueryPart &part, PatternGraph 
             }
             start_nodes.emplace_back(n.ID());
         }
+        if(n.derivation_!=Node::CREATED){
+            LOG_DEBUG()<<"size:"<<id_seek_variables.size();
+            LOG_DEBUG()<<"part id:"<<part_id;
+            try{
+                auto now_id_seek_variables=id_seek_variables[part_id];
+                if(std::find(now_id_seek_variables.begin(), now_id_seek_variables.end(), n.Alias()) != now_id_seek_variables.end()){
+                    start_nodes.emplace_back(n.ID());
+                }  
+            }
+            catch (std::exception &e) {
+                LOG_DEBUG()<<"id seek error";
+            }
+        }
+            // LOG_DEBUG()<<"size e";            
     }
     std::map<size_t, NodeID> args_ordered;
     for (auto &s : pattern_graph.symbol_table.symbols) {
@@ -860,13 +874,13 @@ void ExecutionPlan::_BuildWithOps(const parser::QueryPart &part,
 }
 
 void ExecutionPlan::_BuildClause(const parser::Clause &clause, const parser::QueryPart &part,
-                                 PatternGraph &pattern_graph, OpBase *&root) {
+                                 PatternGraph &pattern_graph, OpBase *&root,int part_id) {
     switch (clause.type) {
     case parser::Clause::STANDALONECALL:
         _BuildStandaloneCallOp(part, pattern_graph, root);
         break;
     case parser::Clause::MATCH:
-        _BuildExpandOps(part, pattern_graph, root);
+        _BuildExpandOps(part, pattern_graph, root, part_id);
         break;
     case parser::Clause::UNWIND:
         _BuildUnwindOp(part, pattern_graph, root);
@@ -1113,7 +1127,7 @@ OpBase *ExecutionPlan::BuildPart(const parser::QueryPart &part, int part_id) {
     LOG_DEBUG()<<"build part 3";
     for (auto &clause : part.clauses) {
         LOG_DEBUG()<<"build part clause"<<clause.type;
-        _BuildClause(clause, part, pattern_graph, segment_root);
+        _BuildClause(clause, part, pattern_graph, segment_root, part_id);
         LOG_DEBUG()<<"build part end"<<clause.type;
     }
     LOG_DEBUG()<<"build part 2";
@@ -1396,6 +1410,48 @@ void ExecutionPlan::Build(const std::vector<parser::SglQuery> &stmt, parser::Cmd
     Build(stmt,cmd,ctx,false);
 }
 
+std::vector<std::string> SplitString(const std::string& input) {
+    std::vector<std::string> result;
+    // 使用正则表达式，以 "union" 和 "with" 为分隔符，忽略大小写
+    std::regex re("(union|with)", std::regex_constants::icase);
+    std::sregex_token_iterator it(input.begin(), input.end(), re, -1);
+    std::sregex_token_iterator end;
+
+    for (; it != end; ++it) {
+        std::string token = it->str();
+        if (!token.empty()) {
+            // 去除首尾空白字符
+            token.erase(0, token.find_first_not_of(" \t\n\r"));
+            token.erase(token.find_last_not_of(" \t\n\r") + 1);
+            if (!token.empty()) {
+                result.push_back(token);
+            }
+        }
+    }
+    if(result.empty())return std::vector<std::string>{input};
+    else return result;
+}
+
+std::vector<std::vector<std::string>> FindAllMatches(const std::string& input) {
+    std::vector<std::string> sqls=SplitString(input);
+    std::vector<std::vector<std::string>> results;
+    for(auto sql : sqls){
+        std::vector<std::string> matches;
+        // 使用正则表达式查找形如id(*)的子字符串，id不区分大小写
+        std::regex re("id\\(([^()]+)\\)", std::regex_constants::icase);
+        std::smatch match;
+        std::string::const_iterator searchStart(sql.cbegin());
+
+        while (std::regex_search(searchStart, sql.cend(), match, re)) {
+            // match[1]是括号内的部分
+            matches.push_back(match[1].str());
+            searchStart = match.suffix().first;
+        }
+        results.push_back(matches);
+    }
+    return results;
+}
+
 void ExecutionPlan::Build(const std::vector<parser::SglQuery> &stmt, parser::CmdType cmd,
                           cypher::RTContext *ctx,bool profile) {
     _is_profile=profile;
@@ -1409,6 +1465,16 @@ void ExecutionPlan::Build(const std::vector<parser::SglQuery> &stmt, parser::Cmd
     _view_path = parent_dir+"/view/"+ctx->graph_+".json";
     LOG_DEBUG()<<"GetViewPatternGraphs";
     GetViewPatternGraphs(ctx);
+    id_seek_variables = FindAllMatches(cypher_query_);
+    int i=0;
+    for(auto ids: id_seek_variables){
+        LOG_DEBUG()<<"part "+std::to_string(i)+" s";
+        for(auto id:ids){
+            LOG_DEBUG()<<"variable name:"<<id;
+        }
+        LOG_DEBUG()<<"part "+std::to_string(i)+" e";
+        i++;
+    }
     LOG_DEBUG()<<"GetViewPatternGraphs end";
     // _view_path="/data/view/"+ctx->graph_+".json";
     _cmd_type = cmd;

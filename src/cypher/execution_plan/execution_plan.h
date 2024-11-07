@@ -45,6 +45,7 @@ class ExecutionPlan {
     std::vector<std::pair<std::string, PatternGraph*>> _view_pattern_graphs;
     // std::vector<PatternGraph*> _view_pattern_graphs;
     std::string cypher_query_="";
+    std::vector<std::vector<std::string>> id_seek_variables;
     bool _is_view_maintenance = false;
     bool _is_create_view=false;
     bool _is_optimize=false;
@@ -59,7 +60,7 @@ class ExecutionPlan {
     void _BuildStandaloneCallOp(const parser::QueryPart &part, const PatternGraph &pattern_graph,
                                 OpBase *&root);
 
-    void _BuildExpandOps(const parser::QueryPart &part, PatternGraph &pattern_graph, OpBase *&root);
+    void _BuildExpandOps(const parser::QueryPart &part, PatternGraph &pattern_graph, OpBase *&root, int part_id);
 
     void _BuildUnwindOp(const parser::QueryPart &part, const PatternGraph &pattern_graph,
                         OpBase *&root);
@@ -84,7 +85,7 @@ class ExecutionPlan {
                        OpBase *&root);
 
     void _BuildClause(const parser::Clause &clause, const parser::QueryPart &part,
-                      PatternGraph &pattern_graph, OpBase *&root);
+                      PatternGraph &pattern_graph, OpBase *&root, int part_id);
 
     void _PlaceFilterOps(const parser::QueryPart &part, OpBase *&root);
 

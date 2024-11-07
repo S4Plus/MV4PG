@@ -1,1 +1,1 @@
-MATCH (p1:Person {id: 987})-[r:knows {creationDate: 13824310250}]->(p2:Person {id: 2199023265994}) delete r
+match (n:Comment{id:2199029813921})-[r:replyOf]->(m:Post{id:2199029813920}) where r.creationDate=1700000000000 delete r
