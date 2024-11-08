@@ -1,21 +1,21 @@
 MATCH (acc:Account {id: 1694622296319520})<-[r:deposit]-(loan: Loan {createTime: '1656084982460'}) 
 create (acc)-[:repay{timestamp:1729822775000,amount:39419373.84}]->(loan)
 cycle: 5
-original_time: 0.03270258903503418
-optimized_time: 0.0587958812713623
-speed up: 0.5562054403794203
+original_time: 0.061286544799804686
+optimized_time: 0.06718587875366211
+speed up: 0.9121938409782894
 
 MATCH (acc:Account {id: 7606696318861801})-[r:repay]->(loan: Loan {id: 288346924384537}) where r.timestamp=1645739703489
 delete r
 cycle: 5
-original_time: 0.032232475280761716
-optimized_time: 0.06188011169433594
-speed up: 0.5208858613568412
+original_time: 0.05650162696838379
+optimized_time: 0.09473814964294433
+speed up: 0.596397831088437
 
 MATCH (loan:Loan {id: 569547023196251})
 DETACH DELETE loan
 cycle: 5
-original_time: 0.03049025535583496
-optimized_time: 0.07924427986145019
-speed up: 0.3847628549233305
+original_time: 0.06661114692687989
+optimized_time: 0.09823727607727051
+speed up: 0.6780638631967517
 

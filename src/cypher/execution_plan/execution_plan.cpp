@@ -359,11 +359,11 @@ void ExecutionPlan::_AddScanOp(const parser::QueryPart &part, const SymbolTable 
         // argument type exists in symbol table
         if (it->second.scope == SymbolNode::ARGUMENT) {
             if (skip_arg_op) return;
-            scan_op = new Argument(sym_tab);
+            scan_op = new Argument(sym_tab, _is_view_maintenance);
         } else if (pf.type == Property::VALUE || pf.type == Property::PARAMETER) {
             /* use index when possible. weak index lookup if label absent */
             scan_op = new NodeIndexSeekDynamic(node, sym_tab);
-            auto argument = new Argument(sym_tab);
+            auto argument = new Argument(sym_tab, _is_view_maintenance);
             ops.emplace_back(argument);
         } else if (pf.type == Property::VARIABLE) {
             scan_op = new NodeIndexSeekDynamic(node, sym_tab);
@@ -372,7 +372,7 @@ void ExecutionPlan::_AddScanOp(const parser::QueryPart &part, const SymbolTable 
             if (i == sym_tab->symbols.end())
                 throw lgraph::CypherException("Unknown variable: " + pf.value_alias);
             if (i->second.scope == SymbolNode::ARGUMENT) {
-                auto arg = new Argument(sym_tab);
+                auto arg = new Argument(sym_tab, _is_view_maintenance);
                 ops.emplace_back(arg);
             } else if (i->second.scope == SymbolNode::DERIVED_ARGUMENT) {
                 /* WITH [] AS y UNWIND y AS x MATCH (n {id:x}) RETURN n
@@ -394,7 +394,7 @@ void ExecutionPlan::_AddScanOp(const parser::QueryPart &part, const SymbolTable 
                 /* Node not labeled, no other option but a full scan. */
                 scan_op = new AllNodeScanDynamic(node, sym_tab);
             }
-            auto argument = new Argument(sym_tab);
+            auto argument = new Argument(sym_tab, _is_view_maintenance);
             ops.emplace_back(argument);
         }
         ops.emplace_back(scan_op);
@@ -467,7 +467,7 @@ void ExecutionPlan::_BuildArgument(const parser::QueryPart &part,
     auto &sym_tab = pattern_graph.symbol_table;
     for (auto &a : sym_tab.symbols) {
         if (a.second.scope == SymbolNode::ARGUMENT) {
-            auto argument = new Argument(&sym_tab);
+            auto argument = new Argument(&sym_tab, _is_view_maintenance);
             return _UpdateStreamRoot(argument, root);
         }
     }
@@ -678,7 +678,7 @@ void ExecutionPlan::_BuildExpandOps(const parser::QueryPart &part, PatternGraph 
         }
         // throw exception when argument or the stream is not dangling node
         // add one more argument when condition is true
-        traversal_root = new Argument(&pattern_graph.symbol_table);
+        traversal_root = new Argument(&pattern_graph.symbol_table, _is_view_maintenance);
     }
     /* Restructure the tree to move the argument down
      * 1. remove cartesian product and emplace children[1] as the root
@@ -759,7 +759,7 @@ void ExecutionPlan::_BuildUnwindOp(const parser::QueryPart &part, const PatternG
     auto &sym_tab = pattern_graph.symbol_table;
     auto it = sym_tab.symbols.find(std::get<1>(*part.unwind_clause));
     if (it != sym_tab.symbols.end() && it->second.scope == SymbolNode::DERIVED_ARGUMENT) {
-        auto arg = new Argument(&sym_tab);
+        auto arg = new Argument(&sym_tab, _is_view_maintenance);
         unwind->AddChild(arg);
     }
     _UpdateStreamRoot(unwind, root);

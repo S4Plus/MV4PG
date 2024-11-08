@@ -221,6 +221,7 @@ class ViewMaintenance : public LcypherVisitor {
         // std::cout<<"match s"<<std::endl;
         for (auto &mq : match_queries) {
             mq.append(" " + oc_with);
+            if(!_is_create)mq.append(",count(*) as num");
             mq.append(" " + update);
             rewrite_queries.push_back(mq);
         }

@@ -107,7 +107,12 @@ class ExpandAll : public OpBase {
 
     bool _CheckToSkipEdgeFilter(RTContext *ctx) const {
         // if the query has edge_filter, filter before node_expand
-        return edge_filter_ && !edge_filter_->DoFilter(ctx, *children[0]->record);
+        auto start = std::chrono::high_resolution_clock::now();
+        bool is_filter = edge_filter_ && !edge_filter_->DoFilter(ctx, *children[0]->record);
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> elapsed = end - start;
+        check_filter_+=elapsed.count();
+        return is_filter;
     }
 
     bool _CheckToSkipEdge(RTContext *ctx) const {
@@ -118,11 +123,19 @@ class ExpandAll : public OpBase {
     }
 
     bool _CheckIfDuplicate(RTContext *ctx) const {
+        auto start = std::chrono::high_resolution_clock::now();
         if(!no_dup_edge){return false;}
-        if(ctx->deleted_view_edges.find(eit_->GetUid().ToString())!=ctx->deleted_view_edges.end())return true;
+        if(ctx->deleted_view_edges.find(eit_->GetUid().ToString())!=ctx->deleted_view_edges.end()){
+            auto end = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> elapsed = end - start;
+            check_duplicate_+=elapsed.count();
+            return true;
+        }
         else{
-            return expand_pair_node.find(std::make_pair(start_->PullVid(),eit_->GetNbr(expand_direction_)))
-                            !=expand_pair_node.end();
+            if(limit_delete_num>=0 && now_delete_num>=limit_delete_num)return true;
+            else return false;
+            // return expand_pair_node.find(std::make_pair(start_->PullVid(),eit_->GetNbr(expand_direction_)))
+            //                 !=expand_pair_node.end();
         }
     }
 
@@ -202,7 +215,11 @@ class ExpandAll : public OpBase {
     std::string view_path_;
     std::set<std::string> view_types_;
     bool no_dup_edge = false;
-    bool no_dup_find = false;
+    // bool no_dup_find = false;
+    int limit_delete_num=-1;
+    int now_delete_num=0;
+    mutable double check_duplicate_=0;
+    mutable double check_filter_=0;
     std::unordered_set<std::pair<lgraph::VertexId,lgraph::VertexId>, pair_hash> expand_pair_node;
     // std::unordered_set<std::string> deleted_view_edges;
     /* ExpandAllStates
@@ -316,12 +333,13 @@ class ExpandAll : public OpBase {
 #endif
         CYPHER_THROW_ASSERT(!children.empty());
         auto child = children[0];
-        if(no_dup_edge && no_dup_find){
-            no_dup_find=false;
-            return OP_REFRESH;
-        }
+        // if(no_dup_edge && no_dup_find){
+        //     no_dup_find=false;
+        //     return OP_REFRESH;
+        // }
         while (state_ == ExpandAllUninitialized || Next(ctx) == OP_REFRESH) {
-            expand_pair_node.clear();
+            now_delete_num=0;
+            // expand_pair_node.clear();
             auto res = child->Consume(ctx);
             state_ = ExpandAllResetted;
             if (res != OP_OK) {
@@ -334,9 +352,10 @@ class ExpandAll : public OpBase {
              * returns OK, except when the child is an OPTIONAL operation.  */
         }
         if(no_dup_edge && start_->PullVid()>=0 && neighbor_->PullVid()>=0){
-            no_dup_find=true;
+            // no_dup_find=true;
             ctx->deleted_view_edges.emplace(eit_->GetUid().ToString());
-            expand_pair_node.emplace(start_->PullVid(),neighbor_->PullVid());
+            now_delete_num++;
+            // expand_pair_node.emplace(start_->PullVid(),neighbor_->PullVid());
 #ifndef NDEBUG
             LOG_DEBUG()<<"expand pair:"<<start_->PullVid()<<","<<neighbor_->PullVid();
 #endif
@@ -357,7 +376,8 @@ class ExpandAll : public OpBase {
         neighbor_->PushVid(-1);
         pattern_graph_->VisitedEdges().Erase(*eit_);
         state_ = ExpandAllUninitialized;
-        expand_pair_node.clear();
+        now_delete_num=0;
+        // expand_pair_node.clear();
         return OP_OK;
     }
 
@@ -367,10 +387,10 @@ class ExpandAll : public OpBase {
                                                        : "--";
         std::string edgefilter_str = "EdgeFilter";
         return fma_common::StringFormatter::Format(
-            "{}({}) [{} {} {} {}]", name, expand_into_ ? "Into" : "All", start_->Alias(), towards,
+            "{}({}) [{} {} {} {},{},{}]", name, expand_into_ ? "Into" : "All", start_->Alias(), towards,
             neighbor_->Alias(),
             edge_filter_ ? edgefilter_str.append(" (").append(edge_filter_->ToString()).append(")")
-                         : "");
+                         : "", std::to_string(check_duplicate_),std::to_string(check_filter_));
     }
 
     Node* GetStartNode() const { return start_; }

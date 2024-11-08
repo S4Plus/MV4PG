@@ -17,12 +17,17 @@
 //
 
 #include "cypher/execution_plan/ops/op_argument.h"
+#include "cypher/execution_plan/ops/op_expand_all.h"
 #include "tools/lgraph_log.h"
 
 namespace cypher {
 
-Argument::Argument(const SymbolTable *sym_tab)
-    : OpBase(OpType::ARGUMENT, "Argument"), sym_tab_(sym_tab) {
+Argument::Argument(const SymbolTable *sym_tab){
+    Argument(sym_tab, false);
+}
+
+Argument::Argument(const SymbolTable *sym_tab, bool is_maintenance)
+    : OpBase(OpType::ARGUMENT, "Argument"), sym_tab_(sym_tab),is_maintenance_(is_maintenance) {
     std::map<size_t, std::pair<std::string, SymbolNode::Type>> ordered_alias;
     for (auto &a : sym_tab->symbols) {
         if (a.second.scope == SymbolNode::ARGUMENT) {
@@ -82,6 +87,13 @@ OpBase::OpResult Argument::RealConsume(RTContext *ctx) {
         switch (input.type) {
         case Entry::CONSTANT:
             record->values[a.rec_idx].constant = input.constant;
+            LOG_DEBUG()<<"a.alias"<<a.alias;
+            if(is_maintenance_ ){
+                if(auto expand=dynamic_cast<ExpandAll *>(parent)){
+                    expand->limit_delete_num=std::stoi(input.constant.ToString());
+                }
+            }
+            LOG_DEBUG()<<"argument constant:"<<input.constant.ToString();
             break;
         case Entry::NODE:
             /* Note: The input may be invalid, such as nodes produced by OPTIONAL MATCH.

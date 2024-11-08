@@ -16,3 +16,21 @@ create view cypher: create view COMPANY_LOAN as (
 )
 create time: 25.509885787963867
 
+create view cypher: create view ACCOUNT_LOAN as (
+    Construct (n)-[r:ACCOUNT_LOAN]->(m)
+    match (n:Account)-[r1*..2]->(m:Loan)
+)
+create time: 420.84539461135864
+
+create view cypher: create view PERSON_COMPANY as (
+    Construct (n)-[r:PERSON_COMPANY]->(m)
+    match (n:Person)-[r1*2]->(m:Company)
+)
+create time: 50.59359526634216
+
+create view cypher: create view COMPANY_LOAN as (
+    Construct (n)-[r:COMPANY_LOAN]->(m)
+    match (n:Company)-[r1]->()-[r2]->(m:Loan)
+)
+create time: 27.128772735595703
+

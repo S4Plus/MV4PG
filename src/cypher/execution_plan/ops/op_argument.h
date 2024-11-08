@@ -37,9 +37,11 @@ class Argument : public OpBase {
     std::shared_ptr<Record> *input_record_ = nullptr;
     const SymbolTable *sym_tab_ = nullptr;  // build time context
     PatternGraph *pattern_graph_ = nullptr;
+    bool is_maintenance_ = false;
 
  public:
     explicit Argument(const SymbolTable *sym_tab);
+    explicit Argument(const SymbolTable *sym_tab, bool is_maintenance);
 
     void Receive(std::shared_ptr<Record> *input_record, PatternGraph *pattern_graph);
 
