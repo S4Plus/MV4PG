@@ -4,7 +4,7 @@ First pull the TuGraph image and create the container, copy this repository to t
 ```
 docker pull tugraph/tugraph-compile-centos7
 docker run -d -p 7071:7071 7072:7072 -it tugraph/tugraph-compile-centos7 tugraph
-docker cp ../tugraph-db tugraph:/
+docker cp ../MV4PG tugraph:/
 ```
 ## Test
 Then execute the following script in docker
