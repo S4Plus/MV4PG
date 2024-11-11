@@ -5,7 +5,7 @@ The experimental test results are in `results.xlsx`. The test process in TuGraph
 First, pull the TuGraph image and create the container, then copy this repository to the container.
 ```
 docker pull tugraph/tugraph-compile-centos7
-docker run -d -p 7071:7071 -p 7072:7072 -it tugraph/tugraph-compile-centos7 tugraph
+docker run -d --name tugraph -p 7071:7071 -p 7072:7072 -it tugraph/tugraph-compile-centos7 bash
 docker cp ../MV4PG tugraph:/
 ```
 ## Test
