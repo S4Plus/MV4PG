@@ -1,1 +1,0 @@
-MATCH (c1:Company{id:%d}), (c2:Company{id:%d}) CREATE (c1)-[:guarantee{timestamp: %d}]->(c2);
