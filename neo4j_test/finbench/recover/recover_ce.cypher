@@ -1,1 +1,1 @@
-Match (acc:Account {id: 1694622296319520})<-[r:deposit {timestamp: 1729822775000}]-(loan: Loan {id: 254459151382484580}) delete r
+match (acc:Account{id:"1694622296319520"})-[r:repay]->(loan:Loan{createTime:"1656084982460"}) where r.timestamp="1729822775000" delete r

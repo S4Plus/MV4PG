@@ -159,7 +159,6 @@ def create_views(path,url,user,password):
             excute_time["result_consumed_after"]=summary.result_consumed_after
             excute_time["time"]=summary.result_available_after+summary.result_consumed_after
             profile=summary.profile
-            excute_time["AllDbHits"],profile=filter(profile)
             excute_time["profile"]=profile
             createview_time[line]=excute_time
     with open("./profile.json",'w') as inputfile:

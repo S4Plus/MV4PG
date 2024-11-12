@@ -90,21 +90,21 @@ if __name__=="__main__":
     #password="352541141"
     #connector=connector(url,user,password)
     # types=["addnodes","deletenodes","addrelationship","deleterelaships"]
-    path="/home/wxd/neo4j_test/graph-views/view_maintance_2024/neo4j_Test/finbench/output.json"
+    path="/home/wxd/neo4j_test/graph-views/view_maintance_2024/neo4j_Test/ldbcSf1/output.json"
     my_tool=tool(path)
     #for view in my_tool.views:
     #     result2=connector.run_cypher(view)
     #     print(result2)
     result1={}
     result2={}
-    with open("/home/wxd/neo4j_test/graph-views/view_maintance_2024/neo4j_Test/finbench/WriteQueries/all.txt",'r') as inputfile:
+    with open("/home/wxd/neo4j_test/graph-views/view_maintance_2024/neo4j_Test/ldbcSf1/WriteQueries/all.txt",'r') as inputfile:
         lines=inputfile.readlines()
         for line in lines:
             line=line.rstrip("\n")
             result1[line]=my_tool.tran(line)
     with open('/home/wxd/neo4j_test/graph-views/view_maintance_2024/neo4j_Test/test_cypher/new_cypher.json', 'w') as json_file:
         json.dump(result1,json_file, indent=4)  # indent 参数用于美化输出
-    with open("/home/wxd/neo4j_test/graph-views/view_maintance_2024/neo4j_Test/finbench/recover/all.txt",'r') as inputfile:
+    with open("/home/wxd/neo4j_test/graph-views/view_maintance_2024/neo4j_Test/ldbcSf1/recover/all.txt",'r') as inputfile:
         lines=inputfile.readlines()
         for line in lines:
             line=line.rstrip("\n")

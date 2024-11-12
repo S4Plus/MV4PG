@@ -1,4 +1,4 @@
-MATCH (p1:Person {id:"987"})-[r:knows {creationDate:"13824310250"}]->(p2:Person {id:"2199023265994"}) delete r
+match (n:Comment{id:"2199029813921"})-[r:replyOf]->(m:Post{id:"2199029813920"}) where r.creationDate="1700000000000" delete r
 MATCH (n:Person {id:"65"}),(m:Comment {id:"1649268071638"}) create (n)-[r:likes{creationDate:"1330582858332"}]->(m)
 create (n:Post{id:"556",creationDate:"1266568358891",locationIP:"103.2.223.188",browserUsed:"Internet Explorer",language:"tk",content:"About Louis I of Hungary, le lasting political results. Louis is the first European monarch w",length:93,creator:4194,container:37,place:58})
 MATCH (n:Post {id: "556"}),(m:Person{id:"4194"}) create (n)-[r:postHasCreator{creationDate:"1266568358891"}]->(m)

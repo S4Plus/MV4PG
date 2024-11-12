@@ -132,8 +132,8 @@ def create_views(path,url,user,password):
             excute_time["result_consumed_after"]=summary.result_consumed_after
             excute_time["time"]=summary.result_available_after+summary.result_consumed_after
             createview_time[line]=excute_time
-    # with open(path+"/result/createviews.json",'w') as inputfile:
-    #     json.dump(createview_time,inputfile,indent=4)
+    with open(path+"/result/views/createviews.json",'w') as inputfile:
+        json.dump(createview_time,inputfile,indent=4)
 def create_indexs(path,url,user,password):
     connector1=connector(url,user,password)
     with open(path+"/index/all.txt") as createindexs:
@@ -143,6 +143,12 @@ def create_indexs(path,url,user,password):
             connector1.run_cypher(line)
 if __name__=="__main__":
     parse_args()
-    create_indexs(path,neo4j_url1,neo4j_user1,neo4j_password1)
-    create_indexs(path,neo4j_url2,neo4j_user2,neo4j_password2)
+    try:
+        create_indexs(path,neo4j_url1,neo4j_user1,neo4j_password1)
+    except:
+        print("error")
+    try:
+        create_indexs(path,neo4j_url2,neo4j_user2,neo4j_password2)
+    except:
+        print("exit")
     create_views(path,neo4j_url2,neo4j_user2,neo4j_password2)    
