@@ -1,9 +1,9 @@
 {
-    "directory" : "/var/lib/lgraph/movie_db",
+    "directory" : "/data_opt",
 
     "host" : "0.0.0.0",
-    "port" : 7090,
-    "rpc_port" : 9090,
+    "port" : 7072,
+    "rpc_port" : 9092,
     "enable_rpc" : true,
     "enable_ha" : false,
 

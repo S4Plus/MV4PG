@@ -29,11 +29,8 @@ cd "$SCRIPT_DIR/import_finbench_sf10"
 
 # start TuGraph
 cd "$SCRIPT_DIR/tugraph_db_without_views"
-./build/output/lgraph_server -d start --directory /data_wo_opt --port 7071 --rpc_port 9091
+./build/output/lgraph_server -d start -c ./demo/movie/lgraph.json
 cd "$SCRIPT_DIR/tugraph_db_with_views"
-./build/output/lgraph_server -d start --directory /data_opt --port 7072 --rpc_port 9092
-
-# python
-python3 -m pip install TuGraphClient
+./build/output/lgraph_server -d start -c ./demo/movie/lgraph.json
 
 echo "prepare done"
