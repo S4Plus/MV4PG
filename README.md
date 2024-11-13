@@ -1,30 +1,18 @@
 # Overview
 The experimental test results are available in `results.xlsx`. For a detailed explanation, please refer to `Evaluation Result`. The testing processes for TuGraph and Neo4j are documented in `TuGraph_Test` and `Neo4j_Test`, respectively.
-# TuGraph Test
-## Docker
-First, pull the TuGraph image and create the container, then copy this repository to the container.
-```
-docker pull tugraph/tugraph-compile-centos7
-docker run -d --name tugraph -p 7071:7071 -p 7072:7072 -it tugraph/tugraph-compile-centos7 bash
-docker cp ../MV4PG tugraph:/
-```
-## Test
-Then execute the following script in the docker container.
-```
-docker attach tugraph
-./MV4PG/tugraph_test.sh
-```
-
-# Neo4j Test
-## Prerequisites
-
+# Prerequisites
 - Python 3.x
-- Neo4j Database (Two instances required for comparison)
-- TuGraph Server
+- Docker
 - Required Python packages:
   - neo4j
   - TuGraphClient
-  - argparse
+# TuGraph Test
+If you already have a docker environment, just execute the `tugraph.sh` script directly.
+```
+./tugraph.sh
+```
+The results are stored in the `MV4PG/tugraph_test/view_test/ldbcSf1` and `MV4PG/tugraph_test/view_test/finbench` folders, respectively, within the container named `tugraph`
+# Neo4j Test
 
 ## Installation
 
