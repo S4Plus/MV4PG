@@ -27,7 +27,7 @@ pip install neo4j TuGraphClient argparse
 ```bash
 ./db.sh
 ```
-4. set the path in shell script (ldbc_test.sh, finbench_test.sh) as the path of the test file in your local machine . If you need to initialize the databases,please add the parameters <true> after the shell script.
+4. set the path in shell script (ldbc_test.sh, finbench_test.sh) as the path of the test file in your local machine . If you need to initialize the databases,please add the parameters true after the shell script.
 
 5. run the shell script 
 ```bash
