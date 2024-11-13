@@ -17,8 +17,10 @@ Then execute the following script in the docker container.
 # Neo4j Test
 ## Prerequisites
 
+## Prerequisites
+
 - Python 3.x
-- Neo4j Database (Two instances required for comparison)
+- Docker
 - TuGraph Server
 - Required Python packages:
   - neo4j
@@ -38,16 +40,13 @@ pip install neo4j TuGraphClient argparse
 ```
 
 3. Set up Neo4j instances:
-   - Configure two separate Neo4j instances on different ports
-   - Ensure both instances are running and accessible
+   - run the shell script db.sh in the root directory of the project.
 
 4. Set up TuGraph:
    - Install and configure TuGraph server
    - Create necessary graphs and permissions
 5. set the path in shell script (ldbc_test.sh, finbench_test.sh) as the path of the test file in your local machine . If you need to initialize the databases,please add the parameters <true> after the shell script.
 6. run the shell script 
-### Note
-if you cannot run the shell script, please check the path of the test file and complier the CypherRewrite in the build folder.
 ## Configuration
 
 ### Default Configuration

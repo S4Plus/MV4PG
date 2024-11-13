@@ -10,6 +10,36 @@ tugraph_user='admin'
 tugraph_password='73@TuGraph'
 tugraph="finbenchSf10"
 need_init=$1
+docker exec neo4j1 bash -c "cat > /var/lib/neo4j/conf/neo4j.conf << EOL
+dbms.tx_log.rotation.retention_policy=100M size
+dbms.memory.heap.initial_size=63G
+dbms.memory.heap.max_size=63G
+dbms.tx_state.memory_allocation=ON_HEAP
+dbms.memory.pagecache.size=512M
+dbms.connector.http.listen_address=:7443
+dbms.connector.bolt.listen_address=:7690
+dbms.default_listen_address=0.0.0.0
+dbms.security.auth_enabled=true
+cypher.lenient_create_relationship = true
+dbms.default_database=finbenchSf10
+dbms.directories.logs=/logs
+EOL"
+docker exec neo4j2 bash -c "cat > /var/lib/neo4j/conf/neo4j.conf << EOL
+dbms.tx_log.rotation.retention_policy=100M size
+dbms.memory.heap.initial_size=63G
+dbms.memory.heap.max_size=63G
+dbms.tx_state.memory_allocation=ON_HEAP
+dbms.memory.pagecache.size=512M
+dbms.connector.http.listen_address=:7444
+dbms.connector.bolt.listen_address=:7691
+dbms.default_listen_address=0.0.0.0
+dbms.security.auth_enabled=true
+cypher.lenient_create_relationship = true
+dbms.default_database=finbenchSf10
+dbms.directories.logs=/logs
+EOL"
+docker restart neo4j1
+docker restart neo4j2
 cd ./CypherRewrite/build
 ./CypherRewrite $path
 echo "complete rewrite"

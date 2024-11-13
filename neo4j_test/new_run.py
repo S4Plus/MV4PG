@@ -16,7 +16,7 @@ tugraph_url = '127.0.0.1:7072'
 tugraph_user = 'admin'
 tugraph_password = '73@TuGraph'
 tugraph_graph = 'finbenchSf10'
-path="/home/wxd/neo4j_test/graph-views/view_maintance_2024/neo4j_Test/finbench"
+path=""
 def filter(profile):
     result={}
     db=0

@@ -5,7 +5,7 @@ This tool is designed to test and compare the performance of view maintenance op
 ## Prerequisites
 
 - Python 3.x
-- Neo4j Database (Two instances required for comparison)
+- Docker
 - TuGraph Server
 - Required Python packages:
   - neo4j
@@ -25,8 +25,7 @@ pip install neo4j TuGraphClient argparse
 ```
 
 3. Set up Neo4j instances:
-   - Configure two separate Neo4j instances on different ports
-   - Ensure both instances are running and accessible
+   - run the shell script db.sh in the root directory of the project.
 
 4. Set up TuGraph:
    - Install and configure TuGraph server

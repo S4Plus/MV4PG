@@ -14,7 +14,7 @@ tugraph_url = '127.0.0.1:7072'
 tugraph_user = 'admin'
 tugraph_password = '73@TuGraph'
 tugraph_graph = 'finbenchsf10'
-path="/home/wxd/neo4j_test/graph-views/view_maintance_2024/neo4j_Test/finbench"
+path=""
 def parse_args():
     parser = argparse.ArgumentParser(description="Tugraph optimization in neo4j")
     parser.add_argument('-path', '--path', help='url for tugraph')
