@@ -1,6 +1,6 @@
-# docker pull docker.1ms.run/neo4j:4.4.2
-# wget http://home.ustc.edu.cn/~angels/import_snb_sf1.zip
-# wget http://home.ustc.edu.cn/~angels/import_finbench_sf10.zip
+docker pull neo4j:4.4.2
+wget http://home.ustc.edu.cn/~angels/import_snb_sf1.zip
+wget http://home.ustc.edu.cn/~angels/import_finbench_sf10.zip
 # Create directories for neo4j1
 mkdir -p ./neo4j1/data
 mkdir -p ./neo4j1/logs
@@ -26,7 +26,7 @@ docker run -d \
     -e NEO4J_AUTH=neo4j/123456 \
     -p 7443:7443 \
     -p 7690:7690 \
-    docker.1ms.run/neo4j:4.4.2
+    neo4j:4.4.2
 
 # Start neo4j2 container
 docker run -d \
@@ -39,7 +39,7 @@ docker run -d \
     -e NEO4J_AUTH=neo4j/352541141 \
     -p 7444:7444 \
     -p 7691:7691 \
-    docker.1ms.run/neo4j:4.4.2
+    neo4j:4.4.2
 # Install unzip in neo4j1
 docker exec neo4j1 apt-get update
 docker exec neo4j1 apt-get install -y unzip

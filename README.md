@@ -1,35 +1,37 @@
-# Neo4j View Maintenance Testing Tool
-
-This tool is designed to test and compare the performance of view maintenance operations in Neo4j, with and without optimization. It supports testing both read and write operations, and includes functionality to test with TuGraph optimization.
-
-## Prerequisites
-
+# Overview
+The experimental test results are available in `results.xlsx`. For a detailed explanation, please refer to `Evaluation Result`. The testing processes for TuGraph and Neo4j are documented in `TuGraph_Test` and `Neo4j_Test`, respectively.
+# Prerequisites
 - Python 3.x
 - Docker
-- TuGraph Server
 - Required Python packages:
   - neo4j
   - TuGraphClient
-  - argparse
+# TuGraph Test
+If you already have a docker environment, just execute the `tugraph.sh` script directly.
+```
+./tugraph.sh
+```
+The results are stored in the `MV4PG/tugraph_test/view_test/ldbcSf1` and `MV4PG/tugraph_test/view_test/finbench` folders, respectively, within the container named `tugraph`.
+
+# Neo4j Test
+
+This tool is designed to test and compare the performance of view maintenance operations in Neo4j, with and without optimization. It supports testing both read and write operations, and includes functionality to test with TuGraph optimization.
 
 ## Installation
+Before running the Neo4j test, ensure that the TuGraph service is started in `Tugraph Test`.
+
 1. Install required dependencies:
 ```bash
 pip install neo4j TuGraphClient
 ```
 
-2. Install required dependencies:
-```bash
-pip install neo4j TuGraphClient argparse
-```
-3. Set up Neo4j instances:
-   - run the shell script db.sh in the root directory of the project.
+2. Set up Neo4j instances:
+   - run the shell script db.sh in folder `neo4j_test`.
 ```bash
 ./db.sh
 ```
-4. set the path in shell script (ldbc_test.sh, finbench_test.sh) as the path of the test file in your local machine . If you need to initialize the databases,please add the parameters true after the shell script.
 
-5. run the shell script 
+3. Then run the shell script in folder `neo4j_test`.
 ```bash
 ./ldbc_test.sh 
 ./finbench_test.sh
