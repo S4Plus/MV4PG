@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/wxd/neo4j_test/graph-views/view_maintance_2024/gitpull/MV4PG/neo4j_test/CypherRewrite/include -I/home/wxd/neo4j_test/graph-views/view_maintance_2024/gitpull/MV4PG/neo4j_test/CypherRewrite/antlr4-runtime
+CXX_INCLUDES = -I/home/wxd/neo4j_test/graph-views/view_maintance_2024/git/MV4PG/neo4j_test/CypherRewrite/include -I/home/wxd/neo4j_test/graph-views/view_maintance_2024/git/MV4PG/neo4j_test/CypherRewrite/antlr4-runtime
 
 CXX_FLAGS = -std=gnu++17
 

@@ -7,4 +7,4 @@ add_executable(CypherRewrite main.cpp
      generated/LcypherLexer.cpp
      generated/LcypherParser.cpp
      generated/LcypherVisitor.cpp)
-target_link_libraries(CypherRewrite antlr4-runtime.so)
+target_link_libraries(CypherRewrite libantlr4-runtime.a)

@@ -1,4 +1,4 @@
-# Install script for directory: /home/wxd/neo4j_test/graph-views/view_maintance_2024/gitpull/MV4PG/neo4j_test/CypherRewrite
+# Install script for directory: /home/wxd/neo4j_test/graph-views/view_maintance_2024/git/MV4PG/neo4j_test/CypherRewrite
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/wxd/neo4j_test/graph-views/view_maintance_2024/gitpull/MV4PG/neo4j_test/CypherRewrite/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/wxd/neo4j_test/graph-views/view_maintance_2024/git/MV4PG/neo4j_test/CypherRewrite/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

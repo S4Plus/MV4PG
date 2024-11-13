@@ -1,1 +1,1 @@
-/usr/bin/c++ -rdynamic CMakeFiles/CypherRewrite.dir/main.cpp.o CMakeFiles/CypherRewrite.dir/generated/LcypherLexer.cpp.o CMakeFiles/CypherRewrite.dir/generated/LcypherParser.cpp.o CMakeFiles/CypherRewrite.dir/generated/LcypherVisitor.cpp.o -o CypherRewrite  -lantlr4-runtime 
+/usr/bin/c++ -rdynamic CMakeFiles/CypherRewrite.dir/main.cpp.o CMakeFiles/CypherRewrite.dir/generated/LcypherLexer.cpp.o CMakeFiles/CypherRewrite.dir/generated/LcypherParser.cpp.o CMakeFiles/CypherRewrite.dir/generated/LcypherVisitor.cpp.o -o CypherRewrite  -Wl,-Bstatic -lantlr4-runtime -Wl,-Bdynamic 

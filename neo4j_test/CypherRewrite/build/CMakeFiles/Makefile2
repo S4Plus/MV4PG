@@ -54,10 +54,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/wxd/neo4j_test/graph-views/view_maintance_2024/gitpull/MV4PG/neo4j_test/CypherRewrite
+CMAKE_SOURCE_DIR = /home/wxd/neo4j_test/graph-views/view_maintance_2024/git/MV4PG/neo4j_test/CypherRewrite
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/wxd/neo4j_test/graph-views/view_maintance_2024/gitpull/MV4PG/neo4j_test/CypherRewrite/build
+CMAKE_BINARY_DIR = /home/wxd/neo4j_test/graph-views/view_maintance_2024/git/MV4PG/neo4j_test/CypherRewrite/build
 
 #=============================================================================
 # Directory level rules for the build root directory
@@ -81,14 +81,14 @@ clean: CMakeFiles/CypherRewrite.dir/clean
 CMakeFiles/CypherRewrite.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CypherRewrite.dir/build.make CMakeFiles/CypherRewrite.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CypherRewrite.dir/build.make CMakeFiles/CypherRewrite.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/wxd/neo4j_test/graph-views/view_maintance_2024/gitpull/MV4PG/neo4j_test/CypherRewrite/build/CMakeFiles --progress-num=1,2,3,4,5 "Built target CypherRewrite"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/wxd/neo4j_test/graph-views/view_maintance_2024/git/MV4PG/neo4j_test/CypherRewrite/build/CMakeFiles --progress-num=1,2,3,4,5 "Built target CypherRewrite"
 .PHONY : CMakeFiles/CypherRewrite.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/CypherRewrite.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wxd/neo4j_test/graph-views/view_maintance_2024/gitpull/MV4PG/neo4j_test/CypherRewrite/build/CMakeFiles 5
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wxd/neo4j_test/graph-views/view_maintance_2024/git/MV4PG/neo4j_test/CypherRewrite/build/CMakeFiles 5
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/CypherRewrite.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wxd/neo4j_test/graph-views/view_maintance_2024/gitpull/MV4PG/neo4j_test/CypherRewrite/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wxd/neo4j_test/graph-views/view_maintance_2024/git/MV4PG/neo4j_test/CypherRewrite/build/CMakeFiles 0
 .PHONY : CMakeFiles/CypherRewrite.dir/rule
 
 # Convenience name for target.
