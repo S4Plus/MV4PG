@@ -47,6 +47,8 @@ pip install neo4j TuGraphClient argparse
    - Create necessary graphs and permissions
 5. set the path in shell script (ldbc_test.sh, finbench_test.sh) as the path of the test file in your local machine . If you need to initialize the databases,please add the parameters <true> after the shell script.
 6. run the shell script 
+### Note
+if you cannot run the shell script, please check the path of the test file and complier the CypherRewrite in the build folder.
 ## Configuration
 
 ### Default Configuration
