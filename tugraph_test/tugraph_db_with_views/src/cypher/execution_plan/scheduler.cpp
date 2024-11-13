@@ -42,7 +42,7 @@
 
 #include "server/bolt_session.h"
 
-#define MaintenanceProfile true
+#define MaintenanceProfile false
 #define MaintenanceTemplate std::tuple<std::string,std::string,std::string>
 
 namespace cypher {
