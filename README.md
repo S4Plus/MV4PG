@@ -11,7 +11,8 @@ docker cp ../MV4PG tugraph:/
 ## Test
 Then execute the following script in the docker container.
 ```
-./tugraph_test.sh
+docker attach tugraph
+./MV4PG/tugraph_test.sh
 ```
 
 # Neo4j Test
