@@ -1,74 +1,41 @@
-# Overview
-The experimental test results are available in `results.xlsx`. For a detailed explanation, please refer to `Evaluation Result`. The testing processes for TuGraph and Neo4j are documented in `TuGraph_Test` and `Neo4j_Test`, respectively.
-<<<<<<< HEAD
-# TuGraph Test
-## Docker
-First, pull the TuGraph image and create the container, then copy this repository to the container.
-```
-docker pull tugraph/tugraph-compile-centos7
-docker run -d --name tugraph -p 7071:7071 -p 7072:7072 -it tugraph/tugraph-compile-centos7 bash
-docker cp ../MV4PG tugraph:/
-```
-## Test
-Then execute the following script in the docker container.
-```
-./tugraph_test.sh
-```
+# Neo4j View Maintenance Testing Tool
 
-# Neo4j Test
-## Prerequisites
+This tool is designed to test and compare the performance of view maintenance operations in Neo4j, with and without optimization. It supports testing both read and write operations, and includes functionality to test with TuGraph optimization.
 
 ## Prerequisites
 
 - Python 3.x
 - Docker
 - TuGraph Server
-=======
-# Prerequisites
-- Python 3.x
-- Docker
->>>>>>> 5dcecc0e6e1db2e3b069c8f2ca8da4743fe3a7a9
 - Required Python packages:
   - neo4j
   - TuGraphClient
-# TuGraph Test
-If you already have a docker environment, just execute the `tugraph.sh` script directly.
-```
-./tugraph.sh
-```
-The results are stored in the `MV4PG/tugraph_test/view_test/ldbcSf1` and `MV4PG/tugraph_test/view_test/finbench` folders, respectively, within the container named `tugraph`
-# Neo4j Test
-Testing on Neo4j relies on TuGraph, so make sure you have the TuGraph service started!
+  - argparse
+
 ## Installation
 1. Install required dependencies:
 ```bash
 pip install neo4j TuGraphClient
 ```
 
-<<<<<<< HEAD
 2. Install required dependencies:
 ```bash
 pip install neo4j TuGraphClient argparse
 ```
-
 3. Set up Neo4j instances:
    - run the shell script db.sh in the root directory of the project.
+```bash
+./db.sh
+```
+4. set the path in shell script (ldbc_test.sh, finbench_test.sh) as the path of the test file in your local machine . If you need to initialize the databases,please add the parameters <true> after the shell script.
 
-4. Set up TuGraph:
-   - Install and configure TuGraph server
-   - Create necessary graphs and permissions
-5. set the path in shell script (ldbc_test.sh, finbench_test.sh) as the path of the test file in your local machine . If you need to initialize the databases,please add the parameters <true> after the shell script.
-6. run the shell script 
-=======
-2. Set up Neo4j instances:
-   - Configure two separate Neo4j instances on different ports
-   - Ensure both instances are running and accessible
-
-3. set the path in shell script (ldbc_test.sh, finbench_test.sh) as the path of the test file in your local machine . If you need to initialize the databases,please add the parameters <true> after the shell script.
-4. run the shell script 
+5. run the shell script 
+```bash
+./ldbc_test.sh 
+./finbench_test.sh
+```
 ### Note
 if you cannot run the shell script, please check the path of the test file and complier the CypherRewrite in the build folder.
->>>>>>> 5dcecc0e6e1db2e3b069c8f2ca8da4743fe3a7a9
 ## Configuration
 
 ### Default Configuration
@@ -129,7 +96,3 @@ path/
 │   ├── write/
 │   └── recovery/
 └── output.json          # View definitions and triggers
-```
-
-# Evaluation Result
-`results.xlsx` contains 7 tables: `tugraph_snb`, `tugraph_finbench`, `neo4j_snb`, `neo4j_finbench`, `delete_performance`, `snbSf1`, and `finbenchSf10`. The tables `tugraph_snb` and `tugraph_finbench` are the test results of the two datasets in TuGraph, including various data used in the paper, such as time, speedup ratios, profile results, etc. The tables `neo4j_snb` and `neo4j_finbench` are the test results in Neo4j, similar to the previous two tables. `delete_performance` is the statistical data measuring the effects of deleting different numbers of edges. `snbSf1` and `finbenchSf10` are statistical data of the two datasets.
