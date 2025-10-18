@@ -661,14 +661,14 @@ def mutex_test(path,url,user,password,is_opt):
 
 if __name__=="__main__":
     parse_args()
-    # mutex_test(path,neo4j_url2,neo4j_user2,neo4j_password2,True)
-    # mutex_test(path,neo4j_url1,neo4j_user1,neo4j_password1,False)
+    mutex_test(path,neo4j_url2,neo4j_user2,neo4j_password2,True)
+    mutex_test(path,neo4j_url1,neo4j_user1,neo4j_password1,False)
 
     print("测试开始")
-    # old_thread=threading.Thread(target=old_test,name="OldThread")
-    # old_thread.start()
+    old_thread=threading.Thread(target=old_test,name="OldThread")
+    old_thread.start()
     opt_test()
-    # old_thread.join()
+    old_thread.join()
     print("测试结束")
 
     # neo4j_test_writeafteropt(path,neo4j_url2,neo4j_user2,neo4j_password2)
