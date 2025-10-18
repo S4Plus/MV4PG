@@ -1,1 +1,0 @@
-CREATE (:Company {id:%d, name:'%s', isBlocked:%s});

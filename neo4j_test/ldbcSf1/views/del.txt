@@ -1,3 +1,4 @@
-match (n)-[r:COMMENT_PLACE{is_view:true}]->(m) delete r
+match (n)-[r:COMMENT_TAG{is_view:true}]->(m) delete r
 match (n)-[r:PERSON_PLACE{is_view:true}]->(m) delete r
-match (n)-[r:ROOT_POST{is_view:true}]->(m) delete
+match (n)-[r:ROOT_POST{is_view:true}]->(m) delete r
+match (n)-[r:PERSON_TAG{is_view:true}]->(m) delete r

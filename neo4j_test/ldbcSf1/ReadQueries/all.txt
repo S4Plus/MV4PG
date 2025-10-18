@@ -1,7 +1,7 @@
-match (n0:Comment)-[r1:replyOf*..]->(n1:Post) match (n1)<-[r2:replyOf*..]-(n2:Comment) where id(n0)<>id(n2) return count(n1)
-match (n0:Place{name:'China'})<-[r1:isPartOf]-(n1:Place) match (n0)<-[r2*2]-(n2:Comment) return count(n2)
-match (n0:Place)<-[r1:personIsLocatedIn]-(n1:Person) match (n1)-[r2]->(n2)-[r3]->(n3:Place) return count(n3)
-match (n0:Place)<-[r1*2]-(n1:Comment) match (n1)-[r2:replyOf*..]->(n2:Post) return count(n2)
-match (n0:Place{name:'Taiwan'})<-[r1]-(n1)<-[r2]-(n2:Person) match (n0)<-[r3*2]-(n3:Comment) return count(n3)
-match (n0:Tag)<-[r1:hasInterest]-(n1:Person) match (n1)-[r2]->(n2)-[r3]->(n3:Place) where toInteger(n0.hasType)>100 return count(n3)
-match (n0:Comment)-[r1:replyOf*..]->(n1:Post) match (n1)-[r2:postHasCreator]->(n2:Person) match (n2)-[r3]->(n3)-[r4]->(n4:Place) where toInteger(n0.creationDate)<1280000000000 return count(n4)
+match (n:Person)<-[r1:postHasCreator]-(p:Post)-[r2:postHasTag]->(m:Tag) return count(*)
+MATCH (person:Person)-[:knows*..1]-(friend:Person) with distinct friend match (friend:Person)<-[:postHasCreator]-(post:Post)-[:postHasTag]->(t:Tag) return count(*)
+MATCH (:Person)-[:knows]-(friend:Person)<-[:commentHasCreator]-(comment:Comment)-[:replyOf]->(:Post)-[:postHasTag]->(tag:Tag) RETURN count(*)
+MATCH (message:Comment)-[:replyOf*..]->(post:Post)-[:postHasCreator]->(person) RETURN count(*)
+MATCH (m:Comment)-[:replyOf*..]->(p:Post)<-[:containerOf]-(f:Forum)-[:hasModerator]->(mod:Person) RETURN count(*)
+MATCH (country:Place{id:'54'}) MATCH (person1:Person)-[:personIsLocatedIn]->(city1:Place)-[:isPartOf]->(country) MATCH (person2:Person)-[:personIsLocatedIn]->(city2:Place)-[:isPartOf]->(country) MATCH (person3:Person)-[:personIsLocatedIn]->(city3:Place)-[:isPartOf]->(country) RETURN count(*) AS count
+MATCH (tag:Tag)<-[:postHasTag]-(message:Post)<-[:replyOf]-(comment:Comment) RETURN count(*) AS count

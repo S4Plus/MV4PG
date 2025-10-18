@@ -1,0 +1,1 @@
+match (n:Comment{id:'8796133222279'})-[r:replyOf]->(m:Post{id:'8796133222278'}) where r.creationDate=1700000000000 delete r

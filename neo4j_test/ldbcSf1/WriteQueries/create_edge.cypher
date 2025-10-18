@@ -1,1 +1,0 @@
-match (n:Comment{id:"2199029813921"}),(m:Post{id:"2199029813920"}) create (n)-[r:replyOf{creationDate:"1700000000000"}]->(m)

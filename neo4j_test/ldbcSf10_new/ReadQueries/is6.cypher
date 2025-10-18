@@ -1,0 +1,1 @@
+MATCH (m:Comment)-[:replyOf*..]->(p:Post)<-[:containerOf]-(f:Forum)-[:hasModerator]->(mod:Person) RETURN count(*)

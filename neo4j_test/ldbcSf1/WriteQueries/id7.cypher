@@ -1,0 +1,1 @@
+MATCH (:Comment {id:"557"})<-[r:replyOf*0..]-(comment:Comment) detach delete comment

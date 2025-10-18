@@ -1,3 +1,4 @@
-match (m:Place)<-[r1*2..2]-(n:Comment) where all(rel in r1 where rel.is_view is null) with n,m  CREATE (n)-[r:COMMENT_PLACE{is_view:true}]->(m)
-MATCH (n:Person)-[r1]->()-[r2]->(m:Place) where r1.is_view is null and r2.is_view is null with n,m CREATE(n)-[r:PERSON_PLACE{is_view:true}]->(m)
+match (n:Person)-[r1:personIsLocatedIn]->(:Place)-[r2:isPartOf]->(m:Place) where r1.is_view is null and r2.is_view is null with n,m CREATE(n)-[r:PERSON_PLACE{is_view:true}]->(m)
+match (n:Comment)-[r1:replyOf]->(:Post)-[r2:postHasTag]->(m:Tag) where r1.is_view is null and r2.is_view is null with n,m CREATE(n)-[r:COMMENT_TAG{is_view:true}]->(m)
+match (n:Person)<-[r1:postHasCreator]-(:Post)-[r2:postHasTag]->(m:Tag) where r1.is_view is null and r2.is_view is null with n,m CREATE(n)-[r:PERSON_TAG{is_view:true}]->(m)
 match (n:Comment)-[r1:replyOf*..]->(m:Post) where all(rel in r1 where rel.is_view is null)  with n,m CREATE (n)-[r:ROOT_POST{is_view:true}]->(m)

@@ -3,25 +3,68 @@ import json
 from TuGraphClient import TuGraphClient
 import time
 import threading
+import os
+import logging  
 import argparse
-neo4j_url1="bolt://localhost:7690" 
+neo4j_url1="bolt://localhost:7687" 
 neo4j_user1="neo4j"
 neo4j_password1="123456"
-neo4j_url2="bolt://localhost:7691" 
+neo4j_url2="bolt://localhost:7688" 
 neo4j_user2="neo4j"
 neo4j_password2="352541141"
 tugraph_url = '127.0.0.1:7072'
 tugraph_user = 'admin'
 tugraph_password = '73@TuGraph'
 tugraph_graph = 'finbenchsf10'
-path=""
+path="/home/wxd/MV4PG-master/neo4j_test/ldbcSf10_new"
 def parse_args():
     parser = argparse.ArgumentParser(description="Tugraph optimization in neo4j")
     parser.add_argument('-path', '--path', help='url for tugraph')
+    parser.add_argument('-tugraph', '--tugraph', help='url for tugraph')
+    parser.add_argument('-tuurl', '--tuurl', help='url for tugraph')
+    parser.add_argument('-tupwd', '--tupwd', help='pwd for tugraph')
+    parser.add_argument('-tuuser', '--tuuser', help='user for tugraph')
+    parser.add_argument('-neurl1', '--neurl1', help='url for neo4j1')
+    parser.add_argument('-nepwd1', '--nepwd1', help='pwd for neo4j1')
+    parser.add_argument('-neuser1', '--neuser1', help='user for neo4j1')
+    parser.add_argument('-neurl2', '--neurl2', help='url for neo4j2')
+    parser.add_argument('-nepwd2', '--nepwd2', help='pwd for neo4j2')
+    parser.add_argument('-neuser2', '--neuser2', help='user for neo4j2')
+
     args = parser.parse_args()
     if args.path:
         global path
         path=args.path
+    if args.tugraph:
+        global tugraph_graph
+        tugraph_graph=args.tugraph
+    if args.tuurl:
+        global tugraph_url
+        tugraph_url=args.tuurl
+    if args.tupwd:
+        global tugraph_password
+        tugraph_password=args.tupwd
+    if args.tuuser:
+        global tugraph_user
+        tugraph_user=args.tuuser
+    if args.neurl1:
+        global neo4j_url1
+        neo4j_url1=args.neurl1
+    if args.nepwd1:
+        global neo4j_password1
+        neo4j_password1=args.nepwd1
+    if args.neuser1:
+        global neo4j_user1
+        neo4j_user1=args.neuser1
+    if args.neurl2:
+        global neo4j_url2
+        neo4j_url2=args.neurl2
+    if args.nepwd2:
+        global neo4j_password2
+        neo4j_password2=args.nepwd2
+    if args.neuser2:
+        global neo4j_user2
+        neo4j_user2=args.neuser2
 
 def listtostr(listcypher):
     result=""
@@ -132,6 +175,7 @@ def create_views(path,url,user,password):
             excute_time["result_consumed_after"]=summary.result_consumed_after
             excute_time["time"]=summary.result_available_after+summary.result_consumed_after
             createview_time[line]=excute_time
+    os.makedirs(path+"/result/views",exist_ok=True)
     with open(path+"/result/views/createviews.json",'w') as inputfile:
         json.dump(createview_time,inputfile,indent=4)
 def create_indexs(path,url,user,password):

@@ -1,1 +1,0 @@
-MATCH (a1:Account{id:%d}), (a2:Account{id:%d}) CREATE (a1)-[:withdraw{timestamp: %d, amount: %f}]->(a2);

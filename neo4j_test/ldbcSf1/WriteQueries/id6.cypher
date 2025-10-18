@@ -1,0 +1,1 @@
+MATCH (:Post {id:"2199029813920"})<-[r:replyOf*0..]-(message) detach delete message

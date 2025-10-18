@@ -1,0 +1,7 @@
+MATCH (n:Person)<-[r1:postHasCreator]-(p:Post)-[r2:postHasTag]->(m:Tag) RETURN count(*)
+MATCH (person:Person)-[:knows*..1]-(friend:Person) with distinct friend match (friend:Person)<-[:postHasCreator]-(post:Post)-[:postHasTag]->(t:Tag) return count(*)
+MATCH (:Person)-[:knows]-(friend:Person)<-[:commentHasCreator]-(comment:Comment)-[:replyOf]->(:Post)-[:postHasTag]->(tag:Tag) RETURN count(*)
+MATCH (message:Comment)-[:replyOf*..]->(post:Post)-[:postHasCreator]->(person) RETURN count(*)
+MATCH (m:Comment)-[:replyOf*..]->(p:Post)<-[:containerOf]-(f:Forum)-[:hasModerator]->(mod:Person) RETURN count(*)
+MATCH (country:Place{id:"65"}) MATCH (person1:Person)-[:personIsLocatedIn]->(city1:Place)-[:isPartOf]->(country) MATCH (person2:Person)-[:personIsLocatedIn]->(city2:Place)-[:isPartOf]->(country) MATCH (person3:Person)-[:personIsLocatedIn]->(city3:Place)-[:isPartOf]->(country) RETURN count(*) AS count
+MATCH (tag:Tag)<-[:postHasTag]-(message:Post)<-[:replyOf]-(comment:Comment) RETURN count(*) AS count
