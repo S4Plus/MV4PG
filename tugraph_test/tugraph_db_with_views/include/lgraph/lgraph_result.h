@@ -295,7 +295,7 @@ class Result {
     std::vector<std::string> BoltHeader();
     std::vector<std::vector<std::any>> BoltRecords();
 
- private:
+//  private:
     /**
      * @brief   Get record of the table, if row number is more bigger than max length of table,
      *          throw a exception.

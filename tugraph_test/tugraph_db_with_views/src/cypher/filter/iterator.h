@@ -235,6 +235,8 @@ class VIter {
 
     ~VIter() { FreeIter(); }
 
+    lgraph::VIter::IteratorType GetType() { return _type; }
+
     void FreeIter() {
         switch (_type) {
         case VERTEX_ITER:
@@ -389,6 +391,10 @@ class VIter {
             return (_vit && _vit->Goto(vid));
         case LABEL_VERTEX_ITER:
             return (_lvit && _lvit->Goto(vid));
+        case WEAK_INDEX_ITER:
+            return _wit;
+        case INDEX_ITER:
+            return _iit;
         default:
             CYPHER_TODO();
             return false;

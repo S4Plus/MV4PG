@@ -544,6 +544,7 @@ void ExecutionPlan::_BuildExpandOps(const parser::QueryPart &part, PatternGraph 
     /* If we have multiple graph components, the root operation is a Cartesian Product.
      * Each chain of traversals will be a child of this op. */
     OpBase *traversal_root = nullptr;
+    std::unordered_set<cypher::NodeID> nowIds; // 所有已经加入expandAll或者node scan的id
     for (auto &stream : expand_streams) {
         std::vector<OpBase *> expand_ops;
         bool hanging = false;  // if the stream is a hanging node
@@ -572,9 +573,14 @@ void ExecutionPlan::_BuildExpandOps(const parser::QueryPart &part, PatternGraph 
                 // expand when neighbor is not null
                 OpBase *expand_op = new VarLenExpand(&pattern_graph, &start, &neighbor, &relp);
                 expand_ops.emplace_back(expand_op);
+                nowIds.insert(start.ID());
+                nowIds.insert(neighbor.ID());
             } else {
-                OpBase *expand_op = new ExpandAll(&pattern_graph, &start, &neighbor, &relp);
+                LOG_DEBUG()<<"expand start:"<<start.Alias()<<",end:"<<neighbor.Alias()<<",appear before:"<<nowIds.count(neighbor.ID());
+                OpBase *expand_op = new ExpandAll(&pattern_graph, &start, &neighbor, &relp, nullptr, !nowIds.count(neighbor.ID()));
                 expand_ops.emplace_back(expand_op);
+                nowIds.insert(start.ID());
+                nowIds.insert(neighbor.ID());
             }
             // add property filter op
             auto pf = neighbor.Prop();

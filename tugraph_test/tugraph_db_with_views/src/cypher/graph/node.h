@@ -79,6 +79,18 @@ class Node {
 
     NodeID ID() const;
 
+    void ChangeID(NodeID id){
+        id_=id;
+    }
+
+    void ChangeLhs(std::vector<RelpID>& ids){
+        lhs_relps_=ids;
+    }
+
+    void ChangeRhs(std::vector<RelpID>& ids){
+        rhs_relps_=ids;
+    }
+
     const std::string &Label() const;
 
     void SetLabel(const std::string &label) { label_ = label; }
@@ -120,7 +132,7 @@ class Node {
     lgraph::VertexId GetVid() const { return vid_; }
 
     void SetVid(lgraph::VertexId vid) { vid_ = vid; }
-
+    lgraph::VIter::IteratorType GetItType() { return it_.GetType(); }
     /* Get node's vid, get vid from the iterator if necessary.
      **/
     lgraph::VertexId PullVid() {

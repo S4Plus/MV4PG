@@ -191,9 +191,11 @@ static bool JsonToListOfProtoFieldData(const web::json::value& js,
 template <typename T>
 static bool ExtractObjectArray(const web::json::value& js, const utility::string_t& key,
                                ::google::protobuf::RepeatedPtrField<T>* values) {
+    LOG_DEBUG()<<"ExtractObjectArray s";
     if (!js.has_array_field(key)) return false;
     auto& arr = js.at(key).as_array();
     values->Reserve(static_cast<int>(arr.size()));
+    LOG_DEBUG()<<"array size:"<<arr.size();
     for (auto& v : arr) {
         if (!JsonToType<T>(v, *values->Add())) return false;
     }
@@ -1991,6 +1993,7 @@ void RestServer::HandlePostPlugin(const std::string& user, const std::string& to
         bool read_only = false;
         std::string version;
         ::google::protobuf::RepeatedPtrField<std::string> codes;
+        LOG_DEBUG()<<"HandlePostPlugin start";
         if (!ExtractStringField(body, RestStrings::NAME, *req->mutable_name()) ||
             !ExtractBoolField(body, RestStrings::READONLY, read_only) ||
             !ExtractObjectArray(body, RestStrings::CODE, &codes) ||
@@ -1998,12 +2001,14 @@ void RestServer::HandlePostPlugin(const std::string& user, const std::string& to
                                      body, RestStrings::FILENAMES, req->mutable_file_name()))) {
             BEG_AUDIT_LOG(user, _TS(paths[1]), lgraph::LogApiType::Plugin, true,
                           "POST " + _TS(relative_path));
+            LOG_DEBUG()<<"HandlePostPlugin fail code:" <<!ExtractObjectArray(body, RestStrings::CODE, &codes);
             return RespondBadJSON(request);
         }
         // use v1 by default for compatibility
         if (!ExtractStringField(body, RestStrings::VERSION, version)) {
             version = "v1";
         }
+        LOG_DEBUG()<<"HandlePostPlugin2";
         preq->set_version(version);
         req->set_read_only(read_only);
         for (auto &code : codes) {

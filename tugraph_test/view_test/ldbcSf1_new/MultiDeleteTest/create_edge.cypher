@@ -1,0 +1,1 @@
+match (n:Comment{id:$commentId}),(m:Post{id:$postId}) create (n)-[r:replyOf{creationDate:$commentDate}]->(m)

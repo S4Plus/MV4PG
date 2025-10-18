@@ -1,0 +1,252 @@
+[  0%] Built target mdb_stat
+[  1%] Built target isogql_parser
+[  1%] Built target geax_isogql
+[  2%] Built target bolt
+[  3%] Built target bfs_standalone
+[  3%] Built target lgraph_client_cpp_rpc
+[  3%] Built target wcc_standalone
+[  4%] Built target de_standalone
+[  5%] Built target scc_standalone
+[  6%] Built target mssp_standalone
+[  7%] Built target triangle_standalone
+[  8%] Built target en_standalone
+[  9%] Built target hits_standalone
+[ 10%] Built target subgraph_isomorphism_standalone
+[ 10%] Built target ji_standalone
+[ 11%] Built target kcliques_standalone
+[ 12%] Built target ktruss_standalone
+[ 12%] Built target leiden_standalone
+[ 12%] Built target lgraph_cli
+[ 13%] Built target locate_cycle_standalone
+[ 14%] Built target lcc_standalone
+[ 15%] Built target wlpa_standalone
+[ 15%] Built target lgraph_monitor
+[ 16%] Built target pagerank_standalone
+[ 16%] Built target slpa_standalone
+[ 17%] Built target bc_standalone
+[ 18%] Built target clce_standalone
+[ 18%] Built target sssp_standalone
+[ 18%] Built target lpa_standalone
+[ 19%] Built target fast_triangle_counting_standalone
+[ 20%] Built target dc_standalone
+[ 20%] Built target sybilrank_standalone
+[ 21%] Built target cn_standalone
+[ 21%] Built target motif_standalone
+[ 22%] Built target apsp_standalone
+[ 23%] Built target mis_standalone
+[ 25%] Built target kcore_standalone
+[ 25%] Built target spsp_standalone
+[ 26%] Built target louvain_standalone
+[ 27%] Built target wpagerank_standalone
+[ 27%] Built target ppr_standalone
+[ 28%] Built target trustrank_standalone
+[ 28%] Building CXX object src/CMakeFiles/lgraph_client_cpp_rest.dir/client/cpp/restful/rest_client.cpp.o
+[ 33%] Built target fma_unit_test
+[ 41%] Built target lgraph
+[ 41%] Built target apsp_embed
+[ 42%] Built target lgraph_db_python
+[ 43%] Built target wcc_embed
+[ 43%] Built target lgraph_client_python
+[ 43%] Built target random_walk
+[ 44%] Built target khop_within_embed
+[ 44%] Built target bfs_embed
+[ 44%] Built target mssp_embed
+[ 45%] Built target lpa_embed
+[ 47%] Built target louvain_embed
+[ 47%] Built target bfs
+[ 47%] Built target pagerank
+[ 47%] Built target hits_embed
+[ 47%] Built target scc_embed
+[ 47%] Built target neighbors_sampling
+[ 48%] Built target wpagerank_embed
+[ 48%] Built target lpa
+[ 48%] Built target ktruss_embed
+[ 48%] Built target bfs_v2
+[ 49%] Built target ji_embed
+[ 49%] Built target locate_cycle_embed
+[ 49%] Built target lcc_v2
+[ 50%] Built target leiden_embed
+[ 50%] Built target feature_float_embed
+[ 50%] Built target subgraph_isomorphism_embed
+[ 50%] Built target lcc
+[ 51%] Built target lpa_v2
+[ 52%] Built target getdb
+[ 53%] Built target sssp_embed
+[ 54%] Built target slpa_embed
+[ 54%] Built target edge_sampling
+[ 55%] Built target negative_sampling
+[ 55%] Built target bc_embed
+[ 56%] Built target cn_embed
+[ 57%] Built target mis_embed
+[ 57%] Built target pagerank_v2
+[ 58%] Built target en_embed
+[ 58%] Built target wlpa_embed
+[ 59%] Built target motif_embed
+[ 59%] Built target triangle_embed
+[ 59%] Built target clce_embed
+[ 59%] Built target lgraph_python_api
+[ 60%] Built target lcc_embed
+[ 61%] Built target dc_embed
+[ 61%] Built target fast_triangle_counting_embed
+[ 62%] Built target kcliques_embed
+[ 62%] Built target de_embed
+[ 63%] Built target ppr_embed
+[ 64%] Built target pagerank_embed
+[ 65%] Built target spsp_embed
+[ 65%] Built target kcore_embed
+[ 65%] Built target wcc
+[ 65%] Built target trustrank_embed
+[ 65%] Built target khop_kth_embed
+[ 65%] Built target sssp
+[ 66%] Built target wcc_v2
+[ 68%] Built target sssp_v2
+[ 68%] Built target sybilrank_embed
+[ 68%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/arithmetic/arithmetic_expression.cpp.o
+[ 68%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/arithmetic/ast_agg_expr_detector.cpp.o
+[ 68%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/arithmetic/ast_expr_evaluator.cpp.o
+[ 68%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/execution_plan.cpp.o
+[ 69%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/execution_plan_v2.cpp.o
+[ 69%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/execution_plan_maker.cpp.o
+[ 69%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/pattern_graph_maker.cpp.o
+[ 69%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_aggregate.cpp.o
+[ 69%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_all_node_scan.cpp.o
+[ 69%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_apply.cpp.o
+[ 69%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_argument.cpp.o
+[ 69%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_cartesian_product.cpp.o
+[ 70%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_create.cpp.o
+[ 70%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_delete.cpp.o
+[ 70%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_distinct.cpp.o
+[ 70%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_expand_all.cpp.o
+[ 70%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_filter.cpp.o
+[ 70%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_node_index_seek.cpp.o
+[ 70%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_node_index_seek_dynamic.cpp.o
+[ 71%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_immediate_argument.cpp.o
+[ 71%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_inquery_call.cpp.o
+[ 71%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_limit.cpp.o
+[ 71%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_node_by_label_scan.cpp.o
+[ 71%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_optional.cpp.o
+[ 71%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_produce_results.cpp.o
+[ 71%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_project.cpp.o
+[ 71%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_relationship_count.cpp.o
+[ 72%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_remove.cpp.o
+[ 72%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_set.cpp.o
+[ 72%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_skip.cpp.o
+[ 72%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_sort.cpp.o
+[ 72%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_standalone_call.cpp.o
+[ 72%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_unwind.cpp.o
+[ 72%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_union.cpp.o
+[ 72%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_var_len_expand.cpp.o
+[ 72%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_merge.cpp.o
+[ 73%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_var_len_expand_into.cpp.o
+[ 73%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_node_by_id_seek.cpp.o
+[ 73%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/ops/op_traversal.cpp.o
+[ 73%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/scheduler.cpp.o
+[ 73%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/filter/filter.cpp.o
+[ 74%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/graph/graph.cpp.o
+[ 74%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/graph/node.cpp.o
+[ 74%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/parser/cypher_base_visitor.cpp.o
+[ 74%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/grouping/group.cpp.o
+[ 74%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/parser/symbol_table.cpp.o
+[ 74%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/procedure/procedure.cpp.o
+[ 74%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/resultset/record.cpp.o
+[ 74%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/monitor/monitor_manager.cpp.o
+[ 74%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/optimization/rewrite/schema_rewrite.cpp.o
+[ 74%] Building CXX object src/CMakeFiles/lgraph_cypher_lib.dir/cypher/execution_plan/optimization/rewrite/graph.cpp.o
+[ 75%] Linking CXX shared library ../output/liblgraph_client_cpp_rest.so
+[ 75%] Built target lgraph_client_cpp_rest
+[ 76%] Linking CXX static library ../output/liblgraph_cypher_lib.a
+[ 78%] Built target lgraph_cypher_lib
+[ 78%] Building CXX object src/CMakeFiles/lgraph_server_lib.dir/server/bolt_handler.cpp.o
+[ 78%] Building CXX object src/CMakeFiles/lgraph_server_lib.dir/server/bolt_server.cpp.o
+[ 78%] Building CXX object src/CMakeFiles/lgraph_server_lib.dir/server/lgraph_server.cpp.o
+[ 79%] Building CXX object src/CMakeFiles/lgraph_server_lib.dir/server/state_machine.cpp.o
+[ 79%] Building CXX object src/CMakeFiles/lgraph_server_lib.dir/server/ha_state_machine.cpp.o
+[ 79%] Building CXX object src/CMakeFiles/lgraph_server_lib.dir/import/import_online.cpp.o
+[ 79%] Building CXX object src/CMakeFiles/lgraph_server_lib.dir/import/import_v2.cpp.o
+[ 79%] Building CXX object src/CMakeFiles/lgraph_server_lib.dir/import/import_v3.cpp.o
+[ 79%] Building CXX object src/CMakeFiles/lgraph_server_lib.dir/restful/server/rest_server.cpp.o
+[ 79%] Building CXX object src/CMakeFiles/lgraph_server_lib.dir/http/http_server.cpp.o
+[ 79%] Building CXX object src/CMakeFiles/lgraph_server_lib.dir/http/import_task.cpp.o
+[ 79%] Building CXX object src/CMakeFiles/lgraph_server_lib.dir/http/algo_task.cpp.o
+[ 79%] Linking CXX static library ../output/liblgraph_server_lib.a
+[ 81%] Built target lgraph_server_lib
+[ 81%] Linking CXX executable ../output/lgraph_validate
+[ 81%] Linking CXX executable ../output/lgraph_backup
+[ 81%] Linking CXX executable ../output/lgraph_warmup
+[ 81%] Linking CXX executable ../output/lgraph_export
+[ 81%] Linking CXX executable ../output/lgraph_peek
+[ 81%] Linking CXX executable ../output/lgraph_peer
+[ 81%] Building CXX object src/CMakeFiles/lgraph_server.dir/server/server_main.cpp.o
+[ 81%] Building CXX object toolkits/CMakeFiles/lgraph_binlog.dir/lgraph_binlog.cpp.o
+[ 81%] Building CXX object toolkits/CMakeFiles/lgraph_import.dir/lgraph_import.cpp.o
+[ 81%] Building CXX object toolkits/CMakeFiles/lgraph_binlog.dir/__/src/client/cpp/restful/rest_client.cpp.o
+[ 82%] Building CXX object toolkits/CMakeFiles/lgraph_import.dir/__/src/client/cpp/restful/rest_client.cpp.o
+[ 83%] Built target lgraph_validate
+[ 83%] Built target lgraph_backup
+[ 83%] Built target lgraph_peek
+[ 83%] Built target lgraph_warmup
+[ 83%] Built target lgraph_export
+[ 84%] Built target lgraph_peer
+[ 84%] Linking CXX executable ../output/lgraph_server
+[ 85%] Linking CXX executable ../output/lgraph_binlog
+[ 85%] Linking CXX executable ../output/lgraph_import
+[ 85%] Built target lgraph_server
+[ 85%] Built target lgraph_binlog
+[ 85%] Building CXX object test/CMakeFiles/unit_test.dir/main.cpp.o
+[ 85%] Building CXX object test/CMakeFiles/unit_test.dir/test_backup_restore.cpp.o
+[ 85%] Building CXX object test/CMakeFiles/unit_test.dir/test_batch_vertex_index.cpp.o
+[ 85%] Building CXX object test/CMakeFiles/unit_test.dir/test_batch_edge_index.cpp.o
+[ 85%] Building CXX object test/CMakeFiles/unit_test.dir/test_cpp_procedure.cpp.o
+[ 85%] Building CXX object test/CMakeFiles/unit_test.dir/test_cypher.cpp.o
+[ 85%] Building CXX object test/CMakeFiles/unit_test.dir/test_cypher_plan.cpp.o
+[ 85%] Building CXX object test/CMakeFiles/unit_test.dir/test_import_column_parser.cpp.o
+[ 85%] Building CXX object test/CMakeFiles/unit_test.dir/test_import_online.cpp.o
+[ 85%] Building CXX object test/CMakeFiles/unit_test.dir/test_import_v2.cpp.o
+[ 85%] Building CXX object test/CMakeFiles/unit_test.dir/test_import_v3.cpp.o
+[ 86%] Building CXX object test/CMakeFiles/unit_test.dir/test_json_convert.cpp.o
+[ 86%] Building CXX object test/CMakeFiles/unit_test.dir/test_lgraph_api.cpp.o
+[ 86%] Building CXX object test/CMakeFiles/unit_test.dir/test_lgraph_backup.cpp.o
+[ 86%] Building CXX object test/CMakeFiles/unit_test.dir/test_lgraph_export.cpp.o
+[ 86%] Building CXX object test/CMakeFiles/unit_test.dir/test_lgraph_server.cpp.o
+[ 87%] Building CXX object test/CMakeFiles/unit_test.dir/test_lgraph_spatial.cpp.o
+[ 88%] Building CXX object test/CMakeFiles/unit_test.dir/test_memorylimit.cpp.o
+[ 88%] Building CXX object test/CMakeFiles/unit_test.dir/test_mthread.cpp.o
+[ 88%] Building CXX object test/CMakeFiles/unit_test.dir/test_olap_on_db.cpp.o
+[ 88%] Building CXX object test/CMakeFiles/unit_test.dir/test_proto_convert.cpp.o
+[ 89%] Building CXX object test/CMakeFiles/unit_test.dir/test_query.cpp.o
+[ 89%] Building CXX object test/CMakeFiles/unit_test.dir/test_rest_client.cpp.o
+[ 89%] Building CXX object test/CMakeFiles/unit_test.dir/test_restful_abnormal_branch.cpp.o
+[ 89%] Building CXX object test/CMakeFiles/unit_test.dir/test_restful_base_operation.cpp.o
+[ 89%] Building CXX object test/CMakeFiles/unit_test.dir/test_restful_import_online.cpp.o
+[ 89%] Building CXX object test/CMakeFiles/unit_test.dir/test_rpc.cpp.o
+[ 89%] Building CXX object test/CMakeFiles/unit_test.dir/test_schema_change.cpp.o
+[ 89%] Building CXX object test/CMakeFiles/unit_test.dir/test_edge_constraint.cpp.o
+[ 89%] Building CXX object test/CMakeFiles/unit_test.dir/test_olap_vertex_traversal.cpp.o
+[ 89%] Building CXX object test/CMakeFiles/unit_test.dir/test_detach_property.cpp.o
+[ 89%] Building CXX object test/CMakeFiles/unit_test.dir/test_ha_base.cpp.o
+[ 89%] Building CXX object test/CMakeFiles/unit_test.dir/test_http_tasks.cpp.o
+[ 89%] Building CXX object test/CMakeFiles/unit_test.dir/__/src/client/cpp/restful/rest_client.cpp.o
+[ 89%] Building CXX object test/CMakeFiles/unit_test.dir/test_ha_full_import.cpp.o
+[ 89%] Built target lgraph_import
+In file included from /usr/local/include/gtest/gtest-printers.h:114,
+                 from /usr/local/include/gtest/gtest-matchers.h:48,
+                 from /usr/local/include/gtest/internal/gtest-death-test-internal.h:46,
+                 from /usr/local/include/gtest/gtest-death-test.h:43,
+                 from /usr/local/include/gtest/gtest.h:60,
+                 from /tugraph-db_graph_views/test/test_lgraph_api.cpp:22:
+/tugraph-db_graph_views/test/test_lgraph_api.cpp: 在成员函数‘virtual void TestLGraphApi_LGraphApi_Test::TestBody()’中:
+/tugraph-db_graph_views/test/test_lgraph_api.cpp:147:8: 附注：变量跟踪大小越限，请不带 -fvar-tracking-assignments 重试
+ TEST_F(TestLGraphApi, LGraphApi) {
+        ^~~~~~~~~~~~~
+In file included from /usr/local/include/gtest/gtest-printers.h:114,
+                 from /usr/local/include/gtest/gtest-matchers.h:48,
+                 from /usr/local/include/gtest/internal/gtest-death-test-internal.h:46,
+                 from /usr/local/include/gtest/gtest-death-test.h:43,
+                 from /usr/local/include/gtest/gtest.h:60,
+                 from /tugraph-db_graph_views/test/test_restful_base_operation.cpp:18:
+/tugraph-db_graph_views/test/test_restful_base_operation.cpp: 在成员函数‘virtual void TestRestfulBaseOperation_RestfulBaseOperation_Test::TestBody()’中:
+/tugraph-db_graph_views/test/test_restful_base_operation.cpp:56:8: 附注：变量跟踪大小越限，请不带 -fvar-tracking-assignments 重试
+ TEST_P(TestRestfulBaseOperation, RestfulBaseOperation) {
+        ^~~~~~~~~~~~~~~~~~~~~~~~
+[ 89%] Linking CXX executable ../output/unit_test
+[100%] Built target unit_test

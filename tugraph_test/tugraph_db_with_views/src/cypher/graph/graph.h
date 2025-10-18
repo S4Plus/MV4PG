@@ -16,7 +16,9 @@
 // Created by wt on 6/12/18.
 //
 #pragma once
-
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
 #include "fma-common/type_traits.h"
 
 #include "cypher/graph/node.h"
@@ -64,7 +66,7 @@ class PatternGraph {
     }
 
     void _CollectExpandStepsByDFS(NodeID start, bool ignore_created, EXPAND_STEPS &expand_steps);
-
+    void _CollectExpandStepsByDFSEdge(NodeID start, bool ignore_created, EXPAND_STEPS &expand_steps);
     DISABLE_COPY(PatternGraph);
 
  public:
@@ -165,15 +167,28 @@ class PatternGraph {
     RelpID BuildRelationship(const parser::TUP_RELATIONSHIP_PATTERN &relp_pattern, NodeID lhs,
                              NodeID rhs, Relationship::Derivation derivation);
 
+    std::vector<int64_t> dedup_preserve_order(const std::vector<int64_t> &v) {
+        std::unordered_set<int64_t> seen;
+        seen.reserve(v.size());
+        std::vector<int64_t> out;
+        out.reserve(v.size());
+        for (auto x : v) {
+            if (seen.insert(x).second) out.push_back(x);
+        }
+        // v.swap(out);
+        return out;
+    }
+
     std::vector<EXPAND_STEPS> CollectExpandStreams(const std::vector<NodeID> &start_nodes,
                                                    bool ignore_created) {
+        auto dedup = dedup_preserve_order(start_nodes);
         std::vector<EXPAND_STEPS> expand_streams;
-        for (auto s : start_nodes) {
+        for (auto s : dedup) {
             auto &node = GetNode(s);
-            if (!node.Visited() && node.derivation_ != Node::CREATED &&
+            if (node.derivation_ != Node::CREATED &&
                 node.derivation_ != Node::MERGED) {
                 EXPAND_STEPS expand_stream;
-                _CollectExpandStepsByDFS(s, ignore_created, expand_stream);
+                _CollectExpandStepsByDFSEdge(s, ignore_created, expand_stream);
                 if (!expand_stream.empty()) expand_streams.emplace_back(expand_stream);
             }
         }
@@ -191,5 +206,7 @@ class PatternGraph {
         static Relationship empty;
         return empty;
     }
+
+    std::vector<std::unordered_map<int,int>> reorder();
 };
 }  // namespace cypher

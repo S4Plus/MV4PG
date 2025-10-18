@@ -95,6 +95,8 @@ class Node {
 
     void SetVid(lgraph::VertexId vid) { vid_ = vid; }
 
+    lgraph::VIter::IteratorType GetItType() { return it_.GetType(); }
+
     /* Get node's vid, get vid from the iterator if necessary.
      **/
     lgraph::VertexId PullVid() {
@@ -111,7 +113,9 @@ class Node {
         if (vid_ < 0) {
             it_.FreeIter();
         } else {
+            // LOG_DEBUG()<<"node push s";
             it_.Goto(vid);
+            // LOG_DEBUG()<<"node push e";
         }
     }
 

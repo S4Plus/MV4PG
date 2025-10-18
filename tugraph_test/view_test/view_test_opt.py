@@ -5,6 +5,7 @@ from TuGraphClient import TuGraphClient
 import time
 import os
 import json
+from natsort import natsorted
 
 ip = '127.0.0.1'
 old_port = '7071'
@@ -21,6 +22,7 @@ cycle = 5
 # output_path=""
 is_read=True
 is_profile=False
+is_explain=False
 
 def str2bool(v):
     if isinstance(v, bool):
@@ -43,6 +45,7 @@ def parse_args():
     parser.add_argument('-f', '--folder', help='folder name')
     parser.add_argument('-r', '--read', help='is execute read queries')
     parser.add_argument('-pr', '--profile', help='is profile')
+    parser.add_argument('-ex', '--explain', help='is explain')
     parser.add_argument('--password', help='user password')
     parser.add_argument('--cycle', help='cycle')
     args = parser.parse_args()
@@ -76,6 +79,9 @@ def parse_args():
     if args.profile:
         global is_profile
         is_profile=str2bool(args.profile)
+    if args.explain:
+        global is_explain
+        is_explain=str2bool(args.explain)
     if args.cycle:
         global cycle
         cycle = int(args.cycle)
@@ -96,6 +102,8 @@ def test_cypher(input_cypher):
         cycle=1
     if(is_profile):
         input_cypher="PROFILE "+input_cypher
+    elif(is_explain):
+        input_cypher="EXPLAIN "+input_cypher
     ave_time=0
     optimized_ave_time=0
     for i in range(0,cycle):
@@ -155,7 +163,7 @@ def OptTest(isRead,folder_name):
     if(os.path.exists(cypher_folder)==False):
         return
     parameter_folder=os.path.join(graph_folder,"parameter")
-    for file in sorted(os.listdir(cypher_folder)):
+    for file in natsorted(os.listdir(cypher_folder)):
         with open(os.path.join(cypher_folder,file)) as f:
             cypher_name=file.split(".")[0]
             input_cypher=f.read()

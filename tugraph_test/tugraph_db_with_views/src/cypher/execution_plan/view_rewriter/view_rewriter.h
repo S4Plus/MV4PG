@@ -282,13 +282,18 @@ namespace cypher{
                 if(target_symbols[target_relp->Alias()].is_referenced)
                     return false;
             }
-
-            if(!((view_relp->Src()==view_relp_src && target_relp->Src()==target_relp_src)
-              || (view_relp->Dst()==view_relp_src && target_relp->Dst()==target_relp_src))){
-                // LOG_DEBUG()<<"view_relp_src: "<<view_graph_->GetNode(view_relp_src).Alias();
-                // LOG_DEBUG()<<"target relp src: "<<target_graph_->GetNode(target_relp_src).Alias();
-                return false;
+            if(view_relp->direction_!=parser::LinkDirection::DIR_NOT_SPECIFIED && target_relp->direction_!=parser::LinkDirection::DIR_NOT_SPECIFIED){
+                if(!((view_relp->Src()==view_relp_src && target_relp->Src()==target_relp_src)
+                || (view_relp->Dst()==view_relp_src && target_relp->Dst()==target_relp_src))){
+                    // LOG_DEBUG()<<"view_relp_src: "<<view_graph_->GetNode(view_relp_src).Alias();
+                    // LOG_DEBUG()<<"target relp src: "<<target_graph_->GetNode(target_relp_src).Alias();
+                    return false;
+                }
             }
+            else if(view_relp->direction_==parser::LinkDirection::DIR_NOT_SPECIFIED && target_relp->direction_==parser::LinkDirection::DIR_NOT_SPECIFIED){
+                //TODO:对于方向不确定的情况的匹配
+            }
+            else return false;
             // if(!is_opposite_direction){
             //     if(view_relp->direction_!=target_relp->direction_){
             //         return false;

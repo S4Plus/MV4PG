@@ -144,7 +144,7 @@ def OptTest(folder_name):
     # print("folder name:", folder_name)
     # print("graph:", graph)
     graph_folder=os.path.join(root_folder,folder_name)
-    cypher_folder = os.path.join(graph_folder,"WriteQueries")
+    cypher_folder = os.path.join(graph_folder,"MultiDeleteTest")
     print(cypher_folder)
     print(os.path.exists(cypher_folder))
     if(os.path.exists(cypher_folder)==False):
@@ -184,7 +184,7 @@ def OptTest(folder_name):
                 # else:
                 #     optimized_result_map[input_cypher]=optimized_time
             # recover
-        view_folder=os.path.join(folder_name,"recover")
+        view_folder=os.path.join(folder_name,"MultiDeleteTest")
         recover_ce_file=os.path.join(view_folder,"recover_ce.cypher")     
         lines = open(recover_ce_file).readlines()
         for line in lines:

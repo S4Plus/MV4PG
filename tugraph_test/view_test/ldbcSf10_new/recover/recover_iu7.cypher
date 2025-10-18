@@ -1,0 +1,1 @@
+match (n:Comment{id:10000000}) DETACH delete n

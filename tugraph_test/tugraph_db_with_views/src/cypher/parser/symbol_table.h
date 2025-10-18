@@ -110,6 +110,42 @@ struct SymbolTable {
             // }
         }
     }
+    void Recover(std::vector<std::unordered_map<int,int>>& m){ // 更改PatternGraph后某些node的id可能超出symbol_table的大小，需要重新给id
+        // 不能更改with的symbol的顺序，因为TuGraph实现中argument所需的symbol的顺序是固定的，
+        // 比如with n,m，n的id必须是0，m的id必须是1，这也不会影响，因为with的变量不会被删除，又是在最前面，不会超出size
+        // int index=0;
+        int argument_size=0;
+        for (auto &it : symbols) {
+            if(it.second.scope==SymbolNode::Scope::ARGUMENT)argument_size++;
+        }
+        // int index=argument_size;
+        for (auto &it : symbols) {
+            if(it.second.type==SymbolNode::Type::NODE){
+                it.second.id=m[0][it.second.id];
+            }
+            else if(it.second.type==SymbolNode::Type::RELATIONSHIP){
+                it.second.id=m[1][it.second.id];
+            }
+            // 如果超出界限，找到没有出现的最小id
+            // if(it.second.id>=symbols.size() && it.second.scope!=SymbolNode::Scope::ARGUMENT){
+                // std::vector<bool> present(symbols.size(), false);
+                // for(auto &it2 : symbols){
+                //     if(it2.second.id<symbols.size())
+                //         present[it2.second.id]=true;
+                // }
+                // for(size_t i=0;i<symbols.size();i++){
+                //     if(!present[i]){
+                //         it.second.id=i;
+                //         break;
+                //     }
+                // }
+            // }
+            // if(it.second.scope!=SymbolNode::Scope::ARGUMENT){
+            //     it.second.id=index;
+            //     index++;
+            // }
+        }
+    }
     void DumpTable() const;
 };
 

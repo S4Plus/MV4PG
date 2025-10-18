@@ -179,6 +179,8 @@ def OptTest(folder_name):
         for file in os.listdir(view_folder):       
             lines = open(view_folder+"/"+file).readlines()
             for line in lines:
+                if(line.strip()==''):
+                    continue
                 print(line)
                 test_cypher(line)
 

@@ -116,6 +116,7 @@ void Scheduler::EvalCypher(RTContext *ctx, const std::string &script, ElapsedTim
             if (plan->CommandType() == parser::CmdType::EXPLAIN) {
                 header = "@plan";
                 data = plan->DumpPlan(0, false);
+                LOG_DEBUG() << plan->DumpPlan(0, false);
             } 
             // else {
             //     header = "@profile";

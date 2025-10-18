@@ -76,6 +76,55 @@ void PatternGraph::_CollectExpandStepsByDFS(NodeID start, bool ignore_created,
     }
 }
 
+void PatternGraph::_CollectExpandStepsByDFSEdge(NodeID start, bool ignore_created,
+                                            EXPAND_STEPS &expand_steps) { // 遍历所有边而不是所有点
+    GetNode(start).Visited() = true;
+    if (_IsHanging(start, ignore_created)) {
+        expand_steps.emplace_back(start, -1, -1);
+        return;
+    }
+    std::stack<NodeID> sn;
+    sn.push(start);
+    while (!sn.empty()) {
+        auto &curr = GetNode(sn.top());
+        // find the first unvisited relationship
+        RelpID relp = -1;
+        NodeID neighbor;
+        for (auto rr : curr.RhsRelps()) {
+            auto &r = GetRelationship(rr);
+            auto &nbr = GetNode(r.Rhs());
+            if (nbr.ID() == curr.ID()) CYPHER_TODO();  // self-loop!
+            // TODO(anyone) think about this again
+            if (!r.Visited() && (!ignore_created || (nbr.derivation_ != Node::CREATED &&
+                                                       nbr.derivation_ != Node::MERGED))) {
+                relp = r.ID();
+                neighbor = nbr.ID();
+                break;
+            }
+        }
+        for (auto lr : curr.LhsRelps()) {
+            auto &r = GetRelationship(lr);
+            auto &nbr = GetNode(r.Lhs());
+            if (nbr.ID() == curr.ID()) CYPHER_TODO();  // self-loop!
+            if (!r.Visited() &&
+                (!ignore_created ||
+                 (nbr.derivation_ != Node::CREATED && nbr.derivation_ != Node::MERGED)) &&
+                (relp < 0 || (relp >= 0 && r.ID() < relp))) {
+                relp = r.ID();
+                neighbor = nbr.ID();
+                break;
+            }
+        }
+        if (relp < 0) {
+            sn.pop();
+            continue;
+        }
+        expand_steps.emplace_back(curr.ID(), relp, neighbor);
+        sn.push(neighbor);
+        GetRelationship(relp).Visited() = true;
+    }
+}
+
 Node &PatternGraph::GetNode(NodeID id) {
     // if ((size_t)id >= _nodes.size()) return EmptyNode();
     // return _nodes[id];
@@ -309,7 +358,11 @@ RelpID PatternGraph::BuildRelationship(const parser::TUP_RELATIONSHIP_PATTERN &r
     std::set<std::string> r_types(relp_types.begin(), relp_types.end());
     auto &relp = GetRelationship(relp_var);
     if(symbol_table.symbols.find(relp_var) == symbol_table.symbols.end()){
-        size_t id=_next_rid;
+        size_t max_id=0;
+        for(auto &sym:symbol_table.symbols){
+            max_id=std::max((size_t)max_id,sym.second.id);
+        }
+        size_t id=max_id+1;
         SymbolNode node=SymbolNode(id,SymbolNode::Type::RELATIONSHIP,SymbolNode::Scope::LOCAL);
         symbol_table.symbols.emplace(relp_var,node);
         // symbol_table.symbols[relp_var] = node;
@@ -366,6 +419,53 @@ std::string PatternGraph::DumpGraph() const {
     if (_nodes.empty() && _relationships.empty()) line.append("(EMPTY GRAPH)\n");
     // LOG_DEBUG()<<"Dump end";
     return line;
+}
+
+std::vector<std::unordered_map<int,int>> PatternGraph::reorder(){
+    std::vector<Node*> nodes;
+    for(auto &node:_nodes){
+        nodes.push_back(&node);
+    }
+    std::sort(nodes.begin(),nodes.end(),[](const Node* a, const Node* b){
+        return a->ID()<b->ID();
+    });
+
+    std::vector<Relationship*> relps;
+    for(auto& relp:_relationships){
+        relps.push_back(&relp);
+    }
+    std::sort(relps.begin(),relps.end(),[](const Relationship* a, const Relationship* b){
+        return a->ID()<b->ID();
+    });
+
+    std::unordered_map<int,int> result_n;
+    std::unordered_map<int,int> result_r;
+    for(size_t i=0;i<nodes.size();i++){
+        result_n[nodes[i]->ID()]=i;
+        nodes[i]->ChangeID(i);
+    }
+    for(size_t i=0;i<relps.size();i++){
+        result_r[relps[i]->ID()]=i;
+        relps[i]->ChangeID(i);
+        auto new_lhs=result_n[relps[i]->Lhs()];
+        auto new_rhs=result_n[relps[i]->Rhs()];
+        relps[i]->ChangeLhs(new_lhs);
+        relps[i]->ChangeRhs(new_rhs);
+    }
+    for(size_t i=0;i<nodes.size();i++){
+        auto old_lhs=nodes[i]->LhsRelps();
+        auto old_rhs=nodes[i]->RhsRelps();
+        auto new_lhs=old_lhs, new_rhs=old_rhs;
+        for(size_t i=0;i<new_lhs.size();i++){
+            new_lhs[i]=result_r[new_lhs[i]];
+        }
+        for(size_t i=0;i<new_rhs.size();i++){
+            new_rhs[i]=result_r[new_rhs[i]];
+        }
+        nodes[i]->ChangeLhs(new_lhs);
+        nodes[i]->ChangeRhs(new_rhs);
+    }
+    return std::vector<std::unordered_map<int,int>>{result_n,result_r};
 }
 
 }  // namespace cypher

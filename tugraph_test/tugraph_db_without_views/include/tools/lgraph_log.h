@@ -14,6 +14,10 @@
 
 #pragma once
 
+#ifndef LGRAPH_MIN_LOG_LEVEL
+#define LGRAPH_MIN_LOG_LEVEL 0
+#endif
+
 #include <stdexcept>
 #include <string>
 #include <iostream>
@@ -51,12 +55,35 @@ typedef sinks::synchronous_sink< sinks::text_ostream_backend > ut_sink;
   << ::lgraph_log::logging::add_value("Line", __LINE__) \
   << ::lgraph_log::logging::add_value("File", __FILE__) \
 
+#if LGRAPH_MIN_LOG_LEVEL <= 1
 #define LOG_DEBUG() LGRAPH_LOG(DEBUG)
-#define LOG_INFO() LGRAPH_LOG(INFO)
-#define LOG_WARN() LGRAPH_LOG(WARNING)
-#define LOG_ERROR() LGRAPH_LOG(ERROR)
+#else
+#define LOG_DEBUG() if (false) LGRAPH_LOG(DEBUG)
+#endif
 
+#if LGRAPH_MIN_LOG_LEVEL <= 2
+#define LOG_INFO() LGRAPH_LOG(INFO)
+#else
+#define LOG_INFO() if (false) LGRAPH_LOG(INFO)
+#endif
+
+#if LGRAPH_MIN_LOG_LEVEL <= 3
+#define LOG_WARN() LGRAPH_LOG(WARNING)
+#else
+#define LOG_WARN() if (false) LGRAPH_LOG(WARNING)
+#endif
+
+#if LGRAPH_MIN_LOG_LEVEL <= 4
+#define LOG_ERROR() LGRAPH_LOG(ERROR)
+#else
+#define LOG_ERROR() if (false) LGRAPH_LOG(ERROR)
+#endif
+
+#if LGRAPH_MIN_LOG_LEVEL <= 5
 #define LOG_FATAL() lgraph_log::FatalLogger(__FILE__, __LINE__)
+#else
+#define LOG_FATAL() if (false) lgraph_log::FatalLogger(__FILE__, __LINE__)
+#endif
 
 #define FMA_UT_LOG(LEVEL) BOOST_LOG_SEV(::lgraph_log::debug_logger::get(), \
   LEVEL) \

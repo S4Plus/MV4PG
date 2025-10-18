@@ -947,6 +947,7 @@ class ViewMaintenance : public LcypherVisitor {
                 int min_hop = std::max(range_literal[0], 0);
                 int max_hop = std::max(range_literal[1], 0);
                 if (max_hop == VAR_LEN_EXPAND_MAX_HOP) {
+                    if(min_hop < 1) min_hop = 1;
                     for (int i = 0; i < std::max(min_hop - 1, 0); i++) {
                         std::string index1 = std::to_string(i);
                         std::string index2 = std::to_string(min_hop - 1 - i);

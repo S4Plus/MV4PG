@@ -140,17 +140,54 @@ class ExpandAll : public OpBase {
     }
 
     bool _FilterNeighborLabel(RTContext *ctx) {
+        // LOG_DEBUG()<<"filterlabel s:"<<neighbor_->GetItType();
         if (neighbor_->Label().empty()) return true;
         auto nbr_it = ctx->txn_->GetTxn()->GetVertexIterator(eit_->GetNbr(expand_direction_));
-        while (ctx->txn_->GetTxn()->GetVertexLabel(nbr_it) != neighbor_->Label()) {
-            eit_->Next();
-            if(profile_)stats.db_hit++;
-            if (!eit_->IsValid()) return false;
-            nbr_it.Goto(eit_->GetNbr(expand_direction_));
-            if(profile_)stats.db_hit++;
-            CYPHER_THROW_ASSERT(nbr_it.IsValid());
+        // LOG_DEBUG()<<"get type:"<<neighbor_->GetItType();
+        if(CanPushNeighbor()){
+            // LOG_DEBUG()<<"Normal";
+            // if(relp_->Alias()=="r3") LOG_DEBUG()<<nbr_it.getType();
+            while (ctx->txn_->GetTxn()->GetVertexLabel(nbr_it) != neighbor_->Label()) {
+                eit_->Next();
+                if(profile_)stats.db_hit++;
+                if (!eit_->IsValid()) return false;
+                // LOG_DEBUG()<<nbr_it.GetType();
+                // LOG_DEBUG()<<"GOTO s";
+                nbr_it.Goto(eit_->GetNbr(expand_direction_));
+                // LOG_DEBUG()<<"GOTO e";
+                if(profile_)stats.db_hit++;
+                CYPHER_THROW_ASSERT(nbr_it.IsValid());
+            }
+            // LOG_DEBUG()<<"filterlabel e";
+            return true;
         }
-        return true;
+        else{
+            // LOG_DEBUG()<<"abnormal:"<<",relp name:"<<relp_->Alias()<<","<<nbr_it.getType();
+            // LOG_DEBUG()<<"AbNormal";
+            // while (ctx->txn_->GetTxn()->GetVertexLabel(nbr_it) != neighbor_->Label()) {
+                // eit_->Next();
+                // if(profile_)stats.db_hit++;
+                if (!eit_->IsValid()) return false;
+                // LOG_DEBUG()<<nbr_it.GetType();
+                // LOG_DEBUG()<<"GOTO s";
+                nbr_it.Goto(eit_->GetNbr(expand_direction_));
+                if(profile_)stats.db_hit++;
+                // 只有之前已经获得过neighbor点的情况会进while，即patternGraph有环时，比如(p1)-[]-(p2),(p2)-[]-(p3),(p3)-[]-(p1)
+                // bool in_while=false; 
+                while((neighbor_->GetVid()!=eit_->GetNbr(expand_direction_)) || (ctx->txn_->GetTxn()->GetVertexLabel(nbr_it) != neighbor_->Label())){
+                    // in_while=true;
+                    eit_->Next();
+                    if(profile_)stats.db_hit++;
+                    if (!eit_->IsValid()) return false;
+                    nbr_it.Goto(eit_->GetNbr(expand_direction_));
+                    if(profile_)stats.db_hit++;
+                }
+                // LOG_DEBUG()<<"GOTO e";
+                // if(in_while) break;
+                CYPHER_THROW_ASSERT(nbr_it.IsValid());
+            // }
+            return true;
+        }
     }
 
     void _DumpForDebug() const {
@@ -160,6 +197,8 @@ class ExpandAll : public OpBase {
         LOG_DEBUG() << pattern_graph_->VisitedEdges().Dump();
 #endif
     }
+
+    bool CanPushNeighbor() { return canPushNeighbor; }
 
     OpResult Next(RTContext *ctx) {
         // Reset iterators
@@ -176,8 +215,13 @@ class ExpandAll : public OpBase {
             if (!eit_->IsValid() || !_FilterNeighborLabel(ctx)) return OP_REFRESH;
             /* When relationship is undirected, GetNbr() will get src for out_edge_iterator
              * and dst for in_edge_iterator.  */
-            neighbor_->PushVid(eit_->GetNbr(expand_direction_));
-            if(profile_)stats.db_hit++;
+            // LOG_DEBUG()<<"expand all push 1";
+            if(CanPushNeighbor()){
+                LOG_DEBUG()<<"push1 "<<"src:"<<start_->Alias()<<",dst:"<<neighbor_->Alias()<<",id:"<<eit_->GetNbr(expand_direction_);
+                neighbor_->PushVid(eit_->GetNbr(expand_direction_));
+                // LOG_DEBUG()<<"expand all push 2";
+                if(profile_)stats.db_hit++;
+            }
             // if(view_types_.find(eit_->GetLabel())==view_types_.end())
             if(ctx->path_unique_)pattern_graph_->VisitedEdges().Add(*eit_);
             state_ = ExpandAllConsuming;
@@ -192,8 +236,13 @@ class ExpandAll : public OpBase {
         } while (_CheckToSkipEdge(ctx));
 
         if (!eit_->IsValid() || !_FilterNeighborLabel(ctx)) return OP_REFRESH;
-        neighbor_->PushVid(eit_->GetNbr(expand_direction_));
-        if(profile_)stats.db_hit++;
+        // LOG_DEBUG()<<"expand all push 3";
+        if(CanPushNeighbor()){
+            LOG_DEBUG()<<"push2 "<<"src:"<<start_->Alias()<<",dst:"<<neighbor_->Alias()<<",id:"<<eit_->GetNbr(expand_direction_);
+            neighbor_->PushVid(eit_->GetNbr(expand_direction_));
+            if(profile_)stats.db_hit++;
+        }
+        // LOG_DEBUG()<<"expand all push 4";
         if(ctx->path_unique_)pattern_graph_->VisitedEdges().Add(*eit_);
         // _DumpForDebug();
         return OP_OK;
@@ -221,6 +270,7 @@ class ExpandAll : public OpBase {
     mutable double check_duplicate_=0;
     mutable double check_filter_=0;
     std::unordered_set<std::pair<lgraph::VertexId,lgraph::VertexId>, pair_hash> expand_pair_node;
+    bool canPushNeighbor = true;
     // std::unordered_set<std::string> deleted_view_edges;
     /* ExpandAllStates
      * Different states in which ExpandAll can be at. */
@@ -262,14 +312,15 @@ class ExpandAll : public OpBase {
     }
 
     ExpandAll(PatternGraph *pattern_graph, Node *start, Node *neighbor, Relationship *relp,
-              std::string view_path, std::shared_ptr<lgraph::Filter> edge_filter = nullptr)
+              std::string view_path, std::shared_ptr<lgraph::Filter> edge_filter = nullptr, bool canPushNeighbor = true)
         : OpBase(OpType::EXPAND_ALL, "Expand"),
           start_(start),
           neighbor_(neighbor),
           relp_(relp),
           pattern_graph_(pattern_graph),
           edge_filter_(edge_filter),
-          view_path_(view_path) {
+          view_path_(view_path),
+          canPushNeighbor(canPushNeighbor) {
         CYPHER_THROW_ASSERT(start && neighbor && relp);
         view_types_ = _GetViewTypes(view_path_);
         eit_ = relp->ItRef();
@@ -373,7 +424,10 @@ class ExpandAll : public OpBase {
          * */
         /* reset modifies */
         eit_->FreeIter();
-        neighbor_->PushVid(-1);
+        if(CanPushNeighbor()){
+            LOG_DEBUG()<<"push3 "<<"src:"<<start_->Alias()<<",dst:"<<neighbor_->Alias()<<",id:"<<eit_->GetNbr(expand_direction_);
+            neighbor_->PushVid(-1);
+        }
         pattern_graph_->VisitedEdges().Erase(*eit_);
         state_ = ExpandAllUninitialized;
         now_delete_num=0;

@@ -32,6 +32,7 @@ class Relationship {
     lgraph::EIter it_;
     // Store edge iterators for variable length relationship, which slightly duplicate path_.
     std::vector<lgraph::EIter> its_;
+    bool visited_ = false;
 
  public:
     parser::LinkDirection direction_ = parser::LinkDirection::UNKNOWN;
@@ -63,6 +64,10 @@ class Relationship {
     const std::set<std::string> &Types() const;
 
     void SetTypes(const std::set<std::string> &types) { types_ = types; }
+
+    bool &Visited() { return visited_; }
+
+    bool Visited() const { return visited_; }
 
     NodeID Lhs() const { return lhs_; }
 

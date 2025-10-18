@@ -155,12 +155,17 @@ class ReverseRewriteVisitor : public LcypherVisitor {
         return visitChildrenToString(ctx);
     }
 
+    std::string removeAt(std::string name){
+        if(name[0]=='@')name=name.substr(1);
+        return name;
+    }
+
     std::string ReverseNode(const cypher::Node *node){
         std::string node_cypher="";
         node_cypher.append("(");
         if(!node->Alias().empty()){
             std::string name=node->Alias();
-            if(name[0]=='@')name=name.substr(1);
+            name=removeAt(name);
             node_cypher.append(name);
         }
         if(!node->Label().empty()){
@@ -199,7 +204,7 @@ class ReverseRewriteVisitor : public LcypherVisitor {
             relp_cypher.append("[");
             if(!relationship->Alias().empty()){
                 std::string name=relationship->Alias();
-                if(name[0]=='@')name=name.substr(1);
+                name=removeAt(name);
                 relp_cypher.append(name);
             }
             if(!relationship->Types().empty()){
@@ -365,11 +370,11 @@ class ReverseRewriteVisitor : public LcypherVisitor {
                 cypher::NodeID rhs=relationship.Rhs();
                 auto &lnode=pattern_graph.GetNode(lhs);
                 auto &rnode=pattern_graph.GetNode(rhs);
-                opti.append("("+lnode.Alias()+")");
+                opti.append("("+removeAt(lnode.Alias())+")");
                 // opti.append("(").append(lnode.Alias()).append(":").append(lnode.Label()).append(")");
                 opti.append(ReverseRelp(&relationship));
 
-                opti.append("("+rnode.Alias()+")");
+                opti.append("("+removeAt(rnode.Alias())+")");
                 //   opti.append("(").append(rnode.Alias()).append(":").append(rnode.Label()).append(")");
                 j++;
                 if(j!=relationships.size())

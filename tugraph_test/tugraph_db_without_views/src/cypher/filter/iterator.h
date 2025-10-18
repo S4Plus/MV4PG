@@ -235,6 +235,8 @@ class VIter {
 
     ~VIter() { FreeIter(); }
 
+    lgraph::VIter::IteratorType GetType() { return _type; }
+
     void FreeIter() {
         switch (_type) {
         case VERTEX_ITER:
@@ -367,12 +369,29 @@ class VIter {
         }
     }
 
+    bool isNormalType(){
+        switch (_type) {
+        case VERTEX_ITER:
+            return true;
+        case LABEL_VERTEX_ITER:
+            return true;
+        default:
+            // LOG_DEBUG()<<"Abnormal";
+            return false;
+        }
+    }
+
     bool Goto(lgraph::VertexId vid) {
+        // if(_type!=0 && _type!=3) LOG_DEBUG()<<"goto type:"<<_type;
         switch (_type) {
         case VERTEX_ITER:
             return (_vit && _vit->Goto(vid));
         case LABEL_VERTEX_ITER:
             return (_lvit && _lvit->Goto(vid));
+        case WEAK_INDEX_ITER:
+            return _wit;
+        case INDEX_ITER:
+            return _iit;
         default:
             CYPHER_TODO();
             return false;

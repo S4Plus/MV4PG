@@ -383,18 +383,20 @@ struct ArithOperandNode {
         if (type == AR_OPERAND_CONSTANT) {
             return Entry(constant);
         } else if (type == AR_OPERAND_VARIADIC) {
+            // LOG_DEBUG()<<"arithmetic b:"<<variadic.alias_idx<<",name:"<<variadic.alias;
+            // LOG_DEBUG()<<"arithmetic b2:"<<record.values.size();
             CYPHER_THROW_ASSERT(record.values.size() > (size_t)variadic.alias_idx);
             const auto &entry = record.values[variadic.alias_idx];
-            // std::cout<<"arithmetic"<<std::endl;
+            // LOG_DEBUG()<<"arithmetic";
             // if(variadic.alias.size()>0){
-            //     std::cout<<"arithmetic alias:"<<variadic.alias<<std::endl;
+            //     LOG_DEBUG()<<"arithmetic alias:"<<variadic.alias;
             // }
-            // std::cout<<"arithmetic value length:"<<record.values.size()<<std::endl;
+            // LOG_DEBUG()<<"arithmetic value length:"<<record.values.size();
             // for(size_t i=0;i<record.values.size();i++){
-            //     std::cout<<"arithmetic value"<<i<<":"<<record.values[i].ToString()<<std::endl;
+            //     LOG_DEBUG()<<"arithmetic value"<<i<<":"<<record.values[i].ToString();
             // }
-            // std::cout<<"arithmetic alias idx:"<<variadic.alias_idx<<std::endl;
-            // std::cout<<"arithmetic :"<<entry.ToString()<<std::endl;
+            // LOG_DEBUG()<<"arithmetic alias idx:"<<variadic.alias_idx;
+            // LOG_DEBUG()<<"arithmetic :"<<entry.ToString();
             switch (entry.type) {
             case Entry::NODE:
             case Entry::RELATIONSHIP:

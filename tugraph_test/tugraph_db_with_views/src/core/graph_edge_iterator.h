@@ -502,8 +502,9 @@ class EdgeIteratorImpl {
                     eid = 0;
                 }
             }
-            if (eid > ::lgraph::_detail::MAX_EID)
+            if (eid > ::lgraph::_detail::MAX_EID){
                 THROW_CODE(ReachMaximumEid, "Too many edges from src to dst with the same label");
+            }
         }
         int64_t size_diff = ev.InsertAtPos(pos, esid.lid, esid.tid, esid.dst, eid, prop);
         if (pt == PackType::PACKED_DATA) {

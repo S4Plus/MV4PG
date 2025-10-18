@@ -163,6 +163,9 @@ class VertexIteratorImpl {
         return valid_;
     }
 
+    bool isNormalType() const { return true; }
+    int getType() const { return 1; }
+
     const VertexId& GetId() const { return id_; }
 
     /**
@@ -271,6 +274,9 @@ class VertexIterator : public ::lgraph::IteratorBase {
             impl_.RefreshIteratorAndContent();
         }
     }
+
+    bool isNormalType() const { return impl_.isNormalType(); }
+    int getType() const { return impl_.getType(); }
 
     /**
      * Goto the vertex with id src

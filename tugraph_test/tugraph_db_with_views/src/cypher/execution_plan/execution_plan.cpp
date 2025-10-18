@@ -18,6 +18,7 @@
 
 #include <memory>
 #include <stack>
+#include <unordered_map>
 #include "db/galaxy.h"
 
 #include "execution_plan/ops/op.h"
@@ -567,9 +568,12 @@ void ExecutionPlan::_BuildExpandOps(const parser::QueryPart &part, PatternGraph 
     /* If we have multiple graph components, the root operation is a Cartesian Product.
      * Each chain of traversals will be a child of this op. */
     OpBase *traversal_root = nullptr;
+    LOG_DEBUG()<<"expand streams size:"<<expand_streams.size();
+    std::unordered_set<cypher::NodeID> nowIds; // 所有已经加入expandAll或者node scan的id
     for (auto &stream : expand_streams) {
         std::vector<OpBase *> expand_ops;
         bool hanging = false;  // if the stream is a hanging node
+        LOG_DEBUG()<<"stream size:"<<stream.size();
         for (auto &step : stream) {
             auto &start = pattern_graph.GetNode(std::get<0>(step));
             auto &relp = pattern_graph.GetRelationship(std::get<1>(step));
@@ -595,9 +599,14 @@ void ExecutionPlan::_BuildExpandOps(const parser::QueryPart &part, PatternGraph 
                 // expand when neighbor is not null
                 OpBase *expand_op = new VarLenExpand(&pattern_graph, &start, &neighbor, &relp, _view_path);
                 expand_ops.emplace_back(expand_op);
+                nowIds.insert(start.ID());
+                nowIds.insert(neighbor.ID());
             } else {
-                OpBase *expand_op = new ExpandAll(&pattern_graph, &start, &neighbor, &relp, _view_path);
+                LOG_DEBUG()<<"expand start:"<<start.Alias()<<",end:"<<neighbor.Alias();
+                OpBase *expand_op = new ExpandAll(&pattern_graph, &start, &neighbor, &relp, _view_path, nullptr, !nowIds.count(neighbor.ID()));
                 expand_ops.emplace_back(expand_op);
+                nowIds.insert(start.ID());
+                nowIds.insert(neighbor.ID());
             }
             // add property filter op
             auto pf = neighbor.Prop();
@@ -639,7 +648,9 @@ void ExecutionPlan::_BuildExpandOps(const parser::QueryPart &part, PatternGraph 
                 expand_ops.emplace_back(*it);
             }
         }
+        LOG_DEBUG()<<"expand_ops size1:"<<expand_ops.size();
         if (!_SingleBranchConnect(expand_ops)) continue;
+        LOG_DEBUG()<<"expand_ops size2:"<<expand_ops.size();
         if (!traversal_root) {
             // We've built the only necessary traversal chain
             traversal_root = expand_ops[0];
@@ -1105,8 +1116,12 @@ OpBase *ExecutionPlan::BuildPart(const parser::QueryPart &part, int part_id) {
             view_rewriter.GraphRewriteUseViews();
             LOG_DEBUG()<<pattern_graph.DumpGraph();
         }
-        if(_view_pattern_graphs.size()>0)
+        if(_view_pattern_graphs.size()>0){
+            auto id_m=pattern_graph.reorder();
             pattern_graph.symbol_table.Recover();
+            LOG_DEBUG()<<"Final Graph";
+            LOG_DEBUG()<<pattern_graph.DumpGraph();
+        }
     }
     auto end_opt = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = end_opt - start_opt;
@@ -1267,6 +1282,17 @@ bool ExecutionPlan::_WorkWithoutTransaction(const parser::SglQuery &stmt) const 
     return true;
 }
 
+void Realign(OpBase* root, SymbolTable& symbol_table){
+    if(root->type==OpType::FILTER) {
+        // LOG_DEBUG()<<"Realign b:"<<root->ToString();
+        dynamic_cast<OpFilter *>(root)->Filter()->RealignAliasId(symbol_table);
+        // LOG_DEBUG()<<"Realign e";
+    }
+    for(auto child:root->children){
+        Realign(child,symbol_table);
+    }
+}
+
 OpBase *ExecutionPlan::BuildSgl(const parser::SglQuery &stmt, size_t parts_offset) {
     OpBase *sgl_root = nullptr;
     std::vector<OpBase *> segments;
@@ -1282,6 +1308,8 @@ OpBase *ExecutionPlan::BuildSgl(const parser::SglQuery &stmt, size_t parts_offse
 #endif
     // merge segments
     sgl_root = segments[0];
+    Realign(sgl_root, _pattern_graphs[parts_offset].symbol_table);
+    // _RealignAliasId(sgl_root, _pattern_graphs[parts_offset].symbol_table);
     for (int i = 1; i < (int)stmt.parts.size(); i++) {
         /* Need to re-align the alias_id_map for operations on top of project/aggregate,
          * for the record of project/aggregate operation changes the original alias_id_map.

@@ -42,7 +42,7 @@
 
 #include "server/bolt_session.h"
 
-#define MaintenanceProfile false
+#define MaintenanceProfile true
 #define MaintenanceTemplate std::tuple<std::string,std::string,std::string>
 
 namespace cypher {
@@ -373,6 +373,7 @@ const std::string Scheduler::EvalCypher(RTContext *ctx, const std::string &scrip
             if (plan->CommandType() == parser::CmdType::EXPLAIN) {
                 header = "@plan";
                 data = plan->DumpPlan(0, false);
+                LOG_DEBUG() << plan->DumpPlan(0, false);
             } else if (plan->CommandType() == parser::CmdType::PROFILE){
                 // header = "@profile";
                 // TODO : Profile

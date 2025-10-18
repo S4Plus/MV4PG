@@ -75,6 +75,55 @@ void PatternGraph::_CollectExpandStepsByDFS(NodeID start, bool ignore_created,
     }
 }
 
+void PatternGraph::_CollectExpandStepsByDFSEdge(NodeID start, bool ignore_created,
+                                            EXPAND_STEPS &expand_steps) { // 遍历所有边而不是所有点
+    GetNode(start).Visited() = true;
+    if (_IsHanging(start, ignore_created)) {
+        expand_steps.emplace_back(start, -1, -1);
+        return;
+    }
+    std::stack<NodeID> sn;
+    sn.push(start);
+    while (!sn.empty()) {
+        auto &curr = GetNode(sn.top());
+        // find the first unvisited relationship
+        RelpID relp = -1;
+        NodeID neighbor;
+        for (auto rr : curr.RhsRelps()) {
+            auto &r = GetRelationship(rr);
+            auto &nbr = GetNode(r.Rhs());
+            if (nbr.ID() == curr.ID()) CYPHER_TODO();  // self-loop!
+            // TODO(anyone) think about this again
+            if (!r.Visited() && (!ignore_created || (nbr.derivation_ != Node::CREATED &&
+                                                       nbr.derivation_ != Node::MERGED))) {
+                relp = r.ID();
+                neighbor = nbr.ID();
+                break;
+            }
+        }
+        for (auto lr : curr.LhsRelps()) {
+            auto &r = GetRelationship(lr);
+            auto &nbr = GetNode(r.Lhs());
+            if (nbr.ID() == curr.ID()) CYPHER_TODO();  // self-loop!
+            if (!r.Visited() &&
+                (!ignore_created ||
+                 (nbr.derivation_ != Node::CREATED && nbr.derivation_ != Node::MERGED)) &&
+                (relp < 0 || (relp >= 0 && r.ID() < relp))) {
+                relp = r.ID();
+                neighbor = nbr.ID();
+                break;
+            }
+        }
+        if (relp < 0) {
+            sn.pop();
+            continue;
+        }
+        expand_steps.emplace_back(curr.ID(), relp, neighbor);
+        sn.push(neighbor);
+        GetRelationship(relp).Visited() = true;
+    }
+}
+
 Node &PatternGraph::GetNode(NodeID id) {
     if ((size_t)id >= _nodes.size()) return EmptyNode();
     return _nodes[id];
