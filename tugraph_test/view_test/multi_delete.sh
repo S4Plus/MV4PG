@@ -15,3 +15,4 @@ fi
 
 ./ldbcSf1_new/multi_delete_snb.sh ${cycle} ${pr}
 ./ldbcSf10_new/multi_delete_snb.sh ${cycle} ${pr}
+./chem/multi_delete_chem.sh ${cycle} ${pr}

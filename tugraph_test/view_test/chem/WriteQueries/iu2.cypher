@@ -1,0 +1,2 @@
+MATCH (src:molecule {id: $srcId}), (dst:molecule {id: $dstId})
+CREATE (src)-[:replacement_edges {functional_group:'__bench_fg__', functional_group_formula:'__bench_formula__', replace_atom:999}]->(dst)

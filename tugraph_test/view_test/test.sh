@@ -9,5 +9,7 @@ cd "$SCRIPT_DIR"
 ./ldbcSf1_new/test_snb.sh $is_delete
 cd "$SCRIPT_DIR"
 ./ldbcSf10_new/test_snb.sh $is_delete
+cd "$SCRIPT_DIR"
+./chem/test_chem.sh $is_delete
 ./profile.sh
 ./multi_delete.sh
