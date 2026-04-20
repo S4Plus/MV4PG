@@ -16,7 +16,7 @@ user = 'admin'
 password = '73@TuGraph'
 
 is_delete=False
-
+is_create=True
 delete_cypher="CALL db.deleteLabel('edge', '%s')"
 # cypher='create view ROOT_POST as ( Construct (n)-[r:ROOT_POST]->(m) match (n:Comment)-[:replyOf*..]->(m:Post) )'
 # cypher='match (n:Comment)-[r:replyOf*..]->(m:Post) return count(m)'
@@ -42,6 +42,7 @@ def parse_args():
     parser.add_argument('-f', '--folder', help='folder name')
     parser.add_argument('--password', help='user password')
     parser.add_argument('-d', '--is_delete', help='is delete')
+    parser.add_argument('-cr', '--is_create', help='is create')
     args = parser.parse_args()
     if args.ip:
         global ip
@@ -70,6 +71,12 @@ def parse_args():
             is_delete=True
         else:
             is_delete=False
+    if args.is_create:
+        global is_create
+        if(args.is_create=="True" or args.is_create=="true"):
+            is_create=True
+        else:
+            is_create=False
 
 
 
@@ -108,17 +115,18 @@ if  __name__ == '__main__':
             for file in os.listdir(view_folder):
                 view_name=file.split(".")[0]
                 call_cypher(delete_cypher % view_name)
-        for file in os.listdir(view_folder):
-            start_time=time.time()
-            cypher = open(view_folder+"/"+file).read()
-            is_success,records=call_cypher(cypher)
-            end_time=time.time()
-            # print("查询时间：",end_time-start_time)
-            f=open(output_path,'a')
-            f.write("create view cypher: "+cypher+"\n")
-            f.write("create time: "+str(end_time-start_time)+"\n\n")
-            print(records[0])
-            f.close()
+        if(is_create):
+            for file in os.listdir(view_folder):
+                start_time=time.time()
+                cypher = open(view_folder+"/"+file).read()
+                is_success,records=call_cypher(cypher)
+                end_time=time.time()
+                # print("查询时间：",end_time-start_time)
+                f=open(output_path,'a')
+                f.write("create view cypher: "+cypher+"\n")
+                f.write("create time: "+str(end_time-start_time)+"\n\n")
+                print(records[0])
+                f.close()
         # f=open("edge.csv",'w')
         # min_id=100000000
         # max_id=0

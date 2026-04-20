@@ -1,0 +1,3 @@
+match (n)-[r:MOLECULE_RELPS{is_view:true}]->(m) delete r
+match (n)-[r:MULTI_REPLACEMENT{is_view:true}]->(m) delete r
+match (n)-[r:MULTI_TRANSFORM{is_view:true}]->(m) delete r

@@ -1,0 +1,49 @@
+{
+    "MATCH (n:molecule)-[r1:transform*..]->(m:molecule) where r1.is_view is null with n,m CREATE(n)-[r:MULTI_TRANSFORM{is_view:true}]->(m)": [
+        [
+            "optional match (n:molecule)-[*0]-(view_vetex)-[r1:transform*..]->(m:molecule) with n,m,collect(view_vetex) as view_vetexs with n,m,size(view_vetexs) as num,view_vetexs optional match (n)-[r:MULTI_TRANSFORM{is_view:true}]->(m) with collect(r) as views, n,m,num,view_vetexs UNWIND range(0,num-1) as i delete views[i]",
+            "optional match (n:molecule)-[r1:transform*..]->(m:molecule)-[*0]-(view_vetex) with n,m,collect(view_vetex) as view_vetexs with n,m,size(view_vetexs) as num,view_vetexs optional match (n)-[r:MULTI_TRANSFORM{is_view:true}]->(m) with collect(r) as views, n,m,num,view_vetexs UNWIND range(0,num-1) as i delete views[i]",
+            "optional match (n:molecule)-[ANONR0:transform*1..]->(view_vetex)-[ANONR1:transform*0..]->(m:molecule) with n,m,collect(view_vetex) as view_vetexs with n,m,size(view_vetexs) as num,view_vetexs optional match (n)-[r:MULTI_TRANSFORM{is_view:true}]->(m) with collect(r) as views, n,m,num,view_vetexs UNWIND range(0,num-1) as i delete views[i]"
+        ],
+        [
+            "optional match (n:molecule)-[ANONR0:transform*0..]->()-[view_edge:transform]->()-[ANONR1:transform*0..]->(m:molecule) with n,m,view_edge CREATE(n)-[r:MULTI_TRANSFORM{is_view:true}]->(m)"
+        ],
+        [
+            "optional match (n:molecule)-[ANONR0:transform*0..]->()-[view_edge:transform]->()-[ANONR1:transform*0..]->(m:molecule) with n,m,collect(view_edge) as view_edges with n,m,size(view_edges) as num,view_edges optional match (n)-[r:MULTI_TRANSFORM{is_view:true}]->(m) with collect(r) as views, n,m,num,view_edges UNWIND range(0,num-1) as i delete views[i]"
+        ]
+    ],
+    "MATCH (n:molecule)-[r1:transform]->(:molecule)-[r2:replacement_edges]->(m:molecule) where r1.is_view is null and r2.is_view is null with n,m CREATE(n)-[r:MOLECULE_RELPS{is_view:true}]->(m)": [
+        [
+            "optional match (n:molecule)-[*0]-(view_vetex)-[r1:transform]->(:molecule)-[r2:replacement_edges]->(m:molecule) with n,m,collect(view_vetex) as view_vetexs with n,m,size(view_vetexs) as num,view_vetexs optional match (n)-[r:MOLECULE_RELPS{is_view:true}]->(m) with collect(r) as views, n,m,num,view_vetexs UNWIND range(0,num-1) as i delete views[i]",
+            "optional match (n:molecule)-[r1:transform]->(:molecule)-[*0]-(view_vetex)-[r2:replacement_edges]->(m:molecule) with n,m,collect(view_vetex) as view_vetexs with n,m,size(view_vetexs) as num,view_vetexs optional match (n)-[r:MOLECULE_RELPS{is_view:true}]->(m) with collect(r) as views, n,m,num,view_vetexs UNWIND range(0,num-1) as i delete views[i]",
+            "optional match (n:molecule)-[r1:transform]->(:molecule)-[r2:replacement_edges]->(m:molecule)-[*0]-(view_vetex) with n,m,collect(view_vetex) as view_vetexs with n,m,size(view_vetexs) as num,view_vetexs optional match (n)-[r:MOLECULE_RELPS{is_view:true}]->(m) with collect(r) as views, n,m,num,view_vetexs UNWIND range(0,num-1) as i delete views[i]"
+        ],
+        [
+            "optional match (n:molecule)-[view_edge:transform]->(:molecule)-[r2:replacement_edges]->(m:molecule) with n,m,view_edge CREATE(n)-[r:MOLECULE_RELPS{is_view:true}]->(m)",
+            "optional match (n:molecule)-[r1:transform]->(:molecule)-[view_edge:replacement_edges]->(m:molecule) with n,m,view_edge CREATE(n)-[r:MOLECULE_RELPS{is_view:true}]->(m)"
+        ],
+        [
+            "optional match (n:molecule)-[view_edge:transform]->(:molecule)-[r2:replacement_edges]->(m:molecule) with n,m,collect(view_edge) as view_edges with n,m,size(view_edges) as num,view_edges optional match (n)-[r:MOLECULE_RELPS{is_view:true}]->(m) with collect(r) as views, n,m,num,view_edges UNWIND range(0,num-1) as i delete views[i]",
+            "optional match (n:molecule)-[r1:transform]->(:molecule)-[view_edge:replacement_edges]->(m:molecule) with n,m,collect(view_edge) as view_edges with n,m,size(view_edges) as num,view_edges optional match (n)-[r:MOLECULE_RELPS{is_view:true}]->(m) with collect(r) as views, n,m,num,view_edges UNWIND range(0,num-1) as i delete views[i]"
+        ]
+    ],
+    "match (n:molecule)-[r1:replacement_edges*..3]->(m:molecule) where r1.is_view is null with n,m CREATE(n)-[r:MULTI_REPLACEMENT{is_view:true}]->(m)": [
+        [
+            "optional match (n:molecule)-[*0]-(view_vetex)-[r1:replacement_edges*..3]->(m:molecule) with n,m,collect(view_vetex) as view_vetexs with n,m,size(view_vetexs) as num,view_vetexs optional match (n)-[r:MULTI_REPLACEMENT{is_view:true}]->(m) with collect(r) as views, n,m,num,view_vetexs UNWIND range(0,num-1) as i delete views[i]",
+            "optional match (n:molecule)-[r1:replacement_edges*..3]->(m:molecule)-[*0]-(view_vetex) with n,m,collect(view_vetex) as view_vetexs with n,m,size(view_vetexs) as num,view_vetexs optional match (n)-[r:MULTI_REPLACEMENT{is_view:true}]->(m) with collect(r) as views, n,m,num,view_vetexs UNWIND range(0,num-1) as i delete views[i]",
+            "optional match (n:molecule)-[ANONR0:replacement_edges*1]->(view_vetex)-[ANONR1:replacement_edges*0..2]->(m:molecule) with n,m,collect(view_vetex) as view_vetexs with n,m,size(view_vetexs) as num,view_vetexs optional match (n)-[r:MULTI_REPLACEMENT{is_view:true}]->(m) with collect(r) as views, n,m,num,view_vetexs UNWIND range(0,num-1) as i delete views[i]",
+            "optional match (n:molecule)-[ANONR2:replacement_edges*2]->(view_vetex)-[ANONR3:replacement_edges*0..1]->(m:molecule) with n,m,collect(view_vetex) as view_vetexs with n,m,size(view_vetexs) as num,view_vetexs optional match (n)-[r:MULTI_REPLACEMENT{is_view:true}]->(m) with collect(r) as views, n,m,num,view_vetexs UNWIND range(0,num-1) as i delete views[i]",
+            "optional match (n:molecule)-[ANONR4:replacement_edges*3]->(view_vetex)-[ANONR5:replacement_edges*0]->(m:molecule) with n,m,collect(view_vetex) as view_vetexs with n,m,size(view_vetexs) as num,view_vetexs optional match (n)-[r:MULTI_REPLACEMENT{is_view:true}]->(m) with collect(r) as views, n,m,num,view_vetexs UNWIND range(0,num-1) as i delete views[i]"
+        ],
+        [
+            "optional match (n:molecule)-[ANONR0:replacement_edges*0]->()-[view_edge:replacement_edges]->()-[ANONR1:replacement_edges*0..2]->(m:molecule) with n,m,view_edge CREATE(n)-[r:MULTI_REPLACEMENT{is_view:true}]->(m)",
+            "optional match (n:molecule)-[ANONR2:replacement_edges*1]->()-[view_edge:replacement_edges]->()-[ANONR3:replacement_edges*0..1]->(m:molecule) with n,m,view_edge CREATE(n)-[r:MULTI_REPLACEMENT{is_view:true}]->(m)",
+            "optional match (n:molecule)-[ANONR4:replacement_edges*2]->()-[view_edge:replacement_edges]->()-[ANONR5:replacement_edges*0]->(m:molecule) with n,m,view_edge CREATE(n)-[r:MULTI_REPLACEMENT{is_view:true}]->(m)"
+        ],
+        [
+            "optional match (n:molecule)-[ANONR0:replacement_edges*0]->()-[view_edge:replacement_edges]->()-[ANONR1:replacement_edges*0..2]->(m:molecule) with n,m,collect(view_edge) as view_edges with n,m,size(view_edges) as num,view_edges optional match (n)-[r:MULTI_REPLACEMENT{is_view:true}]->(m) with collect(r) as views, n,m,num,view_edges UNWIND range(0,num-1) as i delete views[i]",
+            "optional match (n:molecule)-[ANONR2:replacement_edges*1]->()-[view_edge:replacement_edges]->()-[ANONR3:replacement_edges*0..1]->(m:molecule) with n,m,collect(view_edge) as view_edges with n,m,size(view_edges) as num,view_edges optional match (n)-[r:MULTI_REPLACEMENT{is_view:true}]->(m) with collect(r) as views, n,m,num,view_edges UNWIND range(0,num-1) as i delete views[i]",
+            "optional match (n:molecule)-[ANONR4:replacement_edges*2]->()-[view_edge:replacement_edges]->()-[ANONR5:replacement_edges*0]->(m:molecule) with n,m,collect(view_edge) as view_edges with n,m,size(view_edges) as num,view_edges optional match (n)-[r:MULTI_REPLACEMENT{is_view:true}]->(m) with collect(r) as views, n,m,num,view_edges UNWIND range(0,num-1) as i delete views[i]"
+        ]
+    ]
+}

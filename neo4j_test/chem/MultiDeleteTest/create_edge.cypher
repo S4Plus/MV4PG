@@ -1,0 +1,1 @@
+MATCH (n:molecule{id:'52995'}),(m:molecule{id:'52907'}) create (n)-[r:replacement_edges{functional_group:'test', functional_group_formula:'test', replace_atom:1}]->(m)

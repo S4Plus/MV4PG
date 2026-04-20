@@ -21,7 +21,7 @@ docker run -d \
     -v $PWD/neo4j1/conf:/var/lib/neo4j/conf \
     -v $PWD/neo4j1/import:/var/lib/neo4j/import \
     -v $PWD/neo4j1/plugins:/var/lib/neo4j/plugins \
-    -e NEO4J_AUTH=neo4j/123456 \
+    -e NEO4J_AUTH=neo4j/12345678 \
     -e NEO4J_dbms_connector_bolt_advertised__address=:7687 \
     -e NEO4J_dbms_connector_http_advertised__address=:7474 \
     -e NEO4J_dbms_connector_https_advertised__address=:7474 \
@@ -36,7 +36,7 @@ docker run -d \
     -v $PWD/neo4j2/conf:/var/lib/neo4j/conf \
     -v $PWD/neo4j2/import:/var/lib/neo4j/import \
     -v $PWD/neo4j2/plugins:/var/lib/neo4j/plugins \
-    -e NEO4J_AUTH=neo4j/352541141 \
+    -e NEO4J_AUTH=neo4j/12345678 \
     -e NEO4J_dbms_connector_bolt_advertised__address=:7688 \
     -e NEO4J_dbms_connector_http_advertised__address=:7475 \
     -e NEO4J_dbms_connector_https_advertised__address=:7475 \
@@ -55,21 +55,29 @@ docker exec neo4j2 apt-get install -y unzip
 
 # Wait for containers to be ready
 # sleep 30
+wget http://home.ustc.edu.cn/~angels/import_snb_sf1.zip
+wget http://home.ustc.edu.cn/~angels/import_data_sf10.zip
+wget http://home.ustc.edu.cn/~angels/chem.zip
 
+# Copy downloaded archives into containers' import folders
 docker cp import_data_sf10.zip neo4j1:/var/lib/neo4j/import/
 docker cp import_data_sf10.zip neo4j2:/var/lib/neo4j/import/
 docker cp import_snb_sf1.zip neo4j1:/var/lib/neo4j/import/
 docker cp import_snb_sf1.zip neo4j2:/var/lib/neo4j/import/
+docker cp chem.zip neo4j1:/var/lib/neo4j/import/
+docker cp chem.zip neo4j2:/var/lib/neo4j/import/
 # Run import script in neo4j1
-docker exec neo4j1 bash -c "cd /var/lib/neo4j/import && unzip import_data_sf10.zip && unzip import_snb_sf1.zip"
-# Run import script in neo4j2  
-docker exec neo4j2 bash -c "cd /var/lib/neo4j/import && unzip import_data_sf10.zip && unzip import_snb_sf1.zip"
+docker exec neo4j1 bash -c "cd /var/lib/neo4j/import && unzip import_data_sf10.zip && unzip import_snb_sf1.zip && unzip chem.zip || true"
+# Run unzip in neo4j2
+docker exec neo4j2 bash -c "cd /var/lib/neo4j/import && unzip import_data_sf10.zip && unzip import_snb_sf1.zip && unzip chem.zip || true"
 
 
 docker exec neo4j1 bash -c "cd /var/lib/neo4j/import/import_data_sf10 && ./import.sh"
 docker exec neo4j2 bash -c "cd /var/lib/neo4j/import/import_data_sf10 && ./import.sh"
 docker exec neo4j1 bash -c "cd /var/lib/neo4j/import/import_snb_sf1 && ./import.sh"
 docker exec neo4j2 bash -c "cd /var/lib/neo4j/import/import_snb_sf1 && ./import.sh"
+docker exec neo4j1 bash -c "cd /var/lib/neo4j/import/chem && ./import.cmd"
+docker exec neo4j2 bash -c "cd /var/lib/neo4j/import/chem && ./import.cmd"
 # Restart containers to apply new configuration
 docker restart neo4j1
 docker restart neo4j2

@@ -17,6 +17,7 @@ tugraph_user = 'admin'
 tugraph_password = '73@TuGraph'
 tugraph_graph = 'finbenchsf10'
 path="/home/wxd/MV4PG-master/neo4j_test/ldbcSf10_new"
+is_delete = False
 def parse_args():
     parser = argparse.ArgumentParser(description="Tugraph optimization in neo4j")
     parser.add_argument('-path', '--path', help='url for tugraph')
@@ -30,6 +31,7 @@ def parse_args():
     parser.add_argument('-neurl2', '--neurl2', help='url for neo4j2')
     parser.add_argument('-nepwd2', '--nepwd2', help='pwd for neo4j2')
     parser.add_argument('-neuser2', '--neuser2', help='user for neo4j2')
+    parser.add_argument('--is_delete', action='store_true', help='if set, execute views/del.txt before creating views')
 
     args = parser.parse_args()
     if args.path:
@@ -65,6 +67,9 @@ def parse_args():
     if args.neuser2:
         global neo4j_user2
         neo4j_user2=args.neuser2
+    if args.is_delete:
+        global is_delete
+        is_delete = True
 
 def listtostr(listcypher):
     result=""
@@ -178,6 +183,23 @@ def create_views(path,url,user,password):
     os.makedirs(path+"/result/views",exist_ok=True)
     with open(path+"/result/views/createviews.json",'w') as inputfile:
         json.dump(createview_time,inputfile,indent=4)
+
+def run_delete_statements(path,url,user,password):
+    connector1 = connector(url,user,password)
+    del_file = os.path.join(path, 'views', 'del.txt')
+    if not os.path.exists(del_file):
+        print(f"delete file not found: {del_file}")
+        return
+    with open(del_file, 'r') as f:
+        lines = [l.rstrip('\n') for l in f.readlines()]
+        for line in lines:
+            if not line or line.strip().startswith('#'):
+                continue
+            print("delete:", line)
+            try:
+                connector1.run_cypher(line)
+            except Exception as e:
+                print(f"error executing delete line: {line}: {e}")
 def create_indexs(path,url,user,password):
     connector1=connector(url,user,password)
     with open(path+"/index/all.txt") as createindexs:
@@ -195,4 +217,13 @@ if __name__=="__main__":
         create_indexs(path,neo4j_url2,neo4j_user2,neo4j_password2)
     except:
         print("exit")
+    if is_delete:
+        try:
+            run_delete_statements(path, neo4j_url1, neo4j_user1, neo4j_password1)
+        except Exception as e:
+            print("error running deletes on neo4j_url1:", e)
+        try:
+            run_delete_statements(path, neo4j_url2, neo4j_user2, neo4j_password2)
+        except Exception as e:
+            print("error running deletes on neo4j_url2:", e)
     create_views(path,neo4j_url2,neo4j_user2,neo4j_password2)    

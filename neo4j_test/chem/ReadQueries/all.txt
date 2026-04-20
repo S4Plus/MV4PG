@@ -1,0 +1,7 @@
+MATCH (n:molecule)-[:transform]->(:molecule)-[:replacement_edges]->(m:molecule) RETURN count(*) AS count
+match (n:molecule)-[:replacement_edges*..3]->(m:molecule) RETURN count(*) AS count
+MATCH (n:molecule)-[:transform*..]->(m:molecule) RETURN count(*) AS count
+MATCH (n:molecule)-[:transform*..]->(:molecule)-[:replacement_edges*..3]->(m:molecule) RETURN count(*) AS count
+MATCH (n:formula)<-[:molecule_formula]-(n2:molecule) MATCH (n2)-[r:transform|substructure|similarity_3d|similarity|replacement_edges|isomer]->(n3:molecule) MATCH(n3)-[:transform*..]->(m:molecule) RETURN count(*) AS count
+MATCH (n:molecule)-[:transform]->(:molecule)-[:replacement_edges*..3]->(m:molecule) RETURN count(*) AS count
+MATCH (n:molecule)-[r:transform|substructure|similarity_3d|similarity|replacement_edges|isomer]->(n2:molecule) MATCH (n2)-[:transform*..]->(m:molecule) RETURN count(*) AS count

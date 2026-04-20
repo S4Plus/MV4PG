@@ -1,0 +1,3 @@
+MATCH (n:molecule)-[r1:transform]->(:molecule)-[r2:replacement_edges]->(m:molecule) where r1.is_view is null and r2.is_view is null with n,m CREATE(n)-[r:MOLECULE_RELPS{is_view:true}]->(m)
+match (n:molecule)-[r1:replacement_edges*..3]->(m:molecule) where all(rel in r1 where rel.is_view is null) with n,m CREATE(n)-[r:MULTI_REPLACEMENT{is_view:true}]->(m)
+MATCH (n:molecule)-[r1:transform*..]->(m:molecule) where all(rel in r1 where rel.is_view is null) with n,m CREATE(n)-[r:MULTI_TRANSFORM{is_view:true}]->(m)

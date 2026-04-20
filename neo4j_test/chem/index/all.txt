@@ -1,0 +1,4 @@
+CREATE CONSTRAINT unique_person_i FOR (p:molecule) REQUIRE p.id IS UNIQUE
+CREATE CONSTRAINT unique_person_i2 FOR (p:formula) REQUIRE p.id IS UNIQUE
+CREATE CONSTRAINT unique_person_i4 FOR (p:reaction_template) REQUIRE p.id IS UNIQUE
+CREATE CONSTRAINT unique_person_i5 FOR (p:functional_group) REQUIRE p.id IS UNIQUE

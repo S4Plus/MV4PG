@@ -1,4 +1,3 @@
-# Due to the double-blind policy, the dataset URL is currently not included in this repository.
 # Overview
 The experimental test results are available in `results.xlsx`. For a detailed explanation, please refer to `Evaluation Result`. The testing processes for TuGraph and Neo4j are documented in `TuGraph_Test` and `Neo4j_Test`, respectively.
 # Prerequisites

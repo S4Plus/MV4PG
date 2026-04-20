@@ -1,0 +1,1 @@
+MATCH (n:molecule{id:'52995'})-[r:replacement_edges]->(m:molecule{id:'52907'}) delete r

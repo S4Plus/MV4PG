@@ -15,10 +15,12 @@ make -j32
 # import data
 cd "$SCRIPT_DIR"
 echo "anonymous now, waiting for upload..."
-wget todo/import_snb_sf1.zip # anonymous url for ldbcSf1
-wget todo/import_data_sf10.zip # anonymous url for ldbcSf10
+wget http://home.ustc.edu.cn/~angels/import_snb_sf1.zip
+wget http://home.ustc.edu.cn/~angels/import_data_sf10.zip
+wget http://home.ustc.edu.cn/~angels/chem.zip
 unzip import_snb_sf1.zip 
 unzip import_data_sf10.zip
+unzip chem.zip || true
 
 cd "$SCRIPT_DIR/import_snb_sf1"
 ../tugraph_db_without_views/build/output/lgraph_import --dir /data_wo_opt --verbose 2 -c import.conf -g ldbcSf1  --continue_on_error 1 --overwrite 1 --online false
@@ -27,6 +29,10 @@ cd "$SCRIPT_DIR/import_snb_sf1"
 cd "$SCRIPT_DIR/import_data_sf10"
 ../tugraph_db_without_views/build/output/lgraph_import --dir /data_wo_opt --verbose 2 -c import.conf -g ldbcSf10  --continue_on_error 1 --overwrite 1 --online false
 ../tugraph_db_with_views/build/output/lgraph_import --dir /data_opt --verbose 2 -c import.conf -g ldbcSf10  --continue_on_error 1 --overwrite 1 --online false
+
+cd "$SCRIPT_DIR/chem"
+../tugraph_db_without_views/build/output/lgraph_import --dir /data_wo_opt --verbose 2 -c import.json -g chem  --continue_on_error 1 --overwrite 1 --online false
+../tugraph_db_with_views/build/output/lgraph_import --dir /data_opt --verbose 2 -c import.json -g chem  --continue_on_error 1 --overwrite 1 --online false
 
 # start TuGraph
 cd "$SCRIPT_DIR/tugraph_db_without_views"

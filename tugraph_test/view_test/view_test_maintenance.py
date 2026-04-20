@@ -5,6 +5,7 @@ from TuGraphClient import TuGraphClient
 import time
 import os
 import json
+from natsort import natsorted
 
 ip = '127.0.0.1'
 old_port = '7071'
@@ -147,7 +148,7 @@ def OptTest(folder_name):
     optimized_result_map=dict()
     for i in range(0,cycle):
         # 测试
-        for file in sorted(os.listdir(cypher_folder)):
+        for file in natsorted(os.listdir(cypher_folder)):
             with open(os.path.join(cypher_folder,file)) as f:
                 cypher_name=file.split(".")[0]
                 input_cypher=f.read()

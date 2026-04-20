@@ -1,0 +1,2 @@
+MATCH (n:molecule{id:$srcID}),(m:molecule{id:$dstID})
+CREATE (n)-[r:replacement_edges{functional_group:$functional_group, functional_group_formula:$functional_group_formula, replace_atom:$replace_atom}]->(m)

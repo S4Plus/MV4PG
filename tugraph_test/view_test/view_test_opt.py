@@ -96,7 +96,7 @@ def call_cypher(input_cypher, input_port,input_graph):
     except Exception as e:
         return False,""
 
-def test_cypher(input_cypher):
+def test_cypher(input_cypher,cypher_name):
     global cycle
     if(is_read==False):
         cycle=1
@@ -106,6 +106,8 @@ def test_cypher(input_cypher):
         input_cypher="EXPLAIN "+input_cypher
     ave_time=0
     optimized_ave_time=0
+    records=[]
+    optimized_records=[]
     for i in range(0,cycle):
         start=time.time()
         try:
@@ -127,21 +129,24 @@ def test_cypher(input_cypher):
     ave_time/=cycle
     optimized_ave_time/=cycle
 
-    f=open(output_path,"a")
-    f.write(input_cypher+"\n")
-    f.write("cycle: "+str(cycle)+"\n")
-    f.write("original_time: "+str(ave_time)+"\n")
-    f.write("optimized_time: "+str(optimized_ave_time)+"\n")
-    f.write("speed up: "+str(ave_time/optimized_ave_time)+"\n")
-    if(len(records)<11):
-        for i in range(0,len(records)):
-            if(records[i]!=optimized_records[i]):
-                print("wrong: "+input_cypher)
+    with open(output_path,"a") as f:
+        f.write(cypher_name+": "+input_cypher+"\n")
+        f.write("cycle: "+str(cycle)+"\n")
+        f.write("original_time: "+str(ave_time)+"\n")
+        f.write("optimized_time: "+str(optimized_ave_time)+"\n")
+        f.write("speed up: "+str(ave_time/optimized_ave_time)+"\n")
+        # print("output_path ",output_path)
+        if(len(records)<11):
+            for i in range(0,len(records)):
+                if(records[i]!=optimized_records[i]):
+                    print("wrong: "+input_cypher)
+                    print("records:"+str(records[i]))
+                    print("optimized_records:"+str(optimized_records[i]))
+                f.write(str(records[i])+"\n")
+                f.write(str(optimized_records[i])+"\n")
                 print("records:"+str(records[i]))
                 print("optimized_records:"+str(optimized_records[i]))
-            f.write(str(records[i])+"\n")
-            f.write(str(optimized_records[i])+"\n")
-    f.write("\n")
+        f.write("\n")
 
 def convert_to_number(s):
     if s.isdigit():
@@ -181,7 +186,7 @@ def OptTest(isRead,folder_name):
             # if len(parameters)>0:
             #     input_cypher=input_cypher % tuple(parameters)
             # print(input_cypher)
-            test_cypher(input_cypher)
+            test_cypher(input_cypher,cypher_name)
 
 
 if  __name__ == '__main__':

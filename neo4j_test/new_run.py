@@ -20,6 +20,7 @@ tugraph_graph = 'ldbcSf10'
 path="./ldbcSf10_new"
 is_profile=False
 cycle=5
+test_type=0
 
 def filter(profile):
     result={}
@@ -92,6 +93,7 @@ def parse_args():
     parser.add_argument('-neuser2', '--neuser2', help='user for neo4j2')
     parser.add_argument('-pr', '--profile', default=False, help='whether to use profile')
     parser.add_argument('-c', '--cycle', type=int, default=5, help='number of cycles to run')
+    parser.add_argument('-tt', '--test_type', type=int, default=0, help='test type: 1=Read,2=Write,3=multi_delete')
 
     args = parser.parse_args()
     if args.path:
@@ -133,6 +135,25 @@ def parse_args():
     if args.cycle:
         global cycle
         cycle=args.cycle
+    if args.test_type is not None:
+        global test_type
+        test_type=args.test_type
+
+def get_lines(path, kind: str):
+    # kind: 'read' or 'write' or 'recover' etc.
+    file_map = {
+        'read': path + '/ReadQueries/all.txt',
+        'write': path + '/WriteQueries/all.txt',
+        'recover': path + '/recover/all.txt'
+    }
+    fp = file_map.get(kind)
+    if not fp or not os.path.exists(fp):
+        return []
+    with open(fp,'r') as f:
+        lines = [l.rstrip('\n') for l in f.readlines()]
+    if test_type == 3:
+        return [l for l in lines if '#sym:mutex_test' in l]
+    return lines
 class tool:
     def __init__(self,path):
         self.path=path
@@ -228,42 +249,41 @@ def neo4j_test_beforeopt(path,url,user,password):
     #for view in my_tool.views:
     #     result2=connector.run_cypher(view)
     #     print(result2)
-    with open(path+"/ReadQueries/all.txt",'r') as inputfile:
-        lines=inputfile.readlines()
-        cyphers_info={}
-        for line in lines:
-            line=line.rstrip("\n")
-            #print(line)
-            cypher_info={}
-            new_line=line
+    lines = get_lines(path, 'read')
+    # lines already stripped of newlines by get_lines
+    cyphers_info={}
+    for line in lines:
+        #print(line)
+        cypher_info={}
+        new_line=line
+        if is_profile:
+            new_line="profile "+new_line
+        print(new_line)
+        alltime=0.0
+        for number in range(cycle):
+            start_time=time.time()
+            result1,summary=connector1.run_cypher(new_line)
+            end_time=time.time()
+            result=str(result1)
+            cypher_info["result"+str(number)]=result
+            if ~is_profile:
+                execute_time=end_time-start_time
+            else:
+                execute_time=summary.result_available_after+summary.result_consumed_after
+            alltime+=execute_time
             if is_profile:
-                new_line="profile "+new_line
-            print(new_line)
-            alltime=0.0
-            for number in range(cycle):
-                start_time=time.time()
-                result1,summary=connector1.run_cypher(new_line)
-                end_time=time.time()
-                result=str(result1)
-                cypher_info["result"+str(number)]=result
-                if ~is_profile:
-                    execute_time=end_time-start_time
-                else:
-                    execute_time=summary.result_available_after+summary.result_consumed_after
-                alltime+=execute_time
-                if is_profile:
-                    cypher_info["AllDbHits"],cypher_info["profile"]=filter(summary.profile)
-                cypher_info["time"+str(number)]=execute_time
-                cypher_info["add_nodes"]=summary.counters.nodes_created
-                cypher_info["delete_nodes"]=summary.counters.nodes_deleted
-                cypher_info["add_rel"]=summary.counters.relationships_created
-                cypher_info["delete_rel"]=summary.counters.relationships_deleted
-            cypher_info["alltime"]=alltime
-            cypher_info["ave_time"]=alltime/float(cycle)
-            cyphers_info[line]=cypher_info
-            os.makedirs(path+"/result/read",exist_ok=True)
-            with open(path+"/result/read/oldtime.json",'w') as timefile:
-                json.dump(cyphers_info,timefile,indent=4)
+                cypher_info["AllDbHits"],cypher_info["profile"]=filter(summary.profile)
+            cypher_info["time"+str(number)]=execute_time
+            cypher_info["add_nodes"]=summary.counters.nodes_created
+            cypher_info["delete_nodes"]=summary.counters.nodes_deleted
+            cypher_info["add_rel"]=summary.counters.relationships_created
+            cypher_info["delete_rel"]=summary.counters.relationships_deleted
+        cypher_info["alltime"]=alltime
+        cypher_info["ave_time"]=alltime/float(cycle)
+        cyphers_info[line]=cypher_info
+        os.makedirs(path+"/result/read",exist_ok=True)
+        with open(path+"/result/read/oldtime.json",'w') as timefile:
+            json.dump(cyphers_info,timefile,indent=4)
 
 
 def neo4j_test_writebeforeopt(path,url,user,password):
@@ -276,37 +296,36 @@ def neo4j_test_writebeforeopt(path,url,user,password):
     #for view in my_tool.views:
     #     result2=connector.run_cypher(view)
     #     print(result2)
-    with open(path+"/WriteQueries/all.txt",'r') as inputfile:
-        lines=inputfile.readlines()
-        cyphers_info={}
-        for line in lines:
-            line=line.rstrip("\n")
-            #print(line)
-            cypher_info={}
-            new_line=line
-            print(new_line)
-            start_time=time.time()
-            result1,summary=connector1.run_cypher(new_line)
-            print(f"server result_consumed_after: {summary.result_consumed_after} ms")
-            end_time=time.time()
-            result=str(result1)
-            cypher_info["result"]=result
-            if ~is_profile:
-                execute_time=end_time-start_time
-            else:
-                execute_time=summary.result_available_after+summary.result_consumed_after
-            time1.append(execute_time)
-            cypher_info["time"]=execute_time
-            if is_profile:
-                cypher_info["AllDbHits"],cypher_info["profile"]=filter(summary.profile)          
-            cypher_info["add_nodes"]=summary.counters.nodes_created
-            cypher_info["delete_nodes"]=summary.counters.nodes_deleted
-            cypher_info["add_rel"]=summary.counters.relationships_created
-            cypher_info["delete_rel"]=summary.counters.relationships_deleted
-            cyphers_info[line]=cypher_info
-            os.makedirs(path+"/result/write",exist_ok=True)
-            with open(path+"/result/write/old_write_time.json",'w') as timefile:
-                json.dump(cyphers_info,timefile,indent=4)
+    lines = get_lines(path, 'write')
+    # lines already stripped of newlines by get_lines
+    cyphers_info={}
+    for line in lines:
+        #print(line)
+        cypher_info={}
+        new_line=line
+        print(new_line)
+        start_time=time.time()
+        result1,summary=connector1.run_cypher(new_line)
+        print(f"server result_consumed_after: {summary.result_consumed_after} ms")
+        end_time=time.time()
+        result=str(result1)
+        cypher_info["result"]=result
+        if ~is_profile:
+            execute_time=end_time-start_time
+        else:
+            execute_time=summary.result_available_after+summary.result_consumed_after
+        time1.append(execute_time)
+        cypher_info["time"]=execute_time
+        if is_profile:
+            cypher_info["AllDbHits"],cypher_info["profile"]=filter(summary.profile)          
+        cypher_info["add_nodes"]=summary.counters.nodes_created
+        cypher_info["delete_nodes"]=summary.counters.nodes_deleted
+        cypher_info["add_rel"]=summary.counters.relationships_created
+        cypher_info["delete_rel"]=summary.counters.relationships_deleted
+        cyphers_info[line]=cypher_info
+        os.makedirs(path+"/result/write",exist_ok=True)
+        with open(path+"/result/write/old_write_time.json",'w') as timefile:
+            json.dump(cyphers_info,timefile,indent=4)
     return time1
 
 
@@ -319,14 +338,12 @@ def neo4j_test_coverbeforeopt(path,url,user,password):
     #for view in my_tool.views:
     #     result2=connector.run_cypher(view)
     #     print(result2)
-    with open(path+"/recover/all.txt",'r') as inputfile:
-        lines=inputfile.readlines()
-        for line in lines:
-            line=line.rstrip("\n")
-            #print(line)
-            new_line=line
-            print(new_line)
-            connector1.run_cypher(new_line)
+    lines = get_lines(path, 'recover')
+    for line in lines:
+        # lines already stripped
+        new_line=line
+        print(new_line)
+        connector1.run_cypher(new_line)
 
 #opt
 def neo4j_test_afteropt(path,neo4j_url,neo4j_user,neo4j_password):
@@ -339,50 +356,49 @@ def neo4j_test_afteropt(path,neo4j_url,neo4j_user,neo4j_password):
     #for view in my_tool.views:
     #     result2=connector.run_cypher(view)
     #     print(result2)
-    with open(path+"/ReadQueries/all.txt",'r') as inputfile:
-        lines=inputfile.readlines()
-        cyphers_info={}
-        for line in lines:
-            line=line.rstrip("\n")
-            line="Optimize "+line
-            print(line)
-            opt_start_time=time.time()
-            opt_cypher_list = client.call_cypher(line)['result']
-            opt_end_time=time.time()
-            opt_cypher=listtostr(opt_cypher_list)
-            print("opt_cypher:",opt_cypher)
-            cypher_info={}
-            opt_time=opt_end_time-opt_start_time
-            cypher_info["opt_time"]=opt_time
-            new_line=opt_cypher
+    lines = get_lines(path, 'read')
+    cyphers_info={}
+    for line in lines:
+        # lines already stripped
+        line="Optimize "+line
+        print(line)
+        opt_start_time=time.time()
+        opt_cypher_list = client.call_cypher(line)['result']
+        opt_end_time=time.time()
+        opt_cypher=listtostr(opt_cypher_list)
+        print("opt_cypher:",opt_cypher)
+        cypher_info={}
+        opt_time=opt_end_time-opt_start_time
+        cypher_info["opt_time"]=opt_time
+        new_line=opt_cypher
+        if is_profile:
+            new_line="profile "+new_line
+        #print(new_line)
+        alltime=0.0
+        for number in range(cycle):
+            start_time=time.time()
+            result1,summary=connector1.run_cypher(new_line)
+            end_time=time.time()
+            result=str(result1)
+            cypher_info["result"+str(number)]=result
+            if ~is_profile:
+                execute_time=end_time-start_time
+            else:
+                execute_time=summary.result_available_after+summary.result_consumed_after
+            alltime+=execute_time
             if is_profile:
-                new_line="profile "+new_line
-            #print(new_line)
-            alltime=0.0
-            for number in range(cycle):
-                start_time=time.time()
-                result1,summary=connector1.run_cypher(new_line)
-                end_time=time.time()
-                result=str(result1)
-                cypher_info["result"+str(number)]=result
-                if ~is_profile:
-                    execute_time=end_time-start_time
-                else:
-                    execute_time=summary.result_available_after+summary.result_consumed_after
-                alltime+=execute_time
-                if is_profile:
-                    cypher_info["AllDbHits"],cypher_info["profile"]=filter(summary.profile)
-                cypher_info["time"+str(number)]=execute_time
-                cypher_info["add_nodes"]=summary.counters.nodes_created
-                cypher_info["delete_nodes"]=summary.counters.nodes_deleted
-                cypher_info["add_rel"]=summary.counters.relationships_created
-                cypher_info["delete_rel"]=summary.counters.relationships_deleted
-            cypher_info["alltime"]=alltime
-            cypher_info["ave_time"]=alltime/float(cycle)
-            cyphers_info[new_line]=cypher_info
-            os.makedirs(path+"/result/read",exist_ok=True)
-            with open(path+"/result/read/opttime.json",'w') as timefile:
-                json.dump(cyphers_info,timefile,indent=4)
+                cypher_info["AllDbHits"],cypher_info["profile"]=filter(summary.profile)
+            cypher_info["time"+str(number)]=execute_time
+            cypher_info["add_nodes"]=summary.counters.nodes_created
+            cypher_info["delete_nodes"]=summary.counters.nodes_deleted
+            cypher_info["add_rel"]=summary.counters.relationships_created
+            cypher_info["delete_rel"]=summary.counters.relationships_deleted
+        cypher_info["alltime"]=alltime
+        cypher_info["ave_time"]=alltime/float(cycle)
+        cyphers_info[new_line]=cypher_info
+        os.makedirs(path+"/result/read",exist_ok=True)
+        with open(path+"/result/read/opttime.json",'w') as timefile:
+            json.dump(cyphers_info,timefile,indent=4)
 
 
 def neo4j_test_writeafteropt(path,url,user,password):
@@ -396,44 +412,43 @@ def neo4j_test_writeafteropt(path,url,user,password):
     #     print(result2)
     time1=[]
     cyphers_info={}
-    with open(path+"/WriteQueries/all.txt",'r') as inputfile:
-        lines=inputfile.readlines()    
-        for line in lines:
-            line=line.rstrip("\n")
-            print("write:",line)
-            #print(line)
-            new_lines=my_tool.tran(line)
-            #print(new_line)
-            alltime=0
-            result_end=[]
-            for new_line in new_lines:
-                cypher_info={}
-                now_dict={}
-                start_time=time.time()
-                result1,summary=connector1.run_cypher(new_line)
-                end_time=time.time()
-                result=str(result1)
-                now_dict["result"]=result
-                if ~is_profile:
-                    execute_time=end_time-start_time
-                else:
-                    execute_time=summary.result_available_after+summary.result_consumed_after
-                alltime+=execute_time
-                now_dict["time"]=execute_time
-                if is_profile:
-                    now_dict["AllDbHits"],now_dict["profile"]=filter(summary.profile)          
-                now_dict["add_nodes"]=summary.counters.nodes_created
-                now_dict["delete_nodes"]=summary.counters.nodes_deleted
-                now_dict["add_rel"]=summary.counters.relationships_created
-                now_dict["delete_rel"]=summary.counters.relationships_deleted
-                cypher_info[new_line]=now_dict
-                result_end.append(cypher_info)
-                result_end.append(alltime)            
-            cyphers_info[line]=result_end
-            time1.append(alltime)
-        os.makedirs(path+"/result/write",exist_ok=True)
-        with open(path+"/result/write/opt_write_time.json",'w') as timefile:
-            json.dump(cyphers_info,timefile,indent=4)
+    lines = get_lines(path, 'write')
+    for line in lines:
+        # lines already stripped
+        print("write:",line)
+        #print(line)
+        new_lines=my_tool.tran(line)
+        #print(new_line)
+        alltime=0
+        result_end=[]
+        for new_line in new_lines:
+            cypher_info={}
+            now_dict={}
+            start_time=time.time()
+            result1,summary=connector1.run_cypher(new_line)
+            end_time=time.time()
+            result=str(result1)
+            now_dict["result"]=result
+            if ~is_profile:
+                execute_time=end_time-start_time
+            else:
+                execute_time=summary.result_available_after+summary.result_consumed_after
+            alltime+=execute_time
+            now_dict["time"]=execute_time
+            if is_profile:
+                now_dict["AllDbHits"],now_dict["profile"]=filter(summary.profile)          
+            now_dict["add_nodes"]=summary.counters.nodes_created
+            now_dict["delete_nodes"]=summary.counters.nodes_deleted
+            now_dict["add_rel"]=summary.counters.relationships_created
+            now_dict["delete_rel"]=summary.counters.relationships_deleted
+            cypher_info[new_line]=now_dict
+            result_end.append(cypher_info)
+            result_end.append(alltime)            
+        cyphers_info[line]=result_end
+        time1.append(alltime)
+    os.makedirs(path+"/result/write",exist_ok=True)
+    with open(path+"/result/write/opt_write_time.json",'w') as timefile:
+        json.dump(cyphers_info,timefile,indent=4)
     return time1
 
 
@@ -448,41 +463,40 @@ def neo4j_test_coverafteropt(path,url,user,password):
     #     print(result2)
     time1=[]
     cyphers_info={}
-    with open(path+"/recover/all.txt",'r') as inputfile:
-        lines=inputfile.readlines()    
-        for line in lines:
-            line=line.rstrip("\n")
-            print("cover:",line)
-            #print(line)
-            new_lines=my_tool.tran(line)
-            #print(new_line)
-            result_end=[]
-            for new_line in new_lines:
-                cypher_info={}
-                now_dict={}
-                start_time=time.time()
-                result1,summary=connector1.run_cypher(new_line)
-                result=str(result1)
-                now_dict["result"]=result
-                end_time=time.time()
-                if ~is_profile:
-                    execute_time=end_time-start_time
-                else:
-                    execute_time=summary.result_available_after+summary.result_consumed_after
-                time1.append(execute_time)
-                now_dict["time"]=execute_time
-                if is_profile:
-                    cypher_info["AllDbHits"],cypher_info["profile"]=filter(summary.profile)          
-                now_dict["add_nodes"]=summary.counters.nodes_created
-                now_dict["delete_nodes"]=summary.counters.nodes_deleted
-                now_dict["add_rel"]=summary.counters.relationships_created
-                now_dict["delete_rel"]=summary.counters.relationships_deleted
-                cypher_info[new_line]=now_dict
-                result_end.append(cypher_info)            
-            cyphers_info[line]=result_end
-    os.makedirs(path+"/result/recovery",exist_ok=True)
-    with open(path+"/result/recovery/recovery.json",'w') as timefile:
-        json.dump(cyphers_info,timefile,indent=4)
+    lines = get_lines(path, 'recover')
+    for line in lines:
+        # lines already stripped
+        print("cover:",line)
+        new_lines=my_tool.tran(line)
+        #print(new_line)
+        result_end=[]
+        for new_line in new_lines:
+            cypher_info={}
+            now_dict={}
+            start_time=time.time()
+            result1,summary=connector1.run_cypher(new_line)
+            result=str(result1)
+            now_dict["result"]=result
+            end_time=time.time()
+            if ~is_profile:
+                execute_time=end_time-start_time
+            else:
+                execute_time=summary.result_available_after+summary.result_consumed_after
+            time1.append(execute_time)
+            now_dict["time"]=execute_time
+            if is_profile:
+                cypher_info["AllDbHits"],cypher_info["profile"]=filter(summary.profile)          
+            now_dict["add_nodes"]=summary.counters.nodes_created
+            now_dict["delete_nodes"]=summary.counters.nodes_deleted
+            now_dict["add_rel"]=summary.counters.relationships_created
+            now_dict["delete_rel"]=summary.counters.relationships_deleted
+            cypher_info[new_line]=now_dict
+            result_end.append(cypher_info)            
+        cyphers_info[line]=result_end
+
+        os.makedirs(path+"/result/recovery",exist_ok=True)
+        with open(path+"/result/recovery/recovery.json",'w') as timefile:
+            json.dump(cyphers_info,timefile,indent=4)
     return time1
 
 
@@ -546,8 +560,8 @@ def mutex_test(path,url,user,password,is_opt):
     mytool=tool(path+"/output.json")
     connector1=connector(url,user,password)
     f={}
-    # num=[1,10,100,1000,10000]
-    num=[1,10,100]
+    num=[1,10,100,1000,10000]
+    # num=[1,10,100]
     output_detail_path=path+"/result/old_db.json"
     if is_opt:
         output_detail_path=path+"/result/opt_db.json"
@@ -579,6 +593,7 @@ def mutex_test(path,url,user,password,is_opt):
                     if is_opt:
                         new_lines=mytool.tran(line)
                     for new_line in new_lines:
+                        print("new_line:",new_line)
                         time1=[]
                         if is_profile:
                             new_line="profile "+new_line
@@ -661,14 +676,29 @@ def mutex_test(path,url,user,password,is_opt):
 
 if __name__=="__main__":
     parse_args()
-    mutex_test(path,neo4j_url2,neo4j_user2,neo4j_password2,True)
-    mutex_test(path,neo4j_url1,neo4j_user1,neo4j_password1,False)
 
     print("测试开始")
-    old_thread=threading.Thread(target=old_test,name="OldThread")
-    old_thread.start()
-    opt_test()
-    old_thread.join()
+    if test_type == 1:
+        # Read only
+        neo4j_test_beforeopt(path,neo4j_url1,neo4j_user1,neo4j_password1)
+        print("未优化读语句测试结束")
+        neo4j_test_afteropt(path,neo4j_url2,neo4j_user2,neo4j_password2)
+        print("优化后读语句测试结束")
+    elif test_type == 2:
+        # Write only
+        test_write(path)
+        print("未优化写语句测试结束")
+        test_write_opt(path)
+        print("优化后写语句测试结束")
+    elif test_type == 3:
+        mutex_test(path,neo4j_url2,neo4j_user2,neo4j_password2,True)
+        mutex_test(path,neo4j_url1,neo4j_user1,neo4j_password1,False)
+    else:
+        # default or multi_delete (test_type==3 will be filtered by get_lines)
+        old_thread=threading.Thread(target=old_test,name="OldThread")
+        old_thread.start()
+        opt_test()
+        old_thread.join()
     print("测试结束")
 
     # neo4j_test_writeafteropt(path,neo4j_url2,neo4j_user2,neo4j_password2)
