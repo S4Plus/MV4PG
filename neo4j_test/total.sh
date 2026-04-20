@@ -3,7 +3,7 @@
 # need_init: true/false (default false)
 # test_type: 0=all,1=Read,2=Write,3=multi_delete
 
-need_init=${1:-false}
+need_init=${1:-true}
 test_type=${2:-0}
 
 scripts_dir=$(dirname "$0")

@@ -33,8 +33,7 @@ pip install neo4j TuGraphClient
 
 3. Then run the shell script in folder `neo4j_test`.
 ```bash
-./ldbc_test.sh 
-./ldbc_test_sf10.sh
+./total.sh
 ```
 ### Note
 if you cannot run the shell script, please check the path of the test file and complier the CypherRewrite in the build folder.

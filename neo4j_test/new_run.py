@@ -695,6 +695,9 @@ if __name__=="__main__":
         mutex_test(path,neo4j_url1,neo4j_user1,neo4j_password1,False)
     else:
         # default or multi_delete (test_type==3 will be filtered by get_lines)
+        mutex_test(path,neo4j_url2,neo4j_user2,neo4j_password2,True)
+        mutex_test(path,neo4j_url1,neo4j_user1,neo4j_password1,False)
+        
         old_thread=threading.Thread(target=old_test,name="OldThread")
         old_thread.start()
         opt_test()
